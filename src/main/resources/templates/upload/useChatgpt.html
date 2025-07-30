@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatGPT 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <input type="text" id="msg" placeholder="메시지를 입력하세요">
+    <button onclick="send()">보내기</button>
+    <div id="response"></div>
+
+    <script>
+        function send() {
+            const msg = document.getElementById("msg").value;
+
+            axios.post("/api/chat", msg, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                document.getElementById("response").innerText = res.data;
+            }).catch(err => {
+                alert("에러 발생: " + err);
+            });
+        }
+    </script>
+</body>
+</html>

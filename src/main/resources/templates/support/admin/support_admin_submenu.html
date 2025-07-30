@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="subMenu">
+
+
+			<div class="title-div" style="border:none !important; ">
+			
+				<div class="div-1" style="border:none !important; margin-right:-20px; ">
+					<div >
+						<img th:src="@{/images/symbol_support.png}"
+							style="width: 50px; height: 50px; border:none !important; margin-right: 36px; margin-left: 10px;" />
+					</div>
+				</div>
+				
+				<div class="div-2" style="border:none !important;">지원센터 관리</div>
+				
+				<div class="div-3" style="border: none; display: flex; flex-direction: row; width: 400px; margin-left: 40px;">
+					<div style="margin-right: 50px; " id="notice-sub">
+						<a th:href="@{/admin/support}" id="notice-menu">공지사항 관리</a>
+					</div>
+					<div style="margin-right: 50px;" id="faq-sub">
+						<a th:href="@{/admin/support/faq}" id="faq-menu">FAQ 관리</a>
+					</div>
+					<div style="margin-right: 50px;" id="feedback-sub">
+						<a th:href="@{/admin/support/feedback}" id="feedback-menu">피드백 관리</a>
+					</div>
+<!-- 					<div style="margin-right: 50px;" id="total-sub"> -->
+<!-- 						<a th:href="@{/admin/support/total}" id="total-menu">관련 통계</a> -->
+<!-- 					</div> -->
+				</div><!-- div-3 -->
+				
+				<div class="div-4" style="border:none !important; flex: 10"></div>
+				
+			</div>
+
+</div>
+
+<script>
+  const selectedFlag = window.selectedFlag;
+  const selectedId = menuMap[selectedFlag];
+
+  const menuMap = {
+    notice: 'notice-menu',
+    faq: 'faq-menu',
+    feedback: 'feedback-menu',
+    total: 'total-menu'
+  };
+
+  if (typeof selectedFlag !== 'undefined') {
+    const selectedId = menuMap[selectedFlag];
+    if (selectedId) {
+      document.getElementById(selectedId)?.style.color = '#bd8ffd';
+    }
+  }
+</script>
+
+</html>
+

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${videoData.title}">영상 보기</title>
+  <link rel="icon" href="http://localhost/images/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-blue: #2E86AB;
+      --light-blue: #4A9ECD;
+      --sky-blue: #87CEEB;
+      --cloud-white: #F8FAFF;
+      --gradient-bg: linear-gradient(135deg, #87CEEB 0%, #98D8E8 30%, #B0E0E6 70%, #E0F6FF 100%);
+      --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      --travel-accent: #FFB347;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--gradient-bg);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 구름과 하늘 배경 효과 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse 300px 150px at 20% 10%, rgba(255,255,255,0.4) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at 80% 15%, rgba(255,255,255,0.3) 0%, transparent 70%),
+        radial-gradient(ellipse 250px 120px at 60% 25%, rgba(255,255,255,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 350px 180px at 10% 40%, rgba(255,255,255,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 200px 100px at 90% 60%, rgba(255,255,255,0.3) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+      animation: cloudFloat 30s ease-in-out infinite;
+    }
+
+    @keyframes cloudFloat {
+      0%, 100% { transform: translateX(0px) translateY(0px); }
+      25% { transform: translateX(-10px) translateY(-5px); }
+      50% { transform: translateX(5px) translateY(-10px); }
+      75% { transform: translateX(-5px) translateY(-3px); }
+    }
+
+    /* 떠다니는 아이콘들 */
+    body::after {
+      content: '✈️ 🌤️ 🦅 ☁️ 🌈';
+      position: fixed;
+      top: 5%;
+      right: 5%;
+      font-size: 1.2rem;
+      opacity: 0.6;
+      letter-spacing: 20px;
+      animation: floatIcons 15s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes floatIcons {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .travel-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .travel-header::before {
+      content: '✈️';
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 2rem;
+      animation: fly 4s ease-in-out infinite;
+    }
+
+    @keyframes fly {
+      0%, 100% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+      50% { transform: translateX(15px) translateY(-8px) rotate(10deg); }
+    }
+
+    .travel-title {
+      color: var(--primary-blue);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+      background: linear-gradient(45deg, var(--primary-blue), var(--light-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .travel-subtitle {
+      color: var(--primary-blue);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      font-weight: 600;
+    }
+
+    .video-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(135, 206, 235, 0.3);
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .video-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--sky-blue), var(--light-blue), var(--sky-blue));
+      border-radius: 25px;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .video-title {
+      color: var(--primary-blue);
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .video-desc {
+      color: #64748b;
+      margin-bottom: 25px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .video-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #000;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      border: 3px solid rgba(255,255,255,0.5);
+    }
+
+    .video-element {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .subtitle-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(135, 206, 235, 0.3);
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .subtitle-section::before {
+      content: '💭';
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .subtitle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid rgba(135, 206, 235, 0.2);
+    }
+
+    .subtitle-speed {
+      background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(46, 134, 171, 0.3);
+    }
+
+    .subtitle-lang {
+      background: linear-gradient(135deg, var(--travel-accent), #FF9A56);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(255, 179, 71, 0.3);
+    }
+
+    .subtitle-content {
+      line-height: 2;
+    }
+
+    .english-text {
+      color: var(--light-blue);
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      padding: 15px 20px;
+      background: rgba(135, 206, 235, 0.1);
+      border-radius: 15px;
+      border-left: 4px solid var(--light-blue);
+    }
+
+    .korean-text {
+      color: #334155;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      padding: 12px 20px;
+      background: rgba(248, 250, 255, 0.8);
+      border-radius: 15px;
+    }
+
+    .vocabulary-note {
+      background: linear-gradient(135deg, #E0F6FF, #B0E0E6);
+      color: var(--primary-blue);
+      font-size: 0.95rem;
+      padding: 15px 20px;
+      border-radius: 15px;
+      border-left: 5px solid var(--light-blue);
+      margin-top: 15px;
+      box-shadow: 0 5px 15px rgba(135, 206, 235, 0.2);
+    }
+
+    .learning-sidebar {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(135, 206, 235, 0.3);
+      height: fit-content;
+      position: relative;
+    }
+
+    .learning-sidebar::before {
+      content: '🎯';
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 1.5rem;
+    }
+
+    .sidebar-title {
+      color: var(--primary-blue);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .current-topic {
+      background: linear-gradient(135deg, #E0F6FF, #B0E0E6);
+      color: var(--primary-blue);
+      padding: 18px 20px;
+      border-radius: 18px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(135, 206, 235, 0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .progress-section {
+      margin-bottom: 30px;
+    }
+
+    .progress {
+      height: 15px;
+      background: rgba(135, 206, 235, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar-custom {
+      height: 100%;
+      background: linear-gradient(90deg, var(--light-blue), var(--sky-blue));
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar-custom::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .quiz-button {
+      background: linear-gradient(135deg, var(--travel-accent), #FF9A56);
+      color: white;
+      border: none;
+      padding: 18px 25px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-bottom: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(255, 179, 71, 0.3);
+      cursor: pointer;
+    }
+
+    .quiz-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(255, 179, 71, 0.4);
+      background: linear-gradient(135deg, #FF9A56, var(--travel-accent));
+    }
+
+    .quiz-section {
+      background: linear-gradient(135deg, #FFF4E6, #FFE4B5);
+      padding: 25px;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 179, 71, 0.3);
+      box-shadow: 0 8px 20px rgba(255, 179, 71, 0.2);
+    }
+
+    .quiz-question {
+      color: #8B5A00;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    .quiz-content {
+      color: #654321;
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+
+    /* 애니메이션 효과 */
+    .video-container, .subtitle-section, .learning-sidebar {
+      animation: slideInUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .video-container { animation-delay: 0.1s; }
+    .subtitle-section { animation-delay: 0.3s; }
+    .learning-sidebar { animation-delay: 0.5s; }
+
+    @keyframes slideInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 모바일 반응형 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .travel-header {
+        padding: 25px 20px;
+        margin-bottom: 25px;
+      }
+      
+      .travel-title {
+        font-size: 2rem;
+      }
+      
+      .travel-subtitle {
+        font-size: 1rem;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .video-container {
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+      
+      .video-title {
+        font-size: 1.4rem;
+      }
+      
+      .video-element {
+        border-radius: 15px;
+      }
+      
+      .subtitle-section {
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+      
+      .learning-sidebar {
+        padding: 25px;
+        margin-top: 20px;
+      }
+      
+      .sidebar-title {
+        font-size: 1.2rem;
+      }
+      
+      .quiz-button {
+        padding: 15px 20px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .travel-header {
+        padding: 20px 15px;
+      }
+      
+      .travel-title {
+        font-size: 1.6rem;
+      }
+      
+      .video-container {
+        padding: 20px;
+      }
+      
+      .video-title {
+        font-size: 1.2rem;
+      }
+      
+      .subtitle-section {
+        padding: 20px;
+      }
+      
+      .learning-sidebar {
+        padding: 20px;
+      }
+      
+      .english-text {
+        font-size: 1.1rem;
+      }
+      
+      .subtitle-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      
+      .subtitle-speed, .subtitle-lang {
+        text-align: center;
+      }
+    }
+
+    /* 호버 효과 */
+    .video-container:hover, .subtitle-section:hover, .learning-sidebar:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- 여행 헤더 -->
+  <div class="travel-header">
+    <h1 class="travel-title">🌍 English Travel Adventure</h1>
+    <div class="travel-subtitle">
+      <i class="fas fa-route"></i>
+      <span>언어와 함께 떠나는 특별한 여행</span>
+      <i class="fas fa-globe-americas"></i>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- 왼쪽: 비디오 및 자막 -->
+    <div class="col-lg-8">
+      <div class="video-container">
+        <h2 class="video-title">
+          <i class="fas fa-play-circle"></i>
+          <span th:text="${videoData.title}">영상 제목</span>
+        </h2>
+        <p class="video-desc" th:text="${videoData.description}">영상 설명</p>
+        <div class="video-wrapper">
+          <video class="video-element" th:src="@{|/upload/video/${videoData.fileName}|}" controls></video>
+        </div>
+      </div>
+      
+      <!-- 자막 및 해석 부분 -->
+      <div class="subtitle-section">
+        <div class="subtitle-header">
+          <div class="subtitle-speed">
+            <i class="fas fa-tachometer-alt"></i> 1x
+          </div>
+          <div class="subtitle-lang">
+            <i class="fas fa-language"></i> 한/A
+          </div>
+        </div>
+        <div class="subtitle-content">
+          <p class="english-text">
+            <i class="fas fa-quote-left"></i>
+            There you go! You're a natural!
+            <i class="fas fa-quote-right"></i>
+          </p>
+          <p class="korean-text">
+            <i class="fas fa-heart"></i> 잘하네! 타고났네요!
+          </p>
+          <div class="vocabulary-note">
+            <i class="fas fa-lightbulb"></i>
+            <strong>natural:</strong> 재능을 타고난 사람
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 오른쪽: 진행 상태 -->
+    <div class="col-lg-4">
+      <div class="learning-sidebar">
+        <h5 class="sidebar-title">
+          <i class="fas fa-compass"></i>
+          학습 여행지
+        </h5>
+        <div class="current-topic">
+          <i class="fas fa-map-marker-alt"></i>
+          인사 표현하기
+        </div>
+        <div class="progress-section">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span style="color: var(--primary-blue); font-weight: 600; font-size: 1rem;">여행 진행도</span>
+            <span style="color: var(--travel-accent); font-weight: 700; font-size: 1.1rem;">Lv.1</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar progress-bar-custom" style="width: 25%;"></div>
+          </div>
+        </div>
+        
+        <button class="quiz-button">
+          <i class="fas fa-question-circle"></i>
+          여행 퀴즈 도전하기
+        </button>
+        
+        <div class="quiz-section">
+          <div class="quiz-question">
+            <i class="fas fa-puzzle-piece"></i>
+            오늘의 여행 미션
+          </div>
+          <div class="quiz-content">
+            <p><strong>&lt;신기하네&gt;는 영어로?</strong></p>
+            <p>That's a ___.</p>
+            <hr style="border-color: rgba(255, 179, 71, 0.4); margin: 15px 0;">
+            <p>엄청 신기하네요!<br>That's ______!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</body>
+</html>

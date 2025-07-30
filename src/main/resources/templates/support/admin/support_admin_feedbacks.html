@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/admin_sidebar.css">
+
+<link rel="stylesheet" href="/css/admin_feedback_design.css">
+
+
+<title>templates/admin/support/support_admin_feedbacks.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+
+<body>
+<style>
+.feedback-header {
+	display: grid;
+/*  	grid-template-columns: 80px 200px 0.8fr 100px 80px 100px 80px 100px 80px;  */
+ 	grid-template-columns: 40px 120px 60px 500px 240px 320px 200px 60px 60px; 
+	padding: 12px 16px;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	background-color: #2e0070;
+	color: white;
+	font-weight: bold;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	
+	
+	text-align: center;
+}
+
+.feedback-row {
+	display: grid;
+/*  	grid-template-columns: 80px 200px 0.8fr 100px 80px 100px 80px 100px 80px;  */
+ 	grid-template-columns: 40px 120px 60px 500px 240px 320px 200px 60px 60px; 
+	padding: 12px 16px;
+	align-items: center;
+	background: #fff;
+	transition: background 0.2s ease;
+	cursor: pointer; /* 클릭 가능한 느낌 부여 */
+	border: 1px solid rgba(53,0,132, 0.2) !important;
+	
+	text-align: center;
+}
+
+/* 제이쿼리는 !important가 잘 안먹힌다고 한다. */
+
+.feedback-step-0 {
+  background-color: rgba(0,0,0,0.1); 
+} 
+
+.feedback-step-1 {
+  
+} 
+
+.feedback-step-2 {
+  background-color: rgba(189,143,253, 0.2); 
+} 
+
+.feedback-step-3 {
+  
+  background-color: rgba(128,253,172,0.2);
+}
+</style>
+
+<div th:replace="layout/admin_sidebar :: sidebar"></div>
+<div class="parent-container" style="border: none !important; width: 100%; height: 100%; padding-top: 30px; margin-bottom: 0px; padding-bottom: 0px; background: #f5f7fa; border: none; padding-right: 320px; min-width: 1800px;">
+<div class="child-div" style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); margin-left: 600px; background-color: rgba(255,255,255,0.7); border:none !important;">
+	<div th:replace="/support/admin/support_admin_submenu :: subMenu"></div>
+</div><!-- child-div -->
+	
+	
+	
+	
+	
+		
+		<div class="child-div"
+			style="height: auto; width: 100%; box-shadow: none; margin-left: 720px; background-color: transparent; border:none;"> 
+
+			<div class="title-div"
+				style="border-bottom: none; border:none; margin-left: 20px; margin-bottom: -10px;">
+				<div class="div-1" style="flex:5; border:none">
+					<div class="div-2" style="font-size: 36px; border:none">
+						전체 피드백 관리
+<!-- 						<span style="opacity : 0.4; font-size: 36px"> > </span> -->
+<!-- 						<span style="color: #5701d0">전체 조회</span> -->
+					</div>
+				</div>
+			</div>
+			
+<!-- 			<div class="title-div" -->
+<!-- 				style="border-bottom: none; border: 1px solid #cecece !important; margin-left: 28px; margin-bottom: 5px; width: 96%; margin-top: 20px"> -->
+<!-- 				<div class="div-1" style="flex:5; border:none"> -->
+<!-- 					<div class="div-2" style="font-size: 24px; border:none"> -->
+<!-- 						<span style="color: #5701d0">검색 조건</span> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+
+			<form th:action="@{/admin/support/notice}" method="get">
+				<div class="child-div"
+					style="height: auto; width: 99%; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); border:none;">
+
+
+
+
+
+					
+					
+					
+					
+					
+
+				</div>
+				<!-- child-div -->
+			</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="child-div" style="width: 1200px; margin-left: 22px; margin-top: -10px; box-shadow: none; height: auto">
+    <div class="feedback-header">
+        <div class="notice-cell" style="color: white">ID</div>
+        <div class="notice-cell" style="color: white; ">일시</div>
+        <div class="notice-cell" style="color: white">구분</div>
+        <div class="notice-cell" style="color: white; text-align: left; margin-left: 20px;">피드백</div>
+<!--         <div class="notice-cell" style="color: white">작성자</div> -->
+        <div class="notice-cell" style="color: white; text-align: left;">이메일</div>
+        <div class="notice-cell" style="color: white;">상태</div>
+<!--         <div class="notice-cell" style="color: white">상태</div> -->
+<!--         <div class="notice-cell" style="color: white">단계</div> -->
+<!--         <div class="notice-cell" style="color: white">스타일</div> -->
+    </div>
+
+
+    <div class="feedback-row row-bordered" th:each="fb : ${feedbackList}" th:attr="data-step=${fb.feedback_step}">
+        <a th:href="@{/admin/support/feedback_detail/{id}(id=${fb.feedback_id})}" style="display: contents;">
+            <div class="notice-cell" th:text="${fb.feedback_id}"></div>
+            <div class="notice-cell" th:text="${#dates.format(fb.feedback_created_date, 'yyyy-MM-dd')}"></div>
+<!-- 실명/익명 구분 마킹 -->
+<div class="notice-cell">
+    <th:block th:if="${fb.feedback_style} == '0'">
+            <button type="submit"
+                    style="border: none; background-color: transparent; color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+                익명
+            </button>
+    </th:block>
+    <th:block th:if="${fb.feedback_style} == '1'">
+            <button type="submit"
+                    style="border: none; background-color: rgba(204,169,254, 0); color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px; font-weight: bold">
+                실명
+            </button>
+    </th:block>
+</div>
+            
+            
+            
+            <div class="notice-cell" th:text="${fb.feedback_title}" style="text-align: left; margin-left: 20px;"></div>
+<!--             <div class="notice-cell" th:text="${fb.user_id}"></div> -->
+            <div class="notice-cell" th:text="${fb.email}" style="text-align: left;"></div>
+<!--             <div class="notice-cell" th:text="${fb.feedback_content}"></div> -->
+
+<!-- 실명/익명 구분 마킹 -->
+<div class="notice-cell">
+    <th:block th:if="${fb.feedback_step} == '0'">
+            <button type="submit"
+                    style="border: none; background-color: transparent; color: #aaaaaa; border: 1px solid #aaaaaa; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+                미반영
+            </button>
+    </th:block>
+    <th:block th:if="${fb.feedback_step} == '1'">
+            <button type="submit"
+                    style="border: none; background-color: rgba(204,169,254, 0); color: #000000; border: 1px solid #000000; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+                검토중	
+            </button>
+    </th:block>
+    <th:block th:if="${fb.feedback_step} == '2'">
+            <button type="submit"
+                    style="border: none; background-color: rgba(204,169,254, 0); color: #5701d0; border: 1px solid #5701d0; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+                처리중
+            </button>
+    </th:block>
+    <th:block th:if="${fb.feedback_step} == '3'">
+            <button type="submit"
+                    style="border: none; background-color: rgba(204,169,254, 0); color: rgb(1,213,75); border: 1px solid rgb(1,213,75); border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+                반영완료
+            </button>
+    </th:block>
+</div>
+
+
+<!--             <div class="notice-cell" th:text="${fb.feedback_status}"></div> -->
+<!--             <div class="notice-cell" th:text="${fb.feedback_step}"></div> -->
+<!--             <div class="notice-cell" th:text="${fb.feedback_style}"></div> -->
+           
+            
+            
+        </a>
+    </div>
+    <div th:if="${#lists.isEmpty(feedbackList)}"
+         style="padding: 30px; font-size: 30px; color: #5701d0; opacity: 0.5; text-align: center;">
+         피드백 기록이 존재하지 않습니다.
+    </div>
+</div>
+			
+
+
+</div>
+<!-- child-div -->
+		
+
+
+
+<style>
+/* 모달 전체 배경 */
+.modal {
+	display: none; /* 기본 숨김 */
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(75, 25, 150, 0.4);
+	
+}
+
+/* 모달 내부 콘텐츠 */
+.modal-content {
+	background-color: #fff;
+	margin: 10% auto;
+	padding: 20px;
+	border-radius: 16px;
+	width: 1400px;
+	height: 800px;
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+	
+	
+}
+
+/* 닫기 버튼 */
+.modal-close {
+	color: #aaa;
+	float: center;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.modal-close:hover {
+	color: black;
+}
+</style>
+
+
+		<!-- 모달 레이어 -->
+		<div id="feedbackModal" class="modal">
+			<div class="modal-content">
+				<div id="modal-body" style="display: flex; justify-content: center;">
+					<!-- 여기에 AJAX로 피드백 상세 내용 로딩 -->
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+	<!-- parent-container -->
+
+	<script>
+		$(document).ready(function() {
+			// 모달 닫기
+			$(".modal-close").click(function() {
+				$("#feedbackModal").hide();
+			});
+
+			// 행 클릭 시 모달 열기 + AJAX 요청
+			$(".feedback-row").click(function(e) {
+				e.preventDefault(); // <a> 태그 기본 이동 방지
+				var detailUrl = $(this).find("a").attr("href");
+
+				$.ajax({
+					url : detailUrl,
+					type : 'GET',
+					success : function(response) {
+						$("#modal-body").html(response); // HTML 내용을 모달에 로드
+						$("#feedbackModal").show();
+					},
+					error : function() {
+						alert("피드백 상세 정보를 불러오지 못했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$(".modal-close").click(function() {
+				$("#feedbackModal").fadeOut();
+			});
+
+			$(".feedback-detail-link").click(function(e) {
+				e.preventDefault();
+				const url = $(this).attr("href");
+
+				$.get(url, function(data) {
+					$("#modal-body").html(data);
+					$("#feedbackModal").fadeIn();
+				});
+			});
+
+			$(window).click(function(event) {
+				if ($(event.target).is("#feedbackModal")) {
+					$("#feedbackModal").fadeOut();
+				}
+			});
+
+			$(document).on("click", ".modal-close", function() {
+				$("#feedbackModal").fadeOut();
+			});
+		});
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$(document).on("click", ".feedback-step-update", function() {
+				const id = $(this).data("id");
+
+				$.ajax({
+					type : "POST",
+					url : "/admin/support/feedback/stepUpdate",
+					data : {
+						id : id
+					},
+					success : function(response) {
+						if (response === "success") {
+							alert("피드백이 접수 처리되었습니다.");
+							location.reload(); // 또는 모달만 새로 고치기
+						} else {
+							alert("접수 처리에 실패했습니다.");
+						}
+					},
+					error : function() {
+						alert("서버 오류가 발생했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+	
+	<script>
+		$(document).ready(function() {
+			$(document).on("click", ".feedback-step-refuse", function() {
+				const id = $(this).data("id");
+
+				$.ajax({
+					type : "POST",
+					url : "/admin/support/feedback/refuse",
+					data : {
+						id : id
+					},
+					success : function(response) {
+						if (response === "success") {
+							alert("피드백이 거절되었습니다.");
+							location.reload(); // 또는 모달만 새로 고치기
+						} else {
+							alert("거절 처리에 실패했습니다.");
+						}
+					},
+					error : function() {
+						alert("서버 오류가 발생했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+
+
+
+</body>
+</html>

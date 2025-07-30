@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 만들기</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #4285f4;
+        }
+        .btn-verify {
+            padding: 12px 20px;
+            background-color: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-verify:hover {
+            background-color: #4752c4;
+        }
+        .password-field {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+        }
+        .interests-section {
+            margin: 30px 0;
+        }
+        .interests-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .interests-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .interest-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .interest-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #5865f2;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 30px 0 20px 0;
+            transition: transform 0.2s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,188,212,0.3);
+        }
+        span.msg {
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        .kakao-login-btn {
+  display: inline-block;
+  background-color: #FEE500;
+  color: #000000;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+}
+        
+       
+        #change-email-btn {
+            font-size: 12px;
+            color: #666;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        button:disabled {
+    background-color: #aaa !important;
+    cursor: not-allowed !important;
+    color: #fff;
+}
+        
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>프로필 만들기</h1>
+    </div>
+
+    <form id="profileForm">
+        <div class="form-group">
+            <input type="text" id="nickname" placeholder="닉네임" required>
+            <span id="nickname-msg" class="msg"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="email" placeholder="이메일" required>
+                <span id="email-msg" class="msg"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn-verify">인증번호 보내기</button>
+            </div>
+        </div>
+
+        <div id="timer-message" class="msg" style="margin-bottom:10px;"></div>
+        <div style="margin-bottom:10px;">
+            <button type="button" id="change-email-btn">이메일을 잘못 입력하셨습니까?</button>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="verificationCode" placeholder="인증번호 입력">
+                <span id="verification-msg" class="msg"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" id="verify-btn" class="btn-verify">인증번호 확인</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="password-field">
+                <input type="password" id="password" placeholder="비밀번호" required>
+                <span class="password-toggle" onclick="togglePassword(this)">👁</span>
+                <span id="password-msg" class="msg"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="password-field">
+                <input type="password" id="passwordCheck" placeholder="비밀번호 확인" required>
+                <span class="password-toggle" onclick="togglePassword(this)">👁</span>
+                <span id="password-check-msg" class="msg"></span>
+            </div>
+        </div>
+
+        <div class="interests-section">
+            <div class="interests-title">• 가입경로 <span style="color:#999; font-size:12px;">(택 1)</span></div>
+            <div class="interests-grid">
+                <div class="interest-item">
+                    <input type="checkbox" id="recommend">
+                    <label for="recommend">추천 및 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="online">
+                    <label for="online">온라인 매체</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="interview">
+                    <label for="interview">언론사 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="sns">
+                    <label for="sns">SNS(페이스북, 인스타그램)</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="tv">
+                    <label for="tv">TV 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="radio">
+                    <label for="radio">라디오 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="offline" style="grid-column: 1 / -1;">
+                    <label for="offline">오프라인 광고(버스,지하철)</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="none" />
+                    <label for="none">해당사항 없음</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">가입 정보 생성</button>
+
+        <div class="divider">또는</div>
+
+        <div style="text-align: center;" >
+            <a href="/oauth2/authorization/google">
+  <img src="/images/web_light_sq_ctn@1x.png" alt="구글계정으로 로그인" />
+</a>
+            </div>
+            <div style="text-align: center;">
+          <a href="/oauth2/authorization/kakao">
+  <img src="/images/kakao_login_medium_narrow (1).png" alt="카카오계정으로 로그인" />
+</a>
+
+        </div>
+    </form>
+</div>
+
+<script>
+    function togglePassword(element) {
+        const input = element.previousElementSibling;
+        if (input.type === 'password') {
+            input.type = 'text';
+            element.textContent = '👁‍🗨';
+        } else {
+            input.type = 'password';
+            element.textContent = '👁';
+        }
+    }
+
+    let timerInterval;
+    let remainingTime = 300;
+    let verified = false;
+    let nicknameAvailable = false;
+
+    document.getElementById('nickname').addEventListener('input', function () {
+        const value = this.value;
+        const msg = document.getElementById('nickname-msg');
+        const regex = /^[a-zA-Z0-9]+$/;
+
+        if (/\s/.test(value)) {
+            msg.textContent = "닉네임에 공백을 포함할 수 없습니다.";
+            msg.style.color = "red";
+            nicknameAvailable = false;
+        } else if (value && !regex.test(value)) {
+            msg.textContent = "닉네임은 영어 또는 영어+숫자만 가능합니다.";
+            msg.style.color = "red";
+            nicknameAvailable = false;
+        } else if (value) {
+            fetch('/api/auth/nickname/check?nickname=' + encodeURIComponent(value))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        msg.textContent = "사용 가능한 닉네임입니다.";
+                        msg.style.color = "green";
+                        nicknameAvailable = true;
+                    } else {
+                        msg.textContent = "이미 사용 중인 닉네임입니다.";
+                        msg.style.color = "red";
+                        nicknameAvailable = false;
+                    }
+                });
+        } else {
+            msg.textContent = "";
+            nicknameAvailable = false;
+        }
+    });
+
+    document.getElementById('email').addEventListener('input', function () {
+        const email = this.value.trim();
+        clearInterval(timerInterval);
+        document.getElementById('timer-message').textContent = '';
+        document.getElementById('change-email-btn').style.display = 'none';
+
+        const btn = document.querySelector('.btn-verify');
+        btn.disabled = false;
+        btn.style.pointerEvents = 'auto';
+
+        this.readOnly = false;
+
+        if (!email) {
+            document.getElementById('email-msg').textContent = '';
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById('email-msg').textContent = "올바른 이메일 형식을 입력하세요.";
+            document.getElementById('email-msg').style.color = "red";
+            return;
+        }
+
+        fetch('/api/auth/email/check?email=' + encodeURIComponent(email))
+            .then(res => res.json())
+            .then(data => {
+                const msg = document.getElementById('email-msg');
+                if (data.success) {
+                    msg.textContent = "사용 가능한 이메일입니다.";
+                    msg.style.color = "green";
+                } else {
+                    msg.textContent = "이미 가입된 이메일입니다.";
+                    msg.style.color = "red";
+                }
+            });
+    });
+
+    document.querySelector('.btn-verify').addEventListener('click', function () {
+        const emailInput = document.getElementById('email');
+        const email = emailInput.value.trim();
+        if (!email) {
+            alert('이메일을 입력하세요!');
+            return;
+        }
+        if (document.getElementById('email-msg').textContent === '이미 가입된 이메일입니다.') {
+            alert('이미 가입된 이메일입니다.');
+            return;
+        }
+
+        emailInput.readOnly = true;
+        this.disabled = true;
+        this.style.pointerEvents = 'none';
+
+        startTimer();
+        alert('인증번호를 전송했습니다.');
+
+        fetch('/api/auth/email/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                sessionStorage.setItem('verificationSeq', data.data);
+            } else {
+                alert(data.message);
+                resetEmailVerificationState();
+            }
+        });
+    });
+
+    document.getElementById('change-email-btn').addEventListener('click', function () {
+        if (confirm('이메일을 변경하시겠습니까?')) {
+            resetEmailVerificationState();
+        }
+    });
+
+    function resetEmailVerificationState() {
+        clearInterval(timerInterval);
+        remainingTime = 300;
+        document.getElementById('timer-message').textContent = '';
+        document.getElementById('email').readOnly = false;
+        document.getElementById('email').value = '';
+        document.querySelector('.btn-verify').disabled = false;
+        document.querySelector('.btn-verify').style.pointerEvents = 'auto';
+        document.getElementById('change-email-btn').style.display = 'none';
+        document.getElementById('email-msg').textContent = '';
+        verified = false;
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        const timerEl = document.getElementById('timer-message');
+        document.getElementById('change-email-btn').style.display = 'inline-block';
+
+        timerInterval = setInterval(() => {
+            remainingTime--;
+            const minutes = String(Math.floor(remainingTime / 60)).padStart(2, '0');
+            const seconds = String(remainingTime % 60).padStart(2, '0');
+            timerEl.textContent = `인증 유효 시간 ${minutes}:${seconds}`;
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                timerEl.textContent = '';
+                document.querySelector('.btn-verify').disabled = false;
+                document.querySelector('.btn-verify').style.pointerEvents = 'auto';
+                document.getElementById('email').readOnly = false;
+            }
+        }, 1000);
+    }
+
+    document.getElementById('verify-btn').addEventListener('click', function () {
+        const code = document.getElementById('verificationCode').value.trim();
+        const verificationSeq = sessionStorage.getItem('verificationSeq');
+        if (!verificationSeq) {
+            alert('먼저 인증번호를 발송해 주세요!');
+            return;
+        }
+        fetch('/api/auth/email/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ verificationSeq: verificationSeq, code: code })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('이메일 인증 성공!');
+                verified = true;
+                document.getElementById('verify-btn').disabled = true;
+                document.getElementById('verify-btn').style.backgroundColor = '#ddd';
+                document.getElementById('verify-btn').style.cursor = 'not-allowed';
+                document.getElementById('verification-msg').textContent = '';
+                clearInterval(timerInterval);
+                document.getElementById('timer-message').textContent = '';
+                document.getElementById('change-email-btn').style.display = 'none';
+                remainingTime = 0;
+            } else {
+                document.getElementById('verification-msg').textContent = "인증번호가 올바르지 않습니다.";
+                document.getElementById('verification-msg').style.color = "red";
+            }
+        });
+    });
+
+    document.getElementById('password').addEventListener('input', function () {
+        const msg = document.getElementById('password-msg');
+        const val = this.value;
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=]).{8,20}$/;
+        if (!regex.test(val)) {
+            msg.textContent = "비밀번호는 영문, 숫자, 특수문자 포함 8~20자여야 합니다.";
+            msg.style.color = "red";
+        } else {
+            msg.textContent = "";
+        }
+    });
+
+    document.getElementById('passwordCheck').addEventListener('input', function () {
+        const pwd = document.getElementById('password').value;
+        const confirmPwd = this.value;
+        const msg = document.getElementById('password-check-msg');
+        if (pwd && confirmPwd && pwd !== confirmPwd) {
+            msg.textContent = "비밀번호가 일치하지 않습니다.";
+            msg.style.color = "red";
+        } else {
+            msg.textContent = "";
+        }
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const nickname = document.getElementById('nickname').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const passwordCheck = document.getElementById('passwordCheck').value;
+        const nicknameMsg = document.getElementById('nickname-msg').textContent;
+        const pwdMsg = document.getElementById('password-msg').textContent;
+        const pwdCheckMsg = document.getElementById('password-check-msg').textContent;
+
+        if (!nickname || nicknameMsg.includes("불가")) {
+            alert('닉네임을 확인해주세요.');
+            return;
+        }
+        if (!nicknameAvailable) {
+            alert('닉네임을 확인해주세요.');
+            return;
+        }
+        if (!verified) {
+            alert('이메일 인증을 완료해주세요.');
+            return;
+        }
+        if (pwdMsg || pwdCheckMsg) {
+            alert('비밀번호를 확인해주세요.');
+            return;
+        }
+
+        const checked = [];
+        document.querySelectorAll('.interests-grid input[type="checkbox"]:checked').forEach(cb => {
+            checked.push(cb.nextElementSibling.textContent.trim());
+        });
+
+        if (checked.length !== 1) {
+            alert('가입경로를 하나만 선택해주세요!');
+            return;
+        }
+
+        fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                nickname: nickname,
+                password: password,
+                signUp_path: checked[0]
+            
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('회원가입 성공!');
+                window.location.href = '/login';
+            } else {
+                alert('회원가입 실패');
+            }
+        });
+    });
+
+   
+</script>
+
+</body>
+</html>

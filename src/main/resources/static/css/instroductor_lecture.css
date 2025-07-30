@@ -1,0 +1,670 @@
+@charset "UTF-8";
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,   sans-serif;
+            background: white;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container-fluid {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 250px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar a.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            max-width: calc(100vw - 250px);
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .lecture-section {
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .lecture-empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: #6c757d;
+            font-size: 18px;
+            background: linear-gradient(135deg, #f8fbff, #e3f2fd);
+            border-radius: 20px;
+            border: 2px dashed #4a90e2;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .lecture-empty::before {
+            content: "📚";
+            font-size: 64px;
+            display: block;
+            margin-bottom: 20px;
+        }
+        .lecture-card {
+            display: flex;
+            align-items: stretch;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 100%;
+            width: 600px;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .lecture-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .lecture-img {
+            width: 160px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 24px;
+            flex-shrink: 0;
+        }
+
+        .lecture-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+            min-height: 120px;
+        }
+
+        .lecture-info {
+            flex: 1;
+        }
+
+        .lecture-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lecture-count {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .lecture-description {
+            color: #6c757d;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lecture-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .lecture-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-icon {
+            width: 12px;
+            height: 12px;
+            opacity: 0.7;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+            transform: translateY(-1px);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .difficulty-초급 {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-중급 {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-고급 {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .language-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+
+        .language-영어 {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .language-일본어 {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .language-중국어 {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+
+        /* 강의 등록 폼 */
+        .lecture-form {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e3f2fd;
+            margin-bottom: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #4a90e2;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .description-group {
+            margin-bottom: 30px;
+        }
+
+        .description-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+         .thumbnail-group {
+        	margin-bottom: 30px;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            font-size: 16px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        /* 챗봇 모달 */
+        .chatbot-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            z-index: 2000;
+            width: 400px;
+            max-width: 90vw;
+        }
+
+        .chatbot-modal.active {
+            display: block;
+        }
+
+        .chatbot-container {
+            background: white;
+            border-radius: 20px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: chatbotSlideIn 0.3s ease-out;
+        }
+
+        @keyframes chatbotSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+            background: #f8fbff;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            background: #e3f2fd;
+            color: #1976d2;
+            align-self: flex-start;
+        }
+
+        .message.user {
+            background: #4a90e2;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .chatbot-input {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .chatbot-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e3f2fd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input input:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .chatbot-send {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .chatbot-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        /* 프로필 아이콘 */
+        .profile-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            cursor: pointer;
+            border: 3px solid white;
+        }
+
+        .profile-icon:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(74, 144, 226, 0.4);
+        }
+
+        .profile-icon img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        /* 모바일 메뉴 토글 */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .mobile-overlay.active {
+            display: block;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100vw;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .lecture-section {
+                padding: 80px 20px 20px;
+            }
+
+            .main-title {
+                font-size: 24px;
+            }
+
+            .lecture-form {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .lecture-empty {
+                padding: 60px 15px;
+                font-size: 16px;
+            }
+
+            .lecture-empty::before {
+                font-size: 48px;
+            }
+
+            .chatbot-modal {
+                bottom: 100px;
+                right: 15px;
+                left: 15px;
+                width: auto;
+            }
+
+            .profile-icon {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+        }
+
+        @media (max-width: 480px) {
+            .lecture-section {
+                padding: 80px 15px 20px;
+            }
+
+            .main-title {
+                font-size: 20px;
+            }
+
+            .lecture-form {
+                padding: 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .btn-register {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .lecture-empty {
+                padding: 40px 15px;
+                font-size: 14px;
+            }
+
+            .lecture-empty::before {
+                font-size: 36px;
+            }
+        }

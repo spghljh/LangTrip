@@ -1,0 +1,14 @@
+<!-- templates/fragments/admin_sidebar.html -->
+<div th:fragment="sidebar" class="sidebar">
+  <a th:href="@{/adminDash/user_statistics}"><h2><i class="fas fa-chart-line"></i> Dashboard</h2></a>
+  <a th:href="@{/admin/accounts}" sec:authorize="hasRole('ROLE_SUPER')"><i class="fas fa-users-cog"></i> Admin Accounts</a>
+  <a th:href="@{/admin/members}" sec:authorize="hasAnyRole('ROLE_MEMBER', 'ROLE_SUPER')"><i class="fas fa-user"></i> Members</a>
+  <a th:href="@{/admin/courses?page=1}" sec:authorize="hasAnyRole('ROLE_COURSE', 'ROLE_SUPER')"><i class="fas fa-graduation-cap"></i> Courses</a>
+  <a th:href="@{/admin/payments}" sec:authorize="hasAnyRole('ROLE_PAYMENT', 'ROLE_SUPER')"><i class="fas fa-credit-card"></i> Payments</a>
+  <a th:href="@{/admin/donation}" sec:authorize="hasAnyRole('ROLE_DONATION', 'ROLE_SUPER')"><i class="fas fa-hand-holding-heart"></i> Donation</a>
+  <a th:href="@{/adminDash/admincommunity}" sec:authorize="hasAnyRole('ROLE_COMMUNITY', 'ROLE_SUPER')"><i class="fas fa-comments"></i> Community</a>
+  <a th:href="@{/admin/report/report-list}" sec:authorize="hasAnyRole('ROLE_REPORT', 'ROLE_SUPER')"><i class="fas fa-exclamation-triangle"></i> Reports</a>
+  <a th:href="@{/admin/support}" sec:authorize="hasAnyRole('ROLE_SUPPORT', 'ROLE_SUPER')"><i class="fas fa-headset"></i> Support</a>
+  <a th:href="@{/admin/log}" sec:authorize="hasAnyRole('ROLE_LOG', 'ROLE_SUPER')"><i class="fas fa-clipboard-list"></i> Logs</a>
+  <a th:href="@{/admin/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>

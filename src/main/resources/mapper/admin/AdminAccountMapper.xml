@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.admin.account.AdminAccountDAO">
+
+  <!-- 1. 관리자 권한 조회 -->
+  <select id="selectRolesByAdminId" parameterType="String" resultType="String">
+    SELECT ROLE_CODE FROM ADMIN_ROLE WHERE ADMIN_ID = #{adminId}
+  </select>
+
+  <!-- 2. 관리자 수정 -->
+  <update id="updateAdmin" parameterType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    UPDATE ADMINS
+    SET ADMIN_NAME = #{adminName, jdbcType=VARCHAR},
+        EMAIL = #{email, jdbcType=VARCHAR},
+        PHONE = #{phone, jdbcType=VARCHAR},
+        DEPT = #{dept, jdbcType=VARCHAR},
+        INLINE = #{inline, jdbcType=VARCHAR},
+        STATUS = #{status, jdbcType=CHAR}
+    WHERE ADMIN_ID = #{adminId, jdbcType=VARCHAR}
+  </update>
+
+  <!-- 3. 기존 권한 삭제 -->
+  <delete id="deleteAdminRoles" parameterType="String">
+    DELETE FROM ADMIN_ROLE WHERE ADMIN_ID = #{adminId}
+  </delete>
+
+  <!-- 4. 권한 목록 추가 -->
+  <insert id="insertAdminRoles" parameterType="map">
+    INSERT ALL
+    <foreach collection="roleCodes" item="code">
+      INTO ADMIN_ROLE (ADMIN_ID, ROLE_CODE) VALUES (#{adminId}, #{code})
+    </foreach>
+    SELECT * FROM DUAL
+  </insert>
+
+  <!-- 5. 관리자 + 가입신청자 통합 목록 -->
+  <select id="selectUnifiedAdminList" parameterType="map" resultType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    SELECT * FROM (
+      SELECT inner_query.*, ROWNUM AS rn
+      FROM (
+        SELECT
+          adminId, adminName, email, phone, status, createdAt, requestId, dept, inline, passwordHash
+        FROM (
+          SELECT
+            a.admin_id AS adminId,
+            a.admin_name AS adminName,
+            a.email,
+            a.phone,
+            a.status,
+            a.reg_date AS createdAt,
+            NULL AS requestId,
+            a.dept,
+            a.inline,
+            NULL AS passwordHash
+          FROM ADMINS a
+          UNION ALL
+          SELECT
+            s.admin_id AS adminId,
+            s.admin_name AS adminName,
+            s.email,
+            s.phone,
+            s.status,
+            s.request_date AS createdAt,
+            s.request_id AS requestId,
+            s.dept,
+            s.inline,
+            s.password_hash AS passwordHash
+          FROM ADMIN_SIGNUP_REQUEST s
+          WHERE s.status = 'PENDING'
+        )
+        <where>
+          <if test="status != null and status != ''">
+            <choose>
+              <when test="status == 'ACTIVE'">
+                status = 'Y'
+              </when>
+              <when test="status == 'INACTIVE'">
+                status = 'N'
+              </when>
+              <when test="status == 'PENDING'">
+                status = 'PENDING'
+              </when>
+            </choose>
+          </if>
+          <if test="searchType != null and searchKeyword != null and searchKeyword != ''">
+            <choose>
+              <when test="searchType == 'id'">
+                AND adminId LIKE '%' || #{searchKeyword} || '%'
+              </when>
+              <when test="searchType == 'name'">
+                AND adminName LIKE '%' || #{searchKeyword} || '%'
+              </when>
+              <when test="searchType == 'email'">
+                AND email LIKE '%' || #{searchKeyword} || '%'
+              </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY
+          <choose>
+            <when test="sort == 'createdAt,asc'">createdAt ASC</when>
+            <when test="sort == 'createdAt,desc'">createdAt DESC</when>
+            <when test="sort == 'adminName,asc'">adminName ASC</when>
+            <when test="sort == 'adminName,desc'">adminName DESC</when>
+            <otherwise>createdAt DESC</otherwise>
+          </choose>
+      ) inner_query
+      WHERE ROWNUM &lt;= #{offset} + #{limit}
+    )
+    WHERE rn &gt; #{offset}
+  </select>
+
+  <!-- 6. 상세조회 (관리자 / 가입신청자 각각) -->
+  <select id="selectByAdminId" parameterType="String" resultType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    SELECT
+      a.admin_id AS adminId,
+      a.admin_name AS adminName,
+      a.email,
+      a.phone,
+      a.status,
+      a.reg_date AS createdAt,
+      NULL AS requestId,
+      a.dept,
+      a.inline,
+      NULL AS passwordHash
+    FROM ADMINS a
+    WHERE a.admin_id = #{adminId}
+  </select>
+
+  <select id="selectByRequestId" parameterType="String" resultType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    SELECT
+      s.admin_id AS adminId,
+      s.admin_name AS adminName,
+      s.email,
+      s.phone,
+      s.status,
+      s.request_date AS createdAt,
+      s.request_id AS requestId,
+      s.dept,
+      s.inline,
+      s.password_hash AS passwordHash
+    FROM ADMIN_SIGNUP_REQUEST s
+    WHERE s.request_id = #{requestId}
+  </select>
+
+  <select id="selectRolesByRequestId" parameterType="String" resultType="String">
+    SELECT ROLE_CODE FROM ADMIN_SIGNUP_ROLE WHERE REQUEST_ID = #{requestId}
+  </select>
+
+  <!-- 7. 단일 상세 통합 조회 -->
+  <select id="selectUnifiedById" parameterType="String" resultType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    SELECT
+      adminId, adminName, email, phone, status, createdAt, requestId, dept, inline, passwordHash
+    FROM (
+      SELECT
+        a.admin_id AS adminId,
+        a.admin_name AS adminName,
+        a.email,
+        a.phone,
+        a.status,
+        a.reg_date AS createdAt,
+        NULL AS requestId,
+        a.dept,
+        a.inline,
+        NULL AS passwordHash
+      FROM ADMINS a
+      WHERE a.admin_id = #{id}
+      UNION ALL
+      SELECT
+        s.admin_id AS adminId,
+        s.admin_name AS adminName,
+        s.email,
+        s.phone,
+        s.status,
+        s.request_date AS createdAt,
+        s.request_id AS requestId,
+        s.dept,
+        s.inline,
+        s.password_hash AS passwordHash
+      FROM ADMIN_SIGNUP_REQUEST s
+      WHERE s.request_id = #{id} OR s.admin_id = #{id}
+    )
+    WHERE ROWNUM = 1
+  </select>
+
+  <!-- 8. 관리자 등록 -->
+  <insert id="insertAdmin" parameterType="kr.co.sist.e_learning.admin.account.AdminAccountUnifiedDTO">
+    INSERT INTO ADMINS (
+      ADMIN_ID, PASSWORD, ADMIN_NAME, EMAIL, PHONE,
+      STATUS, REG_DATE, CHECK_AUTH, DEPT, INLINE
+    ) VALUES (
+      #{adminId}, #{passwordHash}, #{adminName}, #{email}, #{phone},
+      'Y', SYSTIMESTAMP, 'N', #{dept, jdbcType=VARCHAR}, #{inline, jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <!-- 9. 가입신청 상태 변경 -->
+  <update id="updateSignupStatus">
+    UPDATE ADMIN_SIGNUP_REQUEST
+    SET STATUS = #{status}
+    WHERE REQUEST_ID = #{requestId}
+  </update>
+  
+  <update id="updateSignupStatusWithReason">
+  UPDATE ADMIN_SIGNUP_REQUEST
+  SET STATUS = #{status},
+      REJECT_REASON = #{reason}
+  WHERE REQUEST_ID = #{requestId}
+</update>
+
+  <select id="countUnifiedAdmins" parameterType="map" resultType="int">
+    SELECT COUNT(*) FROM (
+      SELECT
+        a.admin_id AS adminId,
+        a.admin_name AS adminName,
+        a.email,
+        a.phone,
+        a.status,
+        a.reg_date AS createdAt
+      FROM ADMINS a
+      UNION ALL
+      SELECT
+        s.admin_id AS adminId,
+        s.admin_name AS adminName,
+        s.email,
+        s.phone,
+        s.status,
+        s.request_date AS createdAt
+      FROM ADMIN_SIGNUP_REQUEST s
+      WHERE s.status = 'PENDING'
+    ) unified
+    <where>
+      <if test="status != null and status != ''">
+        <choose>
+          <when test="status == 'ACTIVE'">
+            unified.status = 'Y'
+          </when>
+          <when test="status == 'INACTIVE'">
+            unified.status = 'N'
+          </when>
+          <when test="status == 'PENDING'">
+            unified.status = 'PENDING'
+          </when>
+        </choose>
+      </if>
+      <if test="searchType != null and searchKeyword != null and searchKeyword != ''">
+        <choose>
+          <when test="searchType == 'id'">
+            AND adminId LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'name'">
+            AND adminName LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'email'">
+            AND email LIKE '%' || #{searchKeyword} || '%'
+          </when>
+        </choose>
+      </if>
+    </where>
+  </select>
+
+  <!-- 10. 부서 목록 조회 -->
+  <select id="selectDistinctDepts" resultType="String">
+    SELECT DISTINCT DEPT FROM DEPT_ROLE_MAPPING ORDER BY DEPT ASC
+  </select>
+
+</mapper>

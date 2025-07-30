@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 강의실</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" th:href="@{/css/upload_lecture.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<body>
+	<!-- 모바일 메뉴 토글 -->
+	<button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+		☰</button>
+
+	<!-- 모바일 오버레이 -->
+	<div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 사이드바 -->
+			<div class="sidebar" id="sidebar">
+				<a href="#" class="active">📚 학습</a> <a href="#">🧠 퀴즈</a> <a
+					href="#">👤 마이페이지</a> <a href="#">📂 더 보기</a> <a href="#">🏫 내
+					강의실</a>
+			</div>
+
+			<!-- 메인 콘텐츠 -->
+			<div class="main-content">
+				<div class="content-wrapper">
+					<div class="lecture-section">
+						<div class="lecture-header">
+							<a href="/ui/instroductor_course" class="btn btn-success">← 내 강의실</a>
+						</div>
+							<div id="courseDataSector"></div>
+						<div class="course-info">
+							<h2 th:text="${courseData.courseTitle}"></h2>
+							<div class="course-meta">
+								<span th:text="|강의번호: ${courseData.courseSeq}|"> </span>
+								<span th:text="|등록일: ${#dates.format(courseData.uploadDate, 'yyyy년 M월 d일 HH:mm')}|"></span>
+								<span>강의수: 5개</span>
+							</div>
+						</div>
+						<div class="video-section">
+							<div th:if="${videoList.isEmpty() && quizList.isEmpty()}" class="lecture-empty">
+								등록된 강의가 없습니다.
+								<div style="margin-top: 20px; font-size: 14px; color: #999;">
+									새로운 강의를 등록해보세요!</div>
+<!-- 								<div> -->
+<!-- 									<h1 th:text="${courseData.courseTitle}"></h1> -->
+<!-- 								</div> -->
+							</div>
+							
+							<div th:if="${videoList != null and !videoList.isEmpty()}">
+								<h3>등록된 강의 영상 목록</h3>
+								<div class="video-tree">
+									<div th:each="video, stat : ${videoList}" class="video-node"
+										th:classappend="inactive">
+
+										<button type="button" class="circle-button"
+											th:onclick="'location.href=\'/video/watch?videoSeq=' + ${video.videoSeq} + '\''">
+											<i class="fa-solid"
+												th:classappend="${video.type == 'video' ? 'fa-star' : 'fa-book'}"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+							<div th:if="${quizList != null and !quizList.isEmpty()}">
+							  <div class="video-tree">
+							    <div th:each="quiz : ${quizList}" class="video-node inactive">
+							      <button type="button" class="start-quiz-button"
+							             th:id="|quiz-btn-${quiz.quizListSeq}|"
+           								th:data-quiz-id="${quiz.quizListSeq}"
+           								th:data-course-id="${courseData.courseSeq}">
+							        <i class="fa-solid fa-book"></i>
+							      </button>
+							    </div>
+							  </div>
+							</div>
+							
+							
+							
+						</div>
+
+						<!-- 우측 설명 패널 -->
+					<div class="right-panel">
+						<div class="side-panel">
+							<h5>📚 강의 컨텐츠 등록</h5>
+							<p class="mb-3">새로운 강의 콘텐츠를 등록하세요.</p>
+							<a th:href="@{/upload/upload_video(seq=${courseData.courseSeq})}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+							🎬 영상 등록</a>
+							<a th:href="@{/quiz/addQuizForm(seq=${courseData.courseSeq})}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+							❓ 퀴즈 등록</a>
+						</div>
+						
+						<div class="side-panel">
+							<h5>📊 강의 통계</h5>
+							<p class="mb-3">강의 진행 현황을 확인하세요.</p>
+							<div style="background: #e3f2fd; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+								<div style="font-size: 14px; color: #4a90e2; margin-bottom: 5px;">전체 진도율</div>
+								<div style="font-size: 24px; font-weight: 700; color: #4a90e2;">85%</div>
+							</div>
+							<div style="background: #e8f5e8; padding: 15px; border-radius: 12px;">
+								<div style="font-size: 14px; color: #4CAF50; margin-bottom: 5px;">완료된 강의</div>
+								<div style="font-size: 24px; font-weight: 700; color: #4CAF50;">4/5</div>
+							</div>
+						</div>
+						
+						<div class="side-panel">
+							<h5>⚙️ 강의 설정</h5>
+							<p class="mb-3">강의 설정을 변경하세요.</p>
+							<button class="btn btn-outline-primary btn-sm mb-2">✏️ 강의 수정</button>
+							<button class="btn btn-outline-secondary btn-sm">🗑️ 강의 삭제</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+								<!-- 챗봇 모달 -->
+								<div class="chatbot-modal" id="chatbotModal">
+									<div class="chatbot-container">
+										<div class="chatbot-header">
+											<h4>🤖 학습 도우미</h4>
+											<button class="chatbot-close" onclick="toggleChatbot()">×</button>
+										</div>
+										<div class="chatbot-messages" id="chatbotMessages">
+											<div class="message bot">안녕하세요! 학습 도우미입니다. 무엇을 도와드릴까요?
+											</div>
+										</div>
+										<div class="chatbot-input">
+											<div class="chatbot-input-group">
+												<input type="text" id="chatbotInput"
+													placeholder="메시지를 입력하세요..."
+													onkeypress="handleChatbotEnter(event)">
+												<button class="chatbot-send" onclick="sendChatbotMessage()">전송</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+				
+
+		<!-- 프로필 캐릭터 (챗봇 버튼) -->
+		<div class="profile-icon" onclick="toggleChatbot()">
+			<img src="/images/mascot2.png" alt="마스코트"
+				onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9IiM0YTkwZTIiLz4KPHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTUiIGN5PSIxNSIgcj0iMTUiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjEwIiBjeT0iMTIiIHI9IjIiIGZpbGw9IiMzMzMiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxMiIgcj0iMiIgZmlsbD0iIzMzMyIvPgo8cGF0aCBkPSJNMTAgMjBRMTUgMjUgMjAgMjAiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
+		</div>
+
+
+		<script>
+		
+		 // 모달 "퀴즈 수정" 버튼
+		  const modifyButtons = document.querySelectorAll(".start-quiz-button");
+		  modifyButtons.forEach(btn => {
+		    btn.addEventListener("click", function () {
+		      const quizListSeq = this.dataset.quizId;
+		      const courseSeq = this.dataset.courseId;
+		      modifyQuiz(quizListSeq, courseSeq);
+		    });
+		  });
+		  
+		//퀴즈 수정 화면으로 이동
+		  function modifyQuiz(quizListSeq, courseSeq) {
+			  location.href = "/quiz/modifyQuizForm/" + quizListSeq + "?courseSeq=" + courseSeq;
+		}
+// 		//퀴즈
+// 		const startButtons = document.querySelectorAll(".start-quiz-button");
+// 		  startButtons.forEach(btn => {
+// 		    btn.addEventListener("click", function () {
+// 		      const quizListSeq = this.dataset.quizId;
+// 		      startQuiz(quizListSeq);
+// 		    });
+// 		  });
+// 		//퀴즈 시작시 학습 화면으로 이동
+// 		  function startQuiz(quizListSeq) {
+// 		    location.href = "/quiz/playQuiz/" + quizListSeq;
+// 		  }
+		
+		
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleChatbot() {
+            const modal = document.getElementById('chatbotModal');
+            modal.classList.toggle('active');
+        }
+
+        function sendChatbotMessage() {
+            const input = document.getElementById('chatbotInput');
+            const messages = document.getElementById('chatbotMessages');
+            const message = input.value.trim();
+            
+            if (message) {
+                // 사용자 메시지 추가
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.textContent = message;
+                messages.appendChild(userMessage);
+                
+                // 입력 필드 초기화
+                input.value = '';
+                
+                // 챗봇 응답 시뮬레이션
+//                 setTimeout(() => {
+//                     const botResponse = document.createElement('div');
+//                     botResponse.className = 'message bot';
+//                     botResponse.textContent = getBotResponse(message);
+//                     messages.appendChild(botResponse);
+                    
+//                     // 스크롤을 맨 아래로
+//                     messages.scrollTop = messages.scrollHeight;
+//                 }, 1000);
+                
+                axios.post("/api/chat", message, {
+                	headers:{
+                		"Content-Type": "text/plain"
+                	}
+                }).
+                then(res=>{
+  					const botResponse = document.createElement('div');
+  					botResponse.className = 'message bot';
+  					botResponse.textContent = res.data;
+  					messages.scrollTop = messages.scrollHeight;
+  					messages.appendChild(botResponse);
+  					messages.scrollTop = messages.scrollHeight;
+                }).
+                catch(err=>{
+                	 const errorMsg = document.createElement('div');
+                     errorMsg.className = 'message bot';
+                     errorMsg.textContent = "오류 발생: " + err;
+                     messages.appendChild(errorMsg);
+                });
+                // 스크롤을 맨 아래로
+//                 messages.scrollTop = messages.scrollHeight;
+            }
+        }
+        function handleChatbotEnter(event) {
+            if (event.key === 'Enter') {
+                sendChatbotMessage();
+            }
+        }
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('chatbotModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleChatbot();
+            }
+        });
+
+        // 사이드바 링크 활성화
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 모바일에서 메뉴 클릭 시 사이드바 닫기
+                if (window.innerWidth <= 768) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+
+        // 윈도우 리사이즈 시 사이드바 상태 초기화
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.querySelector('.mobile-overlay').classList.remove('active');
+            }
+        });
+
+        // 페이지 로드 시 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const panels = document.querySelectorAll('.side-panel');
+            panels.forEach((panel, index) => {
+                panel.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        
+        
+    </script>
+		
+</body>
+</html>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.report.ReportMapper">
+<resultMap id="ReportResultMap" type="kr.co.sist.e_learning.report.ReportDTO">
+    <id property="reportId" column="report_id"/>
+    <result property="reportedAt" column="reported_at"/>
+    <result property="contentType" column="content_type"/>
+    <result property="title" column="title"/>
+    <result property="reporterId" column="reporter_id"/>
+    <result property="nickName" column="nickname"/>
+    <result property="reportedUserId" column="reported_user_id"/>
+    <result property="reporterCustomReasonTxt" column="reason_text"/>
+    <result property="adminCustomReasonTxt" column="admin_reason"/>
+    <result property="adminActedAt" column="admin_acted_at"/>
+    <result property="actionStatus" column="action_status"/>
+    <result property="reportedUserStatus" column="reported_user_status"/>
+    <result property="postId2" column="post_id2"/>
+    <result property="courseId" column="course_id"/>
+
+    <collection property="reporterCheckedReason" ofType="Integer"
+                column="report_id"
+                select="selectReporterReasons"/>
+    <collection property="adminCheckedReason" ofType="Integer"
+                column="report_id"
+                select="selectAdminReasons"/>
+</resultMap>
+
+<select id="selectReports" parameterType="kr.co.sist.e_learning.pagination.UsrAndRptPageRequestDTO" resultMap="ReportResultMap">
+SELECT * FROM (
+	SELECT ROWNUM rnum, A.* FROM (
+		SELECT
+			r.report_id,
+			r.reported_at,
+			r.reporter_id,
+			r.reason_text,
+			r.admin_reason,
+			r.action_status,
+			r.post_id2,
+			r.course_id,
+			r.admin_acted_at,
+			u.status AS reported_user_status,
+			u.nickname,
+			p.title,
+			u.user_seq AS reported_user_id,
+			CASE
+				WHEN r.course_id IS NOT NULL THEN '강의'
+				WHEN r.post_id2 IS NOT NULL THEN '게시글'
+			END AS content_type
+		FROM report r
+		LEFT JOIN community_post p ON r.post_id2 = p.post_id
+		LEFT JOIN course c ON r.course_id = c.course_seq
+		LEFT JOIN users u ON u.user_seq = r.reported_user_id
+		<where>
+		<if test="reporterId != null and reporterId != ''">
+		r.reporter_id LIKE '%' || #{reporterId} || '%'
+		</if>
+		<if test="reportedUserId != null and reportedUserId != ''">
+		AND TO_CHAR(r.reported_user_id) LIKE '%' || #{reportedUserId} || '%'
+		</if>
+		<if test="contentType != null and contentType != ''">
+		AND CASE
+			WHEN r.course_id IS NOT NULL THEN '강의'
+			WHEN r.post_id2 IS NOT NULL THEN '게시글'
+		END = #{contentType}
+		</if>
+		<if test="actionStatus != null and actionStatus != ''">
+		AND r.action_status = #{actionStatus}
+		</if>
+		</where>
+<![CDATA[
+		ORDER BY r.reported_at DESC
+	) A
+	WHERE ROWNUM <= #{endRow}
+)
+WHERE rnum >= #{startRow}
+]]>
+</select>
+
+<select id="countReports" parameterType="kr.co.sist.e_learning.pagination.UsrAndRptPageRequestDTO" resultType="Integer">
+SELECT COUNT(*) FROM report r
+LEFT JOIN community_post p ON r.post_id2 = p.post_id
+LEFT JOIN course c ON r.course_id = c.course_seq
+<where>
+<if test="reporterId != null and reporterId != ''">
+r.reporter_id LIKE '%' || #{reporterId} || '%'
+</if>
+<if test="reportedUserId != null and reportedUserId != ''">
+AND TO_CHAR(r.reported_user_id) LIKE '%' || #{reportedUserId} || '%'
+</if>
+<if test="contentType != null and contentType != ''">
+AND CASE
+	WHEN r.course_id IS NOT NULL THEN '강의'
+	WHEN r.post_id2 IS NOT NULL THEN '게시글'
+END = #{contentType}
+</if>
+<if test="actionStatus != null and actionStatus != ''">
+AND r.action_status = #{actionStatus}
+</if>
+</where>
+</select>
+
+<!-- 신고자가 체크한 사유 리스트 -->
+<select id="selectReporterReasons" parameterType="int" resultType="Integer">
+SELECT reason_chk
+FROM report_reason_user
+WHERE report_id = #{report_id}
+ORDER BY reason_chk
+</select>
+
+<!-- 관리자가 체크한 사유 리스트 -->
+<select id="selectAdminReasons" parameterType="int" resultType="Integer">
+SELECT reason_chk
+FROM report_reason_admin
+WHERE report_id = #{report_id}
+ORDER BY reason_chk
+</select>
+</mapper>

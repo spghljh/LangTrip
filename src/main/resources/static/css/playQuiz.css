@@ -1,0 +1,160 @@
+@charset "UTF-8";
+body {
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.quiz-slide {
+  display: none;
+}
+
+.quiz-slide.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.option-btn {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 16px;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option-btn:hover {
+  background-color: #f0f8ff;
+  border-color: #3db9ff;
+}
+
+.option-btn.selected {
+  background-color: #dff3ff;
+  border-color: #3db9ff;
+  font-weight: bold;
+  
+}
+
+.card-option {
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.card-option:hover {
+  border-color: #3db9ff;
+  background-color: #f0f8ff;
+}
+
+.card-option.selected {
+  border-color: #3db9ff;
+  background-color: #dff3ff;
+  font-weight: bold;
+}
+
+.speech-bubble {
+  background: #3db9ff;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 20px 20px 20px 0;
+  font-size: 18px;
+  font-weight: bold;
+  display: inline-block;
+  max-width: 70%;
+  margin-left: 20px;
+  position: relative;
+  text-align: left;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #3db9ff transparent transparent;
+}
+
+.bottom-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.btn-info {
+  background-color: #3db9ff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #1daeff;
+}
+
+.mascot {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+.progress {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  background-color: #3db9ff;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-text {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.container {
+  background-color: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 720px;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}

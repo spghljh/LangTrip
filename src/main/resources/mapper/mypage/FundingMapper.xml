@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.mypage.FundingDAO">
+
+  <!-- 내 지갑 조회 -->
+  <select id="selectAccountInfo" parameterType="long" resultType="kr.co.sist.e_learning.mypage.FundingDTO">
+    SELECT
+      w.wallet_seq AS walletSeq,
+      w.total_miles AS totalMiles,
+      w.donation_available AS donationAvailable,
+      w.donated_miles AS donatedMiles,
+      w.received_miles AS receivedMiles,
+      a.account_num AS accountNum,
+      a.holder_name AS holderName,
+      a.bank_code AS bankCode
+    FROM mile_wallet w
+    LEFT JOIN user_account a ON w.user_seq = a.user_seq
+    WHERE w.user_seq = #{userSeq}
+  </select>
+
+  <!-- 내가 후원한 내역 조회 -->
+  <select id="selectMyDonations" parameterType="long" resultType="kr.co.sist.e_learning.mypage.FundingDTO">
+    SELECT 
+      d.donation_seq AS donationSeq,
+      d.course_seq AS courseSeq,
+      c.title AS courseTitle,
+      d.donation_amount AS donationAmount,
+      d.message AS message,
+      d.created_at AS createdAt
+    FROM donations d
+    JOIN course c ON d.course_seq = c.course_seq
+    JOIN mile_wallet mw ON d.wallet_seq = mw.wallet_seq
+    WHERE mw.user_seq = #{userSeq}
+    ORDER BY d.created_at DESC
+  </select>
+
+  <!-- 내가 받은 후원 내역 조회 -->
+  <select id="selectReceivedDonations" parameterType="long" resultType="kr.co.sist.e_learning.mypage.FundingDTO">
+    SELECT 
+      d.donation_seq AS donationSeq,
+      d.course_seq AS courseSeq,
+      c.title AS courseTitle,
+      d.donation_amount AS donationAmount,
+      d.message AS message,
+      d.created_at AS createdAt
+    FROM donations d
+    JOIN course c ON d.course_seq = c.course_seq
+    JOIN mile_wallet mw ON d.wallet_seq2 = mw.wallet_seq
+    WHERE mw.user_seq = #{userSeq}
+    ORDER BY d.created_at DESC
+  </select>
+
+  <!-- 결제 내역 조회 -->
+  <select id="selectMyPayments" parameterType="long" resultType="kr.co.sist.e_learning.mypage.FundingDTO">
+    SELECT 
+      p.payment_seq AS paymentSeq,
+      p.method,
+      p.payment_amount AS paymentAmount,
+      p.paid_at AS paidAt,
+      p.payment_status AS paymentStatus,
+      p.name,
+      p.receipt_url
+    FROM payments p
+    JOIN mile_wallet mw ON p.wallet_seq = mw.wallet_seq
+    WHERE mw.user_seq = #{userSeq}
+    ORDER BY p.paid_at DESC
+  </select>
+
+</mapper>

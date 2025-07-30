@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의 상세</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin_sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/account_detail.css}"> <!-- Assuming account_detail.css has relevant detail page styles -->
+</head>
+<body>
+    <div th:replace="layout/admin_sidebar :: sidebar"></div>
+
+    <div class="main-content">
+        <div class="breadcrumb">
+            <a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <span>/</span>
+            <a href="/admin/courses">강의 관리</a>
+            <span>/</span>
+            <span>상세조회</span>
+        </div>
+
+        <div class="page-header">
+            <h1><i class="fas fa-book-open"></i> 강의 상세</h1>
+            <div class="admin-info">
+                <span>강의 ID: <strong th:text="${course.courseSeq}"></strong></span>
+                <span class="status-badge"
+                      th:classappend="${course.isPublic == 'Y' ? 'status-active' : 'status-inactive'}"
+                      th:text="${course.isPublic == 'Y' ? '공개' : '비공개'}">
+                </span>
+                <span>업로드일: <strong th:text="${#temporals.format(course.uploadDate, 'yyyy-MM-dd HH:mm')}"></strong></span>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <div class="section-header">
+                <i class="fas fa-info-circle"></i> 기본 정보
+            </div>
+            <div class="section-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>강의 제목:</label>
+                        <input type="text" th:value="${course.title}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>강사:</label>
+                        <input type="text" th:value="${course.userName}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>소개:</label>
+                        <textarea disabled th:text="${course.introduction}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>영상 수:</label>
+                        <input type="text" th:value="${course.videoCount}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>퀴즈 수:</label>
+                        <input type="text" th:value="${course.quizCount}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>공개 여부:</label>
+                        <div>
+                            <label style="margin-right: 1rem;">
+                                <input type="radio" name="isPublic" value="Y" th:checked="${course.isPublic == 'Y'}" disabled> 공개
+                            </label>
+                            <label>
+                                <input type="radio" name="isPublic" value="N" th:checked="${course.isPublic == 'N'}" disabled> 비공개
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a th:href="@{/admin/courses}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> 목록으로</a>
+                    <form th:action="@{/admin/courses/{courseSeq}/toggleVisibility(courseSeq=${course.courseSeq})}" method="post" style="display:inline;">
+                        <input type="hidden" name="isPublic" th:value="${course.isPublic == 'Y' ? 'N' : 'Y'}">
+                        <button type="submit" class="btn btn-primary" th:text="${course.isPublic == 'Y' ? '비공개로 전환' : '공개로 전환'}"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

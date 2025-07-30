@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.community.dao.CommunityReportDAO">
+
+  <!-- 신고 기본 정보 삽입 (selectKey는 이 안에!) -->
+  <insert id="insertReport"
+          parameterType="kr.co.sist.e_learning.community.dto.CommunityReportDTO">
+    
+    <!-- 시퀀스 채번을 INSERT 내부에 배치 -->
+    <selectKey keyProperty="reportId"
+               resultType="long"
+               order="BEFORE">
+      SELECT report_seq.NEXTVAL FROM dual
+    </selectKey>
+    
+    INSERT INTO report (
+      report_id,
+      post_id2,
+      reporter_id,
+      reason_text,
+      reported_at
+    ) VALUES (
+      #{reportId},
+      #{postId2},
+      #{reporterId},
+      #{reasonText},
+      SYSDATE
+    )
+  </insert>
+
+  <!-- 오늘 중복 신고 체크 -->
+  <select id="hasReportedToday"
+          parameterType="map"
+          resultType="int">
+    SELECT COUNT(*)
+      FROM report
+     WHERE post_id2    = #{postId2}
+       AND reporter_id = #{reporterId}
+       AND TRUNC(reported_at) = TRUNC(SYSDATE)
+  </select>
+
+  <!-- 사유 코드 삽입 -->
+  <insert id="insertReason" parameterType="map">
+    INSERT INTO REPORT_REASON_USER (
+      report_id,
+      reason_chk
+    ) VALUES (
+      #{reportId},
+      #{reasonChk}
+    )
+  </insert>
+
+</mapper>

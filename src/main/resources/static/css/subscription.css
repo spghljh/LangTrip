@@ -1,0 +1,216 @@
+@charset "UTF-8";
+
+.subscription-page .subscription-section * {
+    box-sizing: border-box;
+}
+
+.subscription-page {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff; /* 흰색 배경 */
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.subscription-page .subscription-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.subscription-page .subscription-section h2 {
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.subscription-page .subscription-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    border-radius: 2px;
+}
+
+.subscription-page .empty-state {
+    text-align: center;
+    background: rgba(118, 75, 162, 0.05);
+    border-radius: 20px;
+    padding: 4rem 2rem;
+    color: #555;
+    font-size: 1.2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.subscription-page .subscription-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subscription-page .subscription-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.subscription-page .subscription-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+    background-size: 300% 300%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.subscription-page .subscription-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    background: rgba(118, 75, 162, 0.3);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-page .instructor-info {
+    margin-bottom: 1.5rem;
+}
+
+.subscription-page .instructor-info strong {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+.subscription-page .instructor-info p:last-child {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subscription-page .instructor-info p:last-child::before {
+    content: '📅';
+    font-size: 1rem;
+}
+
+.subscription-page .unsubscribe-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: linear-gradient(45deg, #ff4757, #ff3742);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.subscription-page .unsubscribe-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.subscription-page .unsubscribe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+}
+
+.subscription-page .unsubscribe-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.subscription-page .unsubscribe-btn:active {
+    transform: translateY(0);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.card-enter {
+    animation: cardSlideIn 0.5s ease-out forwards;
+}
+
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .subscription-page {
+        padding: 1rem;
+    }
+
+    .subscription-page .subscription-section h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .subscription-page .subscription-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .subscription-page .subscription-card {
+        padding: 1.5rem;
+    }
+}

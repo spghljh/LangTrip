@@ -1,0 +1,28 @@
+<header class="header" th:fragment="header">
+  <nav class="nav-container">
+    <a href="/" class="logo">LangTrip</a>
+    <ul class="nav-menu">
+      <li><a href="/courses">강의</a></li>
+      <li><a href="/csj/community">커뮤니티</a></li>
+      <li><a href="/support">지원센터</a></li>
+      <li><a href="/mypage">마이페이지</a></li>
+    </ul>
+    <div class="nav-actions">
+      <!-- 로그인 상태 -->
+      <span class="user-state">
+        <a id="user-name" href="/mypage">사용자</a>
+         &nbsp;
+          &nbsp;
+        <a href="/user/logout">로그아웃</a>
+      </span>
+
+      <!-- 비로그인 상태 -->
+      <span class="guest-state">
+        <a href="/login">로그인</a>
+         &nbsp;
+          &nbsp;
+        <a href="/signup">회원가입</a>
+      </span>
+    </div>
+  </nav>
+</header>

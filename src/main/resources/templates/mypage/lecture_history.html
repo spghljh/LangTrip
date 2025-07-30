@@ -1,0 +1,36 @@
+<div th:fragment="lecture_history">
+  <!-- 📚 수강 내역 -->
+  <h2 class="title">📚 수강 내역</h2>
+  <div class="lecture-grid">
+    <div class="lecture-card" th:each="lecture : ${lectureList}">
+      <div class="lecture-title" th:text="${lecture.courseTitle}">강의 제목</div>
+      <div class="video-title" th:text="${lecture.videoTitle}">영상 제목</div>
+
+      <div class="progress-bar">
+        <div class="progress" th:style="'width:' + ${lecture.courseRate} + '%'"></div>
+      </div>
+      <div class="progress-text" th:text="'진행률: ' + ${lecture.courseRate} + '%'">진행률</div>
+
+      <!-- 🔗 바로가기 버튼 -->
+      <a class="go-button"
+         th:href="@{/watch(course_seq=${lecture.courseSeq})}">
+        바로가기
+      </a>
+    </div>
+  </div>
+
+  <!-- 📝 내가 등록한 강의 -->
+  <h2 class="title" style="margin-top: 40px;">📝 내가 등록한 강의</h2>
+  <div class="lecture-grid">
+    <div class="lecture-card" th:each="lecture : ${myLectureList}">
+      <div class="lecture-title" th:text="${lecture.courseTitle}">강의 제목</div>
+      <div class="upload-date" th:text="'등록일자: ' + ${lecture.uploadDate}">등록일자</div>
+
+      <!-- 🔗 강의 관리 버튼 -->
+      <a class="go-button"
+         th:href="@{/course/detail(course_seq=${lecture.courseSeq})}">
+        관리
+      </a>
+    </div>
+  </div>
+</div>

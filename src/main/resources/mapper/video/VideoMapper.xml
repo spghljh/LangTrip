@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="kr.co.sist.video.VideoMapper"> 
+  
+  <insert id="insertVideo" parameterType="VideoDTO">
+  INSERT INTO video (
+      video_seq,
+      course_seq,
+      title,
+      file_name,
+      file_path,
+      upload_date,
+      description,
+      is_completed,
+      video_order
+    ) VALUES (
+      video_seq.NEXTVAL,
+      #{courseSeq},
+      #{title},
+      #{fileName},
+      #{filePath},
+      SYSDATE,
+      #{description},
+      #{isCompleted},
+      #{videoOrder}
+    )
+  </insert>
+  <select id="selectVideo"  resultType="VideoDTO">
+  select * from video order by video_seq asc
+  </select>
+  
+  <select id="showVideo" parameterType="String" resultType="VideoDTO">
+  select * from video where video_seq=#{videoSeq}
+  </select>
+  
+  <select id="showVideoByCourseSeq" parameterType="String" resultType="VideoDTO">
+  select * from video where course_seq=#{courseSeq}
+  
+  </select>
+  
+  </mapper>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/common.css}">
+<link rel="stylesheet" href="/css/notice_detail_design.css">
+<title>templates/support/notice/notices_detail.html</title>
+<link rel="stylesheet"
+	th:href="@{/css/supportCSS/notice_detail_design.css}" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4d/jquery.min.js"></script>
+</head>
+<body
+style="background: linear-gradient( to bottom, white, rgba(204,169,254, 0.7), rgba(64,5,147, 0.6)) !important;"
+>
+<div th:replace="layout/header :: header"></div>
+	<div class="parent-container"
+		style="border: none !important; width: 100%; padding-top: 30px">
+
+		<div class="child-div"
+			style="height: auto; margin: 0px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none">
+			<div class="title-div"
+				style="margin: 0px; margin-top: 0px; padding: 1px; border: none !important; ">
+				
+				<div class="div-2"
+					style="font-size: 28px; color: #000000; margin: 0px; margin-bottom: -5px; border: none; display: flex">
+					<div>
+						<a th:href="@{/support}"><img
+							th:src="@{/images/symbol_support.png}"
+							style="width: 32px; height: 32px; margin-right: 15px; margin-top: 8px;" /></a>
+					</div>
+					<div>
+						<a th:href="@{/support}" style="color: #000000">지원센터</a>
+					</div>
+				</div>
+				<div class="div-3" style="margin: 0px; border: none"></div>
+				<div class="div-4" style="margin: 0px; border: none"></div>
+			</div>
+		</div>
+		<!-- child-div -->
+
+
+
+
+
+		<div class="child-div" style="height: 90px; border:none !important; margin-top: 20px; margin-bottom: 3px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;">
+			<div class="title-div" style="border:none !important;">
+				<div class="div-1">
+					<div style="margin-top:0px; margin-left: 5px;">
+						<img th:src="@{/images/symbol_notice.png}"
+							style="width: 45px; height: 45px; border:none !important;" />
+					</div>
+				</div>
+				<div class="div-2" style="font-size: 28px; margin-top: 0px; margin-left: -15px;">공지사항</div>
+				<div class="div-3" style="font-size: 20px; margin-top: 0px">안내 사항과 피드백 반영을 전달해드립니다.</div>
+				<div class="div-4" style="color: #5701d0">
+					<span><a href="/support/notice">뒤로가기</a></span>
+				</div>
+			</div>
+		</div>
+		<!-- child-div -->
+		
+		
+		
+
+		<div class="child-div"
+			style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;">
+
+			<div class="child-div"
+				style="height: auto; box-shadow: none; margin-top: 20px; width: 99%;">
+				<div class="detail-div"
+					style="height: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+					<div
+						style="font-size: 28px; font-weight: bold; color: #000000; border-bottom: none; padding-bottom: 10px;">
+						<span th:text="${notice.notice_title}"
+							style="margin-left: 10px; font-size: 36px">공지 제목</span>
+					</div>
+					<hr
+						style="border-color: rgba(0, 0, 0, 0.2) !important; width: 98%; margin-top: -15px; margin-bottom: 5px;">
+					<div
+						style="display: flex; justify-content: space-between; font-size: 14px; color: #666;">
+
+						<div
+							style="display: flex; gap: 10px; border: none; margin-top: -10px">
+
+							<div class="detailDivs">
+								<span style="color: #5701d0;">작성자:</span> <span
+									th:text="${notice.notice_writer}" style="color: #000000">관리자</span>
+							</div>
+
+							<div class="detailDivs">
+								<span style="color: #5701d0;">작성일:</span> <span
+									th:text="${#dates.format(notice.notice_created_date, 'yyyy-MM-dd')}"
+									style="color: #000000">2025-07-07</span>
+							</div>
+
+<!-- 							<div class="detailDivs"> -->
+<!-- 								<span style="color: #5701d0;">수정일:</span> <span -->
+<!-- 									th:text="${#dates.format(notice.notice_last_modified_date, 'yyyy-MM-dd')}" -->
+<!-- 									style="color: #000000">2025-07-08</span> -->
+<!-- 							</div> -->
+
+						</div>
+
+						<div class="detailDivs" style="margin-top: 0px">
+							<span style="color: #5701d0;">조회수:</span> <span
+								th:text="${notice.notice_hits}" style="color: #000000">123</span>
+						</div>
+
+					</div>
+
+					<div
+						style="flex: 1; font-size: 20px; line-height: 1.6; color: #000000; border: 1px solid #ddd !important; border-radius: 0px; padding: 20px; background-color: #fefefe;">
+						<p th:utext="${notice.notice_content}">공지 내용이 출력됩니다.</p>
+					</div>
+
+				</div>
+			</div>
+			<!-- child-div  -->
+
+
+		</div>
+		<!-- child-div -->
+
+		<div style="margin-top: 60px"></div>
+
+	</div>
+	<!-- parent-container -->
+	
+<!-- 	<script src="/js/support_ready.js"></script> -->
+<script src="/js/support_center.js"></script>
+
+<div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>강의 추천 게시판</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/common.css}">
+  <link rel="stylesheet" th:href="@{/css/community.css}"> 
+  
+ <script src="/js/login-status.js" defer></script>
+</head>
+<style>
+body.logged-in .guest-state {
+  display: none;
+}
+body.logged-in .user-state {
+  display: inline-flex ;
+}
+body.logged-out .guest-state {
+  display: inline-flex ;
+}
+body.logged-out .user-state {
+  display: none ;
+}
+
+
+</style>
+
+<body>
+  <div th:replace="layout/header :: header"></div>
+
+  <div class="container">
+    <h3 class="board-title">강의 추천 게시판</h3>
+
+    <div class="header-controls">
+      <!-- 왼쪽 탭 버튼 -->
+      <div class="tab-group">
+        <button class="tab-button" data-tab="all" th:classappend="${tab == 'all'} ? 'active'">전체글</button>
+        <button class="tab-button" data-tab="best" th:classappend="${tab == 'best'} ? 'active'">개념글</button>
+        <button class="tab-button" data-tab="notice" th:classappend="${tab == 'notice'} ? 'active'">공지</button>
+      </div>
+
+      <!-- 검색 폼 -->
+      <form id="filterForm" method="get" th:action="@{/csj/community}" class="search-form">
+        <input type="hidden" name="page" th:value="${currentPage}" />
+        <input type="hidden" name="size" th:value="${size}" id="pageSizeInput" />
+        <input type="hidden" name="tab" th:value="${tab}" id="tabInput" />
+        <strong style="color: #64748b; font-weight: 500;">제목+내용</strong>
+		<input type="text" name="keyword" th:value="${keyword}" placeholder="검색어를 입력하세요..." />
+        <button type="button" class="search-btn">검색</button>
+      </form>
+
+      <!-- 오른쪽 드롭다운 + 글쓰기 -->
+      <div class="right-controls">
+        <div class="dropdown">
+       <button class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+        type="button" 
+        data-bs-toggle="dropdown"
+        data-bs-display="static"
+        aria-expanded="false"
+        id="dropdownMenuButton"
+        th:text="${size} + '개'">50개</button>
+
+
+
+<ul class="dropdown-menu">
+  <li th:if="${size != 30}"><a class="dropdown-item" href="javascript:void(0)">30개</a></li>
+  <li th:if="${size != 50}"><a class="dropdown-item" href="javascript:void(0)">50개</a></li>
+  <li th:if="${size != 100}"><a class="dropdown-item" href="javascript:void(0)">100개</a></li>
+</ul>
+
+
+        </div>
+
+        <a href="/csj/communityWrite" class="custom-write-btn">
+          <i class="bi bi-pencil-fill"></i> 글쓰기
+        </a>
+      </div>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="table-container">
+      <table class="table table-hover text-center align-middle">
+        <thead>
+          <tr>
+            <th style="width: 60px;">번호</th>
+            <th class="text-center">제목</th>
+            <th style="width: 100px;">작성자</th>
+            <th style="width: 150px;">작성일</th>
+            <th style="width: 60px;">조회</th>
+            <th style="width: 60px;">추천</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="post, iterStat : ${postList}"
+              th:onclick="|location.href='/csj/community/detail?postId=${post.postId}'|"
+              style="cursor: pointer;">
+            
+            <td th:if="${tab == 'best'}"
+                th:text="${bestPostCount - ((currentPage - 1) * size) - iterStat.index}">1</td>
+
+            <td th:if="${tab != 'best'}"
+                th:text="${#numbers.formatDecimal(totalPostCount - ((currentPage - 1) * size) - iterStat.index, 0, 0)}">1</td>
+
+            <td class="text-center title-column" th:text="${post.title}" >제목</td>
+            <td th:text="${post.nickname}">작성자</td>
+            <td th:text="${post.createdAt != null ? #dates.format(post.createdAt, 'yyyy-MM-dd HH:mm') : ''}">작성일</td>
+            <td th:text="${post.views}">0</td>
+            <td th:text="${post.upCount}">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination-container">
+      <nav>
+        <ul class="pagination">
+          <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+            <a class="page-link" th:href="@{/csj/community(page=${currentPage - 1}, size=${size})}">◀</a>
+          </li>
+
+          <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+              class="page-item"
+              th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/csj/community(page=${i}, size=${size})}" th:text="${i}">1</a>
+          </li>
+
+          <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+            <a class="page-link" th:href="@{/csj/community(page=${currentPage + 1}, size=${size})}">▶</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 탭 버튼 클릭 이벤트
+    document.querySelectorAll(".tab-button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".tab-button").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        this.classList.add("active");
+        
+        const selectedTab = this.getAttribute("data-tab");
+        document.getElementById("tabInput").value = selectedTab;
+        document.getElementById("filterForm").submit();
+      });
+    });
+
+    // 드롭다운 클릭 이벤트
+    document.querySelectorAll(".dropdown-menu .dropdown-item").forEach(function (item) {
+      item.addEventListener("click", function (e) {
+        e.preventDefault();
+        document.getElementById("pageSizeInput").value = this.innerText.replace("개", "");
+        document.getElementById("filterForm").submit();
+      });
+    });
+
+    // 검색 버튼 클릭 이벤트
+    document.querySelector(".search-btn").addEventListener("click", function() {
+      document.getElementById("filterForm").submit();
+    });
+
+    // 검색 입력란 엔터 키 이벤트
+    document.querySelector(".search-form input[type='text']").addEventListener("keypress", function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById("filterForm").submit();
+      }
+    });
+  </script>
+
+  <div th:replace="layout/footer :: footer"></div>
+  
+</body>
+</html>

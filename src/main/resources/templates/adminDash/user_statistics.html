@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 통계</title>
+  <link rel="icon" href="/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/admin_sidebar.css">
+
+  <script src="/js/chart.umd.js"></script>
+  <script src="/js/userStatisticsCharts.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6fa;
+      padding: 30px;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 40px;
+      color: #3f51b5;
+    }
+
+    section {
+      background: #fff;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 40px;
+    }
+
+    section h3 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 320px !important;
+    }
+.chart-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ✅ 이 아래는 chart-grid와 chart-item의 스타일인데
+   chart-container 안에 들어가면 안 됨! 반드시 분리해야 됨 */
+.chart-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.chart-item {
+  flex: 1 1 45%;
+  max-width: 600px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  background-color: white;
+  border-radius: 10px;
+}
+
+.chart-item canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+</style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<!-- <div class="sidebar">
+  <h2><i class="fa-solid fa-chart-line"></i> 관리자 대시보드</h2>
+  <a href="/adminDash/user_statistics" class="active"><i class="fa-solid fa-users"></i> 회원 통계</a>
+  <a href="/adminDash/instructor_statistics"><i class="fa-solid fa-user-tie"></i> 강사 통계</a>
+  <a href="/adminDash/courses"><i class="fa-solid fa-book"></i> 강의 관리</a>
+  <a href="/adminDash/subscriptions"><i class="fa-solid fa-bell"></i> 구독 관리</a>
+  <a href="/adminDash/payments"><i class="fa-solid fa-credit-card"></i> 결제 관리</a>
+  <a href="/adminDash/admincommunity"><i class="fa-solid fa-comments"></i> 커뮤니티</a>
+  <a href="/adminDash/reports"><i class="fa-solid fa-triangle-exclamation"></i> 신고 처리</a>
+  <a href="/adminDash/support"><i class="fa-solid fa-phone-volume"></i> 고객 지원</a>
+</div> -->
+<<<<<<< HEAD
+<div th:replace="layout/admin_sidebar :: sidebar"></div>
+=======
+  <div th:replace="~{/layout/admin_sidebar :: sidebar}"></div>
+
+>>>>>>> dfeacb4a38b23e6c40f00bad2a74931fa7c0d79b
+
+<!-- 메인 콘텐츠 -->
+<main class="main-content">
+  <h2>📊 관리자 대시보드</h2>
+
+  <div class="chart-grid">
+    <div class="chart-item">
+      <h3>📅 일별 회원 가입 수</h3>
+      <canvas id="signupLineChart"></canvas>
+    </div>
+
+    <div class="chart-item">
+      <h3>📱 유입 경로 통계</h3>
+      <canvas id="pathDonutChart"></canvas>
+    </div>
+
+    <div class="chart-item">
+      <h3>📤 탈퇴 사유 통계</h3>
+      <canvas id="reasonBarChart"></canvas>
+    </div>
+  </div>
+</main>
+
+<!-- Font Awesome CDN (최하단에 넣기) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+  
+</body>
+
+</html>

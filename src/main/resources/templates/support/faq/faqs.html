@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/common.css}">
+<link rel="stylesheet" href="/css/faqs_design.css">
+
+<title>templates/support/faq/faqs.html</title>
+
+</head>
+<body
+style="background: linear-gradient( to bottom, white, rgba(204,169,254, 0.3), rgba(64,5,147, 0.3)) !important;" 
+>
+
+<div th:replace="layout/header :: header"></div>
+	<div class="parent-container"
+		style="border: none !important; width: 100%; padding-top: 30px">
+
+		<div class="child-div"
+			style="height: auto; margin: 0px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none">
+			<div class="title-div"
+				style="margin: 0px; padding: 1px; border: none;">
+
+				<div class="div-2"
+					style="font-size: 28px; color: #000000; margin: 0px; margin-bottom: -5px; border: none; display: flex">
+					<div>
+						<a th:href="@{/support}"><img
+							th:src="@{/images/symbol_support.png}"
+							style="width: 32px; height: 32px; margin-right: 15px; margin-top: 8px;" /></a>
+					</div>
+					<div>
+						<a th:href="@{/support}" style="color: #000000">지원센터</a>
+					</div>
+				</div>
+
+				<div class="div-3" style="margin: 0px; border: none"></div>
+				<div class="div-4" style="margin: 0px; border: none"></div>
+			</div>
+		</div>
+		<!-- child-div -->
+
+
+
+
+
+
+
+		<div class="child-div"
+			style="height: 90px; margin-top: 40px; margin-bottom: 20px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;">
+			<div class="title-div" style="margin-top: -5px">
+				<div class="div-1">
+					<div >
+						<img th:src="@{/images/symbol_faq.png}"
+							style="width: 60px; height: 60px; border: none;  margin-bottom:-12px"/>
+					</div>
+				</div>
+				<div class="div-2" style="margin-left: -90px">자주 묻는 질문</div>
+				<div class="div-3" style="font-size: 22px">관련된 질문(FAQ)를 직접 탐색할 수 있습니다.</div>
+				<div class="div-4" style="color: #5701d0">
+					<span><a href="/support" style="font-size: 18px">뒤로가기</a></span>
+				</div>
+			</div>
+
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+					<div class="faq-menu" style="font-size: 32px; margin-top:48px; margin-bottom: -30px;">
+					
+					<style>
+						a:hover{
+							margin-bottom: -10px
+						}
+					</style>
+					
+					  <a th:each="type, iterStat : ${faqtypeList}"
+					     th:href="'#faq-type' + ${iterStat.index + 1}"
+					     th:onclick="'scrollToFaq(event, \'faq-type' + ${iterStat.index + 1} + '\')'"
+					     style="display: inline-flex; flex-direction: column; margin-top: 5px;
+					     align-items: center; text-decoration: none;">
+					
+					    <!-- 아이콘 이미지 (상단) -->
+					    <img th:src="@{|/images/symbol_faqType_${iterStat.index + 1}.png|}"
+					         onerror="this.onerror=null; this.src='/images/symbol_faq.png';"
+					         style="width: 60px; height: 60px; margin-bottom: 15px;" />
+					
+					    <!-- 텍스트 (하단) -->
+					    <span th:text="${type.faqtype_name}" style="font-size: 40px; color: #5701d0">faqtype_name</span>
+					
+					  </a>
+					  
+					</div>
+
+
+
+
+
+
+<!-- 			<hr style="width: 1200px; border: 1px solid rgba(189,143,253, 0.2);"> -->
+
+
+
+
+
+		<div id="faq-result-container" th:replace="support/faq/faq-item :: faqItemFragment"></div>
+		<div style="margin-top: 100px"></div>
+
+	</div>
+	<!-- parent-container -->
+
+<!-- <script src="/js/faq_ready.js"></script> -->
+<!-- <script src="/js/support_ready.js"></script> -->
+<script src="/js/support_center.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

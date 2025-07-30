@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LangTrip - 당신의 언어 여행</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 폰트 & CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <!-- ✅ JS가 HTML 파싱 이후 실행되도록 defer 사용 -->
+    <script src="/js/login-status.js" defer></script>
+</head>
+<style>
+body.logged-in .guest-state {
+  display: none;
+}
+body.logged-in .user-state {
+  display: inline-flex ;
+}
+body.logged-out .guest-state {
+  display: inline-flex ;
+}
+body.logged-out .user-state {
+  display: none ;
+}
+
+
+</style>
+
+<body class="logged-out">
+    <!-- ✅ 헤더 -->
+    <div th:replace="layout/header :: header"></div>
+
+    <!-- ✅ 메인 콘텐츠 -->
+    <main class="main-content">
+        <!-- 구독한 강사 영상 -->
+        <section class="section">
+            <div class="subscribed-section">
+                <div class="section-header">
+                    <h2 class="section-title">내가 좋아한 크리에이터의 새 영상</h2>
+                    <a href="/instructors" class="view-all">전체 보기</a>
+                </div>
+                <div class="instructor-grid">
+                    <div class="instructor-card">
+                        <div class="instructor-avatar">🦜</div>
+                        <div class="instructor-name">후지코</div>
+                        <div class="instructor-subject">일본어 속어</div>
+                        <span class="new-video-count">새 영상 2개</span>
+                    </div>
+                    <div class="instructor-card">
+                        <div class="instructor-avatar">🦜</div>
+                        <div class="instructor-name">Chirpy</div>
+                        <div class="instructor-subject">영국식 영어</div>
+                        <span class="new-video-count">새 영상 1개</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 인기 강의 -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">지금 인기 폭발! 외국어 강의</h2>
+                <a href="/courses/popular" class="view-all">전체 보기</a>
+            </div>
+            <div class="course-grid">
+                <!-- 강의 카드 예시 -->
+                <div class="course-card">
+                    <div class="course-thumbnail">🇯🇵</div>
+                    <div class="course-info">
+                        <span class="course-category">일본어</span>
+                        <h3 class="course-title">애니로 배우는 진짜 일본어 표현</h3>
+                        <p class="course-instructor">타카하시 유미</p>
+                        <div class="course-meta">
+                            <div class="course-rating">⭐ 4.9 (183)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-thumbnail">🇪🇸</div>
+                    <div class="course-info">
+                        <span class="course-category">스페인어</span>
+                        <h3 class="course-title">라틴팝 가사로 배우는 스페인어</h3>
+                        <p class="course-instructor">Carlos Beats</p>
+                        <div class="course-meta">
+                            <div class="course-rating">⭐ 4.8 (152)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 최신 업로드 -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">따끈따끈한 새 강의</h2>
+                <a href="/courses/latest" class="view-all">전체 보기</a>
+            </div>
+            <div class="course-grid">
+                <div class="course-card">
+                    <div class="course-thumbnail">🇫🇷</div>
+                    <div class="course-info">
+                        <span class="course-category">프랑스어</span>
+                        <h3 class="course-title">카페 주문으로 배우는 프랑스어 회화</h3>
+                        <p class="course-instructor">루이즈 파리지앵</p>
+                        <div class="course-meta">
+                            <div class="course-rating">⭐ 4.6 (74)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-thumbnail">🇻🇳</div>
+                    <div class="course-info">
+                        <span class="course-category">베트남어</span>
+                        <h3 class="course-title">현지에서 통하는 생존 베트남어</h3>
+                        <p class="course-instructor">Nguyen Linh</p>
+                        <div class="course-meta">
+                            <div class="course-rating">⭐ 4.7 (61)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ✅ 푸터 -->
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

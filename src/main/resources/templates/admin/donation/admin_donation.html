@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 후원 관리</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/admin_sidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/common.css}">
+  <style>
+    /* Existing styles from admin_log.html */
+    @charset "UTF-8";
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; display: flex; }
+    .sidebar { width:280px; height:100vh; background:linear-gradient(135deg,#667eea,#764ba2); padding:2rem 0; position:fixed; top:0; left:0; overflow-y:auto; box-shadow:4px 0 15px rgba(0,0,0,0.1);}
+    .sidebar h2 { color:#fff; text-align:center; font-size:1.5rem; font-weight:600; margin-bottom:2rem; display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .sidebar h2 i { font-size:1.8rem; background:rgba(255,255,255,0.2); padding:.5rem; border-radius:12px; backdrop-filter:blur(10px); }
+    .sidebar a { display:flex; align-items:center; padding:1rem 1.5rem; color:rgba(255,255,255,.9); text-decoration:none; margin:.2rem 1rem; border-radius:12px; font-weight:500; position:relative; overflow:hidden; transition:all .3s; }
+    .sidebar a::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent); transition:left .5s; }
+    .sidebar a:hover::before { left:100%; }
+    .sidebar a:hover { background:rgba(255,255,255,.15); color:#fff; transform:translateX(5px); backdrop-filter:blur(10px); }
+    .sidebar a.active { background:rgba(255,255,255,.2); color:#fff; backdrop-filter:blur(10px); }
+    .sidebar a i { font-size:1.2rem; margin-right:1rem; width:24px; text-align:center; transition:transform .3s; }
+    .sidebar a:hover i { transform:scale(1.1); }
+
+    .main-content { margin-left:280px; padding:2rem; flex:1; min-height:100vh; background:#f8f9fa; }
+    .page-header { background:#fff; padding:2rem; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.1); margin-bottom:2rem; }
+    .page-header h1 { color:#333; font-size:2rem; margin-bottom:.5rem; }
+    .page-header p { color:#666; font-size:1.1rem; }
+
+    .search-section { background:#fff; padding:2rem; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.1); margin-bottom:2rem; }
+    .search-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      align-items: end;
+      padding-bottom: 1rem; /* Added padding */
+    }
+    .form-group { display:flex; flex-direction:column; }
+    .form-group label { margin-bottom:.5rem; font-weight:600; color:#333; }
+    .form-group input, .form-group select { padding:.8rem; border:2px solid #e9ecef; border-radius:8px; font-size:1rem; transition:border-color .3s; }
+    .form-group input:focus, .form-group select:focus { outline:none; border-color:#667eea; }
+    .search-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap; /* Added for responsiveness */
+      justify-content: flex-end; /* Aligns buttons to the right */
+    }
+    .btn { padding:.8rem 1.5rem; border:none; border-radius:8px; font-size:1rem; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:all .3s; }
+    .btn-primary { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 4px 20px rgba(102,126,234,.4); }
+    .btn-danger { background: #dc3545; color: #fff; }
+    .btn-danger:hover { background: #c82333; }
+    .btn-info { background: #17a2b8; color: #fff; }
+    .btn-info:hover { background: #138496; }
+
+    .table-section { background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.1); overflow:hidden; }
+    .table-header { padding:1.5rem 2rem; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+    .table-header h3 { margin:0; font-size:1.3rem; }
+    .table-stats { font-size:.9rem; opacity:.9; }
+
+    .table-container { overflow-x:auto; }
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table th, .admin-table td { padding:1rem; text-align:left; border-bottom:1px solid #e9ecef; vertical-align: middle; }
+    .admin-table th { background:#f8f9fa; font-weight:600; color:#333; }
+    .admin-table tr:hover { background-color: #f1f3f5; }
+    .admin-table .deleted-message { color: #999; font-style: italic; }
+
+    .pagination { display: flex; justify-content: center; padding: 1.5rem 0; }
+    .pagination button { padding: 0.5rem 1rem; margin: 0 5px; border: 1px solid #ddd; border-radius: 5px; background-color: #f8f8f8; cursor: pointer; transition: background-color 0.3s; }
+    .pagination button:hover:not(.active) { background-color: #e0e0e0; }
+    .pagination button.active { background-color: #667eea; color: white; border-color: #667eea; }
+
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fefefe; margin: 15% auto; padding: 2rem; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.2); }
+    .modal-header { padding-bottom: 1rem; border-bottom: 1px solid #e9ecef; }
+    .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+    .modal-body { padding: 1rem 0; }
+    .modal-body p { margin-bottom: 1rem; font-size: 1.1rem; color: #555; }
+    .modal-body strong { color: #333; }
+    .modal-footer { padding-top: 1rem; border-top: 1px solid #e9ecef; text-align: right; }
+    .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .close-button:hover, .close-button:focus { color: black; text-decoration: none; }
+
+    @media (max-width:768px) {
+        .sidebar { position:relative; width:100%; height:auto; }
+        .main-content { margin-left:0; }
+        .search-form {
+            grid-template-columns: 1fr; /* Stack form elements on small screens */
+            gap: 1rem; /* Reduce gap for smaller screens */
+        }
+        .search-buttons {
+            justify-content: center; /* Center buttons on small screens */
+            margin-top: 1rem; /* Add some space above buttons */
+        }
+        .modal-content { width: 95%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div th:replace="~{/layout/admin_sidebar :: sidebar}"></div>
+
+  <div class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1><i class="fas fa-hand-holding-heart"></i> 후원 관리</h1>
+      <p>사용자 후원 내역을 조회하고 관리합니다.</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <form class="search-form" th:action="@{/admin/donation}" method="get">
+        <div class="form-group">
+          <label for="searchType">검색 유형</label>
+          <select id="searchType" name="searchType">
+            <option value="all" th:selected="${searchDTO.searchType == null or searchDTO.searchType == 'all'}">전체</option>
+            <option value="sender" th:selected="${searchDTO.searchType == 'sender'}">보낸 사람</option>
+            <option value="recipient" th:selected="${searchDTO.searchType == 'recipient'}">받는 사람</option>
+            <option value="lecture" th:selected="${searchDTO.searchType == 'lecture'}">강의명</option>
+            <option value="message" th:selected="${searchDTO.searchType == 'message'}">강의명</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="searchKeyword">검색어</label>
+          <input type="text" id="searchKeyword" name="searchKeyword" th:value="${searchDTO.searchKeyword}" placeholder="검색어를 입력하세요">
+        </div>
+        <div class="form-group">
+          <label for="startDate">시작일</label>
+          <input type="date" id="startDate" name="startDate" th:value="${searchDTO.startDate}">
+        </div>
+        <div class="form-group">
+          <label for="endDate">종료일</label>
+          <input type="date" id="endDate" name="endDate" th:value="${searchDTO.endDate}">
+        </div>
+        <div class="search-buttons">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> 검색</button>
+          <button type="button" class="btn btn-secondary" onclick="clearSearch()"><i class="fas fa-sync-alt"></i> 초기화</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Donation List -->
+    <div class="table-section">
+      <div class="table-header">
+        <h3>후원 내역</h3>
+        <div class="table-stats">총 <span th:text="${pageResponse.totalCnt}">0</span>건</div>
+      </div>
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>후원번호</th>
+              <th>보낸 사람</th>
+              <th>받는 사람</th>
+              <th>강의명</th>
+              <th>후원마일</th>
+              <th>메시지</th>
+              <th>후원일시</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="donation : ${pageResponse.list}" th:data-donation-id="${donation.donationId}">
+              <td th:text="${donation.donationId}"></td>
+              <td th:text="${donation.senderId}"></td>
+              <td th:text="${donation.recipientId}"></td>
+              <td th:text="${donation.lectureTitle}"></td>
+              <td th:text="|₩ ${#numbers.formatInteger(donation.amount, 3, 'COMMA')}|"></td>
+              <td th:classappend="${donation.messageDeleted} ? 'deleted-message' : ''"
+                  th:text="${donation.messageDeleted} ? '관리자에 의해 삭제된 메시지입니다.' : ${donation.message}"></td>
+              <td th:text="${#temporals.format(donation.donationDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+              <td>
+                <button class="btn btn-info btn-sm" onclick="showDetails(this)"><i class="fas fa-eye"></i></button>
+                <button th:if="${!donation.messageDeleted}" class="btn btn-danger btn-sm" onclick="deleteMessage(this)"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pageResponse.list)}">
+              <td colspan="8" style="text-align:center; padding:2rem; color:#666;">
+                후원 내역이 없습니다.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button th:if="${pageResponse.hasPrev}" th:onclick="'goToPage(' + ${pageResponse.startPage - 1} + ')'">이전</button>
+        <th:block th:each="i : ${#numbers.sequence(pageResponse.startPage, pageResponse.endPage)}">
+          <button th:onclick="'goToPage(' + ${i} + ')'" th:classappend="${i == pageResponse.page ? 'active' : ''}">[[${i}]]</button>
+        </th:block>
+        <button th:if="${pageResponse.hasNext}" th:onclick="'goToPage(' + ${pageResponse.endPage + 1} + ')'">다음</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>후원 상세 정보</h2>
+        <span class="close-button" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p><strong>후원번호:</strong> <span id="modalDonationId"></span></p>
+        <p><strong>보낸 사람:</strong> <span id="modalSender"></span></p>
+        <p><strong>받는 사람:</strong> <span id="modalRecipient"></span></p>
+        <p><strong>강의명:</strong> <span id="modalLecture"></span></p>
+        <p><strong>후원금액:</strong> <span id="modalAmount"></span></p>
+        <p><strong>메시지:</strong> <span id="modalMessage"></span></p>
+        <p><strong>후원일시:</strong> <span id="modalDate"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  console.log("admin_donation.html script loaded.");
+  const modal = document.getElementById('detailModal');
+
+  function showDetails(button) {
+    const row = button.closest('tr');
+    const cells = row.getElementsByTagName('td');
+
+    document.getElementById('modalDonationId').textContent = cells[0].textContent;
+    document.getElementById('modalSender').textContent = cells[1].textContent;
+    document.getElementById('modalRecipient').textContent = cells[2].textContent;
+    document.getElementById('modalLecture').textContent = cells[3].textContent;
+    document.getElementById('modalAmount').textContent = cells[4].textContent;
+    document.getElementById('modalMessage').textContent = cells[5].textContent;
+    document.getElementById('modalDate').textContent = cells[6].textContent;
+
+    modal.style.display = "block";
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  function deleteMessage(button) {
+    if (confirm("정말로 이 메시지를 삭제하시겠습니까?")) {
+      const row = button.closest('tr');
+      const donationId = row.dataset.donationId;
+
+      console.log("Attempting to delete message for donationId:", donationId);
+      fetch(`/admin/donation/deleteMessage/${donationId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          const messageCell = row.getElementsByTagName('td')[5];
+          messageCell.textContent = "관리자에 의해 삭제된 메시지입니다.";
+          messageCell.classList.add("deleted-message");
+          button.remove(); // Hide delete button after deletion
+          alert("메시지가 성공적으로 삭제되었습니다.");
+        } else {
+          alert("메시지 삭제에 실패했습니다.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("메시지 삭제 중 오류가 발생했습니다.");
+      });
+    }
+  }
+
+  function goToPage(page) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", page);
+    window.location.href = url.toString();
+  }
+
+  function clearSearch() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('searchType');
+    url.searchParams.delete('searchKeyword');
+    url.searchParams.delete('startDate');
+    url.searchParams.delete('endDate');
+    url.searchParams.set('page', 1);
+    window.location.href = url.toString();
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      closeModal();
+    }
+  }
+</script>
+
+</body>
+</html>

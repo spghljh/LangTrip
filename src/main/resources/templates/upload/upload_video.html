@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비디오 업로드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98E4FF 50%, #B8E6FF 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(135, 206, 235, 0.3);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4A90E2;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
+        }
+
+        .nav-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #87CEEB, #4A90E2);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+            background: linear-gradient(135deg, #4A90E2, #87CEEB);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #E6F8FF, #B8E6FF);
+            color: #2E86AB;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4A90E2;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4A90E2;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #B8E6FF;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.2);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 20px;
+            background: linear-gradient(135deg, #E6F8FF, #B8E6FF);
+            border: 2px dashed #4A90E2;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4A90E2;
+            font-weight: 600;
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(135deg, #B8E6FF, #87CEEB);
+            border-color: #2E86AB;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.2);
+        }
+
+        .video-label::before {
+            content: "🎥 ";
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4A90E2, #87CEEB);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+            background: linear-gradient(135deg, #2E86AB, #4A90E2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+
+        /* 파일 선택시 애니메이션 효과 */
+        @keyframes fileSelected {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .file-selected {
+            animation: fileSelected 0.3s ease;
+            background: linear-gradient(135deg, #87CEEB, #4A90E2);
+            color: white;
+        }
+
+        /* 로딩 스피너 */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #B8E6FF;
+            border-top: 4px solid #4A90E2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎬 비디오 업로드</h2>
+        
+        <a th:href="@{/}" class="nav-link">메인</a>
+        
+        <!-- 업로드 메시지 -->
+        <div th:if="${msg != null}" th:text="${msg}" class="success-message"></div>
+        <!-- 업로드 폼 -->
+        <form id="videoUploadForm" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="title">제목:</label>
+                <input type="text" id="title" name="title" required placeholder="비디오 제목을 입력하세요">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">설명:</label>
+                <textarea id="description" name="description" placeholder="비디오에 대한 설명을 입력하세요 (선택사항)"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>비디오 파일 선택:</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="upfile" name="upfile" accept="video/*" multiple="multiple" required>
+                    <label for="upfile" class="file-input-label video-label">비디오 파일을 선택하세요</label>
+                </div>
+            </div>
+            
+<!--             <div class="form-group"> -->
+<!--                 <label>썸네일 선택:</label> -->
+<!--                 <div class="file-input-wrapper"> -->
+<!--                     <input type="file" id="upViewfile" name="upViewfile" multiple="multiple" required> -->
+<!--                     <label for="upViewfile" class="file-input-label thumbnail-label">썸네일 이미지를 선택하세요</label> -->
+<!--                 </div> -->
+<!--             </div> -->
+            <input type="hidden" name="courseSeq" th:value="${courseSeq}"/>
+            <button type="submit" class="submit-btn">업로드</button>
+            
+            <div class="loading" id="loadingDiv">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #4A90E2;">업로드 중...</p>
+            </div>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 파일 선택시 라벨 텍스트 변경 및 애니메이션
+        $('#upfile').on('change', function() {
+            const files = this.files;
+            const label = $(this).siblings('label');
+            
+            if (files.length > 0) {
+                const fileName = files.length > 1 ? 
+                    `${files.length}개 파일 선택됨` : 
+                    files[0].name;
+                label.text(fileName).addClass('file-selected');
+                setTimeout(() => label.removeClass('file-selected'), 300);
+            } else {
+                label.text('비디오 파일을 선택하세요').removeClass('file-selected');
+            }
+        });
+
+        $('#videoUploadForm').on('submit', function(e){
+            e.preventDefault();
+            
+            // 로딩 표시
+            $('#loadingDiv').show();
+            $('.submit-btn').prop('disabled', true).text('업로드 중...');
+            
+            const formData = new FormData(this);
+            
+            $.ajax({
+                url:'/upload/upload_video',
+                type:'POST',
+                data:formData,
+                processData: false,
+                contentType: false,
+                success: function(res){
+                    $('#loadingDiv').hide();
+                    $('.submit-btn').prop('disabled', false).text('업로드');
+                    
+                    if(res.status === 'success'){
+                        const courseSeq = res.cDTO.courseSeq;
+                        alert(res.msg);
+                        window.location.href = '/upload/upload_course?seq='+courseSeq;
+                    }else{
+                        alert(res.msg);
+                    }
+                },
+                error: function(xhr, status, err){
+                    $('#loadingDiv').hide();
+                    $('.submit-btn').prop('disabled', false).text('업로드');
+                    console.error(xhr.responseText);
+                    alert("에러 발생 : "+ err);
+                }
+            });
+        });
+
+        // 입력 필드에 포커스 애니메이션
+        $('input[type="text"], textarea').on('focus', function() {
+            $(this).parent().addClass('focused');
+        }).on('blur', function() {
+            $(this).parent().removeClass('focused');
+        });
+    </script>
+</body>
+</html>

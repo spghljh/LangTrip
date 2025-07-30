@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="kr.co.sist.course.CourseMapper">
+  <insert id="insertCourse" parameterType="CourseDTO">
+  <selectKey keyProperty="courseSeq" resultType="String" order="BEFORE">
+      SELECT 'course_seq' || LPAD(course_seq.NEXTVAL, 3, '0') FROM dual
+    </selectKey>
+  insert into course(
+  course_seq,
+  title,
+  introduction,
+  upload_date,
+  difficulty,
+  category,
+  thumbnail_path,
+  thumbnail_name,
+  user_id
+  ) values(
+  	#{courseSeq},
+  	#{courseTitle},
+  	#{introduction},
+  	SYSDATE,
+  	#{difficulty},
+  	#{category},
+  	#{thumbnailPath},
+  	#{thumbnailName},
+  	#{userId}
+  )
+  </insert>
+  
+  
+  <insert id="insertVideo" parameterType="VideoDTO">
+  INSERT INTO video (
+      video_seq,
+      course_seq,
+      title,
+      file_name,
+      file_path,
+      upload_date,
+      description,
+      is_completed,
+      video_order
+    ) VALUES (
+      video_seq.NEXTVAL,
+      #{courseSeq},
+      #{title},
+      #{fileName},
+      #{filePath},
+      SYSDATE,
+      #{description},
+      #{isCompleted},
+      #{videoOrder}
+    )
+  </insert>
+ <select id="searchCourseById" resultType="CourseDTO" parameterType="String">
+ select title as courseTitle, introduction, upload_date, user_id, thumbnail_path, thumbnail_name, category, course_seq, difficulty, is_public 
+  from course 
+  where user_id = #{userId}
+ </select>
+ <select id="searchCourseByCourseId" resultType="CourseDTO" parameterType="String">
+ select course_seq, title as courseTitle, introduction,
+upload_date, user_id, thumbnail_path, thumbnail_name,
+category, difficulty, is_public from course where course_seq = #{courseSeq}
+ </select>
+ <select id="searchCourseByPage" parameterType="map" resultType="CourseDTO">
+ SELECT title as courseTitle, introduction, upload_date, user_id, thumbnail_path, thumbnail_name, category, course_seq, difficulty, is_public
+  FROM course
+  WHERE user_id = #{userId}
+  ORDER BY upload_date asc
+  OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+ </select>
+  <select id="searchCourseCount" parameterType="String" resultType="int">
+  select count(*) from course where user_id = #{userId} 
+  </select>
+  <update id="updateCourseByCourseSeq" parameterType="CourseDTO">
+  update course 
+  set 
+  	  category=#{category},
+  	  difficulty=#{difficulty},
+	  title=#{courseTitle},
+  	  thumbnail_name=#{thumbnailName},
+  	  thumbnail_path=#{thumbnailPath},
+  	  introduction=#{introduction}
+  where course_seq = #{courseSeq}
+  	  
+  </update>
+  <delete id="deleteCourseByCourseSeq" parameterType="String">
+  delete from course where course_seq = #{courseSeq}
+  </delete>
+  </mapper>

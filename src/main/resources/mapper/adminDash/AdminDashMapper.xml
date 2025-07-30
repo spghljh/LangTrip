@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.adminDash.AdminDashDAO">
+
+
+  <!-- 일별 가입 통계 -->
+  <select id="getDailySignupStats" resultType="kr.co.sist.e_learning.adminDash.AdminDashDTO">
+    SELECT TO_CHAR(created_at, 'MM-DD') AS regDate,
+           COUNT(*) AS count
+    FROM users
+    GROUP BY TO_CHAR(created_at, 'MM-DD')
+    ORDER BY regDate
+  </select>
+
+  <!-- 유입 경로 통계 -->
+  <select id="getSignupPathStats" resultType="kr.co.sist.e_learning.adminDash.AdminDashDTO">
+    SELECT signup_path AS signupPath,
+           COUNT(*) AS count
+    FROM users
+    WHERE signup_path IS NOT NULL
+    GROUP BY signup_path
+  </select>
+
+  <!-- 탈퇴 사유 통계 -->
+<select id="getUnsignReasonStats" resultType="kr.co.sist.e_learning.adminDash.AdminDashDTO">
+  SELECT unsign_path AS unsugnPath,
+         COUNT(*) AS count
+  FROM users
+  WHERE unsign_path IS NOT NULL
+  GROUP BY unsign_path
+</select>
+
+
+</mapper>

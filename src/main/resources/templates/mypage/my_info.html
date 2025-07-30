@@ -1,0 +1,43 @@
+<div class="profile-container">
+  <div class="profile-header">🙋 내 정보</div>
+
+  <div class="profile-content">
+    <!-- 프로필 이미지 영역 -->
+    <div class="profile-image">
+      <img th:src="@{${myData.profile}}" alt="프로필 이미지" id="profilePreview">
+      <input type="file" id="profileFile" style="display:none;" onchange="uploadProfile()">
+    </div>
+
+    <!-- 사용자 정보 -->
+    <div class="profile-info">
+      <div class="label">유저 번호</div>
+      <div class="value" th:text="${myData.userSeq}"></div>
+
+      <div class="label">이메일</div>
+      <div class="value" th:text="${myData.email}"></div>
+
+      <div class="label">닉네임</div>
+      <div class="value" th:text="${myData.nickname}"></div>
+
+      <div class="label">상태</div>
+      <div class="value" th:text="${myData.status}"></div>
+
+      <div class="label">소셜 ID</div>
+      <div class="value" th:text="${myData.socialId}"></div>
+
+      <div class="label">제공자</div>
+      <div class="value" th:text="${myData.socialProvider}"></div>
+    </div>
+  </div>
+
+  <!-- 버튼 영역 -->
+<div class="profile-buttons">
+  <div class="left-buttons">
+    <button onclick="document.getElementById('profileFile').click()">프로필 사진 변경</button>
+    <button class="warning" onclick="location.href='/mypage/reset_password'">비밀번호 변경</button>
+  </div>
+  <div class="right-buttons">
+    <button onclick="location.href='/mypage/leave'" class="danger">회원 탈퇴</button>
+  </div>
+</div>
+

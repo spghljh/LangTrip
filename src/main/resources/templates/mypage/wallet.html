@@ -1,0 +1,31 @@
+<div th:fragment="content">
+  <div class="wallet-section">
+    <h2 class="wallet-title">💳 내 지갑</h2>
+
+    <div class="wallet-card">
+      <table class="wallet-table">
+        <tr>
+          <th>총 마일</th>
+          <td th:text="${accountInfo.totalMiles} + ' M'">0 M</td>
+        </tr>
+        <tr>
+          <th>후원 가능 마일</th>
+          <td th:text="${accountInfo.donationAvailable} + ' M'">0 M</td>
+        </tr>
+        <tr>
+          <th>후원한 마일</th>
+          <td th:text="${accountInfo.donatedMiles} + ' M'">0 M</td>
+        </tr>
+        <tr>
+          <th>후원받은 마일</th>
+          <td th:text="${accountInfo.receivedMiles} + ' M'">0 M</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="wallet-actions">
+      <button class="wallet-button" onclick="location.href='/wallet/link-account'">🏦 계좌 연동하기</button>
+      <button class="wallet-button" onclick="location.href='/wallet/cards'">💳 카드 정보 보기</button>
+    </div>
+  </div>
+</div>

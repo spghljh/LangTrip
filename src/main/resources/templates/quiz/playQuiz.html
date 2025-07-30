@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>퀴즈 학습</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/playQuiz.css}">
+</head>
+<body>
+<form id="quizPlay">
+  <input type="hidden" id="quizListSeq" th:value="${quizListSeq}" />
+  <input type="hidden" id="userSeq" th:value="${userSeq}" />
+  <input type="hidden" id="courseSeq" th:value="${courseSeq}" />
+
+  <!-- 상단 진행률 바 -->
+  <div class="d-flex justify-content-between align-items-center p-2">
+    <button type="button" onclick="window.history.back()" class="btn btn-link">X</button>
+    <div class="w-100 px-3">
+      <div class="progress">
+        <div class="progress-bar bg-info" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+    <div id="progressText" class="me-3">0/5</div>
+  </div>
+
+  <!-- 퀴즈 슬라이드가 삽입될 영역 -->
+  <div id="quizContainer"></div>
+
+  <!-- 하단 제출 버튼 네비게이션 -->
+  <div class="bottom-navbar">
+    <button id="submitBtn" type="button" class="btn btn-info">제출하기</button>
+  </div>
+</form>
+
+<script>
+  const selections = {}; // 사용자 응답 저장
+  let currentIndex = 0;  // 현재 퀴즈 인덱스
+  let slides = [];       // 모든 퀴즈 슬라이드 저장
+
+  
+  // 슬라이드를 보여주는 함수
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.style.display = i === index ? 'block' : 'none';
+    });
+  }
+
+  // 진행률 바 업데이트 (응답 수 기준)
+  function updateProgress() {
+    const answered = Object.keys(selections).length;
+    const percent = (answered / slides.length) * 100;
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressText").textContent = `${answered}/${slides.length}`;
+  }
+
+  // 보기 클릭 시 실행되는 함수 → 선택만 저장, 진행률 업데이트는 하지 않음
+  function selectAnswer(quizSeq, answer, el) {
+    document.querySelectorAll(`[data-quiz='${quizSeq}']`).forEach(el => el.classList.remove("selected"));
+    el.classList.add("selected");
+    selections[quizSeq] = answer;
+  }
+
+  // 제출 버튼 클릭 시 다음 문제로 이동하거나 최종 제출
+  function handleSubmit() {
+    const quizSeq = slides[currentIndex].querySelector(".option-btn, .card-option")?.dataset.quiz;
+    if (!selections[quizSeq]) {
+      alert("보기를 선택해주세요.");
+      return;
+    }
+
+    updateProgress(); // 제출 버튼 눌렀을 때만 진행률 반영
+
+    if (currentIndex < slides.length - 1) {
+      currentIndex++;
+      showSlide(currentIndex);
+    } else {
+      submitAnswers();
+    }
+  }
+
+  // 서버로 결과 전송
+ function submitAnswers(quizSeq, selectOption) {
+  const quizListSeq = document.getElementById("quizListSeq").value;
+  const userSeq = document.getElementById("userSeq").value;
+  const courseSeq = document.getElementById("courseSeq").value;
+
+  let successCount = 0;
+  const total = Object.keys(selections).length;
+
+  
+  Object.entries(selections).forEach(([quizSeq, selectOption]) => {
+    axios.post("/quizResponse", {
+      quizSeq: quizSeq,
+      quizListSeq: quizListSeq,
+      courseSeq: courseSeq,
+      selectOption: selectOption,
+      userSeq: userSeq 
+    })
+    .then(() => {
+     successCount++;
+      if (successCount === total) {
+    	  const quizCourseSeq = document.getElementById("courseSeq").value;
+        // 모든 응답 저장 완료 시 이동
+        window.location.href = '/quiz/quizCompleted/' + quizListSeq+"?courseSeq="+quizCourseSeq;
+      }
+    })
+    .catch(err => {
+      console.error(`❌ ${quizSeq} 응답 저장 실패`, err);
+      alert("퀴즈 저장 중 오류가 발생했습니다.");
+   	 });//catch
+  });
+}
+
+  // 페이지 로드 시 퀴즈 데이터 불러오기
+  document.addEventListener("DOMContentLoaded", () => {
+    const quizListSeq = document.getElementById("quizListSeq").value;
+
+    axios.get(`/playQuizProcess/${quizListSeq}`)
+      .then(res => {
+        const quizList = res.data.quizList;
+        const container = document.getElementById("quizContainer");
+
+        quizList.forEach((quiz, index) => {
+          const slide = document.createElement("div");
+          slide.className = "quiz-slide";
+          slide.style.display = index === 0 ? "block" : "none";
+
+          let optionsHTML = "";
+          if (quiz.type === 'text-quiz') {
+            optionsHTML = quiz.options.map((opt, i) => `
+              <button type="button" class="btn btn-outline-secondary option-btn"
+                data-quiz="${quiz.quizSeq}" data-answer="${i + 1}">
+                ${i + 1}. ${opt.content}
+              </button>`).join("<br/>");
+          } else {
+        	  optionsHTML = '<div class="row row-cols-3 g-3">' + quiz.options.map((opt, i) => `
+        	  <div class="col">
+        	    <div class="card card-option text-center" data-quiz="${quiz.quizSeq}" data-answer="${i + 1}">
+        	      <img src="/upload/img/quiz/${opt.imageName}" class="card-img-top" alt="option">
+        	      <div class="card-body">
+        	        <p class="card-text">${i + 1}. ${opt.content}</p>
+        	      </div>
+        	    </div>
+        	  </div>`).join("") + '</div>';
+          }
+
+          // 퀴즈 슬라이드 구성
+          slide.innerHTML = `
+            <div class="container my-4">
+              <div class="d-flex align-items-start">
+                <img src="/upload/img/mascot.png" class="mascot me-3">
+                <div class="speech-bubble">문제 ${index + 1}: ${quiz.question}</div>
+              </div>
+              <div class="mt-4">${optionsHTML}</div>
+            </div>
+          `;
+
+          // 보기 클릭 이벤트 처리
+          slide.addEventListener("click", e => {
+            const target = e.target.closest(".option-btn, .card-option");
+            if (!target) return;
+            const quizSeq = target.dataset.quiz;
+            const answer = target.dataset.answer;
+            selectAnswer(quizSeq, answer, target);
+          });
+
+          slides.push(slide);
+          container.appendChild(slide);
+        });
+      })
+      .catch(err => console.error("퀴즈 불러오기 실패", err));
+
+    // 제출 버튼 클릭 시 실행
+    document.getElementById("submitBtn").addEventListener("click", handleSubmit);
+  });
+</script>
+</body>
+</html>

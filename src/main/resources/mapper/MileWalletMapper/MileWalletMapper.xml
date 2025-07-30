@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.MileWalletMapper">
+
+    <!-- 지갑 존재 여부 확인 -->
+    <select id="selectWalletSeqByUserSeq" resultType="java.lang.Long" parameterType="long">
+        SELECT wallet_seq
+        FROM mile_wallet
+        WHERE user_seq = #{userSeq}
+    </select>
+
+    <!-- 지갑 생성 -->
+    <insert id="insertMileWallet" parameterType="kr.co.sist.e_learning.mileWallet.MileWalletDTO">
+        <selectKey resultType="long" keyProperty="walletSeq" order="BEFORE">
+            SELECT SEQ_MILE_WALLET.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO mile_wallet (
+            wallet_seq,
+            user_seq,
+            total_miles,
+            donation_available,
+            donated_miles,
+            received_miles,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{walletSeq},
+            #{userSeq},
+            #{totalMiles},
+            #{donation_available},
+            #{donated_miles},
+            #{received_miles},
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 마일 잔액 업데이트 (충전 시) -->
+    <update id="updateMileBalance" parameterType="map">
+        UPDATE mile_wallet
+        SET
+            total_miles = total_miles + #{addMileAmount}, 
+            donation_available = donation_available + #{addMileAmount},
+            updated_at = SYSDATE
+        WHERE wallet_seq = #{walletSeq}
+    </update>
+    
+    <!-- 현재 마일 조회 -->
+    <select id="selectCurrentMiles" resultType="long">
+        SELECT donation_available FROM MILE_WALLET WHERE WALLET_SEQ = #{walletSeq}
+    </select>
+
+    <!-- 후원 시 donation_available 업데이트 (차감) -->
+    <update id="updateDonationAvailable" parameterType="map">
+        UPDATE MILE_WALLET
+        SET DONATION_AVAILABLE = DONATION_AVAILABLE + #{amount},  <!-- 차감 처리 -->
+            UPDATED_AT = SYSDATE
+        WHERE WALLET_SEQ = #{walletSeq} AND DONATION_AVAILABLE >= #{amount}  <!-- 부족 마일 차감 방지 -->
+    </update>
+
+    <!-- 후원한 마일 증가 (donated_miles) -->
+    <update id="addDonatedMiles">
+        UPDATE MILE_WALLET
+        SET DONATED_MILES = DONATED_MILES + #{amount},
+            UPDATED_AT = SYSDATE
+        WHERE WALLET_SEQ = #{walletSeq}
+    </update>
+
+    <!-- 받은 마일 증가 (received_miles) -->
+    <update id="addReceivedMiles">
+        UPDATE MILE_WALLET
+        SET RECEIVED_MILES = RECEIVED_MILES + #{amount},
+            UPDATED_AT = SYSDATE
+        WHERE WALLET_SEQ = #{walletSeq}
+    </update>
+
+    <!-- 지갑 존재 여부 확인 -->
+    <select id="checkWalletExists" resultType="boolean" parameterType="long">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END 
+        FROM mile_wallet 
+        WHERE wallet_seq =#{walletSeq}
+    </select>
+
+</mapper>

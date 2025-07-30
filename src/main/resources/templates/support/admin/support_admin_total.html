@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/admin_sidebar.css">
+
+<link rel="stylesheet"
+	href="/css/admin_feedback_design.css">
+
+<title>templates/admin/support/support_admin_notice.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<style>
+
+.graphDivWrap1 {
+	width: 100%;
+	height: 100px;
+/*   	border:1px solid yellow !important;  */
+	border: none;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	background-color: transparent;
+	padding: 10px;
+	
+	flex: 1;
+	
+	min-width: 80px;
+	
+}
+
+.graphDivWrap2 {
+	width: 100%;
+	height: 100px;
+/*  	border:1px solid red !important;   */
+	border: none;
+	
+	display: flex;
+	align-items: left;
+	
+	padding: 0px;
+	
+	flex: 12;
+	
+	min-width: 150px;
+	
+}
+
+.graphDivWrap {
+	width: 100%;
+	height: 100%;
+/*  	border:1px solid blue !important;  */
+	border: none;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	background-color: transparent;
+	padding: 10px;
+	
+	flex: 1;
+	
+	padding-left: 40px;	
+	padding-right: 40px;	
+	margin-bottom: 20px;
+	
+/* 	transform : scale(1.1); */
+}
+
+.graphDivWrap1 > div {
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border: none;
+}
+
+.graphDivWrap2 > div {
+
+	display: flex;
+	justify-content: left;
+	align-items: center;
+
+	border: none;
+}
+
+.graphDivWrap > div {
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border: none;
+}
+
+
+</style>
+
+	<div th:replace="layout/admin_sidebar :: sidebar"></div>
+	
+	
+	<div class="parent-container"
+		style="border: none !important; width: 100%; height: 100%; padding-top: 30px; margin-bottom: 0px; padding-bottom: 400px; background: linear-gradient(to bottom, rgba(204, 169, 254, 0.8), rgba(204, 169, 254, 0.1), rgba(204, 169, 254, 0.1), white, transparent); border: none; padding-right: 320px; min-width: 1800px;">
+
+	<div class="child-div" style="height: auto; width: 100%; box-shadow: none; margin-left: 600px; background-color: transparent; border:none !important;">
+		<div th:replace="/support/admin/support_admin_submenu :: subMenu"></div>
+	</div><!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div class="child-div"
+			style="height: auto; width: 100%; box-shadow: none; margin-left: 600px; background-color: transparent !important; border: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				<div class="div-1" style="flex:5; border:none">
+					<div class="div-2" style="font-size: 30px; border:none">
+						관련 통계 <span style="opacity : 0.4; font-size: 28px">
+<!-- 						> </span> -->
+<!-- 						<span style="color: #5701d0">전체 조회</span> -->
+					</div>
+				</div>
+			</div>
+		
+		
+		
+		
+		
+		
+		
+
+		<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none; background-color: transparent; margin-bottom: -10px; margin-top: 50px;
+			">
+
+			<div class="title-div"
+				style="border-bottom: none; margin-left: 10px; border: none; margin-bottom: 0px">
+				<div class="div-1" style="flex: 5; border: none">
+					<div class="div-2"
+						style="font-size: 40px; border: none; margin-bottom: 24px; border: none;">
+						<span style="color: #000000">피드백 누적 현황</span>
+					</div>
+				</div>
+			</div>
+			
+		</div><!-- child-div --> 
+			
+			
+			
+			
+			<div class="child-div" 
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none; padding: 0px; background-color: transparent;
+			justify-content: center; display: flex; align-items: center; 
+			">
+
+
+							<div class="graphDivWrap" style="width: 80%; margin-bottom: -50px">
+								
+								
+								
+										<canvas id="feedbackChart"></canvas>
+										<script th:inline="javascript">
+										    const chartData = /*[[${feedbackChartData}]]*/ {};
+										    
+										    const labels = Object.keys(chartData);
+										    const values = Object.values(chartData);
+										    
+										    const maxValue0 = /*[[${maxSends}]]*/ {};
+										
+										    const ctx = document.getElementById('feedbackChart').getContext('2d');
+										    new Chart(ctx, {
+										        type: 'bar',
+										        data: {
+										            labels: labels,
+										            datasets: [{
+										                label: '피드백 유형별 접수 수',
+										                data: values,
+										                backgroundColor: 'rgba(87, 1, 208, 1)', // 투명도 없는 색상
+										                borderColor: 'rgba(87, 1, 208, 1)',
+										                borderWidth: 1,
+										                barThickness: 54 // ✅ 막대 너비 통일
+										            }]
+										        },
+										        options: {
+										            scales: {
+										                x: {
+										                    grid: {
+										                        display: false // X축 격자 제거
+										                    },
+										                    ticks: {
+										                        font: {
+										                            size: 24,
+										                            weight: 'bold'
+										                        },
+										                    color: '#5701d0'
+										                    },
+										                    
+										                },
+										                y: {
+										                    beginAtZero: true,
+										                    max: maxValue0, 
+										                    grid: {
+										                        display: false // Y축 격자 제거
+										                    },
+										                    ticks: {
+										                    	font: {
+										                            size: 20,
+										                            weight: 'bold'
+										                        },
+										                        stepSize: 3,
+										                        precision: 0,
+										                        callback: function (value) {
+										                            if (Number.isInteger(value)) return value;
+										                        },
+										                        color: '#5701d0'
+										                 },
+										                    title: {
+										                        display: true,
+										                        text: ''
+										                    }
+										                }
+										            },
+										            plugins: {
+										                legend: {
+										                    display: false
+										                }
+										            }
+										        }
+										    });
+										</script>
+										
+										
+										
+							</div><!-- graphDivWrap -->	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div><!-- child-div -->
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+
+		<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 600px; border: none; background-color: transparent; margin-bottom: -10px; margin-top: 100px;
+			">
+
+			<div class="title-div"
+				style="border-bottom: none; margin-left: 10px; border: none; margin-bottom: -15px">
+				<div class="div-1" style="flex: 5; border: none">
+					<div class="div-2"
+						style="font-size: 40px; border: none; margin-bottom: 24px; border: none;">
+						<span style="color: #000000">FAQ 조회수 현황</span>
+					</div>
+				</div>
+			</div>
+			
+		</div><!-- child-div -->
+			
+			
+<!-- ------------------------------------------------------------------------------------------------------------- -->	
+		
+			<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none;
+			flex-direction: row; justify-content: left; background-color: transparent; flex-direction: column; 
+			">
+			
+<div style="display: flex; margin-bottom:-0px; margin-top:-10px; border-bottom: 1px solid #cecece !important;">
+	<div class="graphDivWrap1" >
+		<div style="width: 60px; height: auto;"><img th:src="@{/images/symbol_faqType_1.png}" style="width: 100%; height: 100%"/></div>
+	</div>
+	<div class="graphDivWrap2" >
+		<div class="title-div">
+			<div class="div-2" style="font-size: 36px; border: none; border: none;">
+				<span style="color: #5701d0">결제FAQ</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="graphDivWrap" style="flex: 9">	
+
+
+			<!-- 유형1 차트 -->
+			<canvas id="faqChart03"></canvas>
+			<script th:inline="javascript" style="width: 80%;">
+			    const data3 = /*[[${type3Data}]]*/ {};
+			    const ids3 = Object.keys(data3);
+			    const hits3 = Object.values(data3);
+			    
+			    const maxValue3 = /*[[${maxHits}]]*/ {};
+			    
+			    new Chart(document.getElementById('faqChart03').getContext('2d'), {
+			        type: 'bar',
+			        data: {
+			            labels: ids3,
+			            datasets: [{
+			                label: '조회수',
+			                data: hits3,
+			                backgroundColor: 'rgba(87, 1, 208, 1)',
+			                borderColor: 'rgba(87, 1, 208, 1)',
+			                borderWidth: 1,
+			                barThickness: 5 // ✅ 막대 너비 통일
+			            }]
+			        },
+			        options: {
+			        	maintainAspectRatio: false,
+			            indexAxis: 'y',
+			            scales: {
+			                x: {
+			                    beginAtZero: true,
+			                    max: maxValue3, // ✅ 서버에서 전달받은 최대값
+			                    stepSize: 10,
+			                    grid: { display: false },
+			                    ticks: {
+			                    	font: {
+			                            size: 16,
+			                            weight: 'bold'
+			                        },
+			                        color: '#5701d0',
+			                        stepSize: 10,
+			                        precision: 0,
+			                        callback: v => Number.isInteger(v) ? v : null
+			                    }
+			                },
+			                y: { grid: { display: false }, ticks: { font: { size: 15, weight: 'bold' }, color: '#5701d0' } }
+			            },
+			            plugins: {
+			                legend: { display: false }
+			            }
+			        }
+			    });
+			</script>
+			
+							
+								
+			</div><!-- graphDivWrap -->	
+			
+			</div><!-- child-div -->	
+			
+<!-- ------------------------------------------------------------------------------------------------------------- -->	
+			
+			<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none;
+			flex-direction: row; justify-content: left; background-color: transparent; flex-direction: column;
+			">
+			
+			
+<div style="display: flex; margin-bottom:-0px; margin-top:-10px; border-bottom: 1px solid #cecece !important;">
+	<div class="graphDivWrap1" >
+		<div style="width: 60px; height: auto;"><img th:src="@{/images/symbol_faqType_2.png}" style="width: 100%; height: 100%"/></div>
+	</div>
+	<div class="graphDivWrap2" >
+		<div class="title-div">
+			<div class="div-2" style="font-size: 36px; border: none; border: none;">
+				<span style="color: #5701d0">강좌FAQ</span>
+			</div>
+		</div>
+	</div>
+
+ </div>
+<div class="graphDivWrap" style="flex: 9">	
+
+
+
+			
+			<!-- 유형2 차트 -->
+			<canvas id="faqChart01" style="width: 50%;"></canvas>
+			<script th:inline="javascript">
+			    const data1 = /*[[${type1Data}]]*/ {};
+			    const ids1 = Object.keys(data1);
+			    const hits1 = Object.values(data1);
+			    
+			    const maxValue1 = /*[[${maxHits}]]*/ {};
+			
+			    new Chart(document.getElementById('faqChart01').getContext('2d'), {
+			        type: 'bar',
+			        data: {
+			            labels: ids1,
+			            datasets: [{
+			                label: '조회수',
+			                data: hits1,
+			                backgroundColor: 'rgba(87, 1, 208, 1)',
+			                borderColor: 'rgba(87, 1, 208, 1)',
+			                borderWidth: 1,
+			                barThickness: 5 // ✅ 막대 너비 통일
+			            }]
+			        },
+			        options: {
+
+			        	maintainAspectRatio: false,
+			            indexAxis: 'y',
+			            scales: {
+			                x: {
+			                    beginAtZero: true,
+			                    max: maxValue1, // ✅ 서버에서 전달받은 최대값
+			                    stepSize: 10,
+			                    grid: { display: false },
+			                 ticks: {
+			                    	font: {
+			                            size: 16,
+			                            weight: 'bold'
+			                        },
+			                        color: '#5701d0',
+			                        stepSize: 10,
+			                        precision: 0,
+			                        callback: v => Number.isInteger(v) ? v : null
+			                    }
+			                },
+			                y: { grid: { display: false }, ticks: { font: { size: 15, weight: 'bold' }, color: '#5701d0' } }
+			            },
+			            plugins: {
+			                legend: { display: false }
+			            }
+			        }
+			    });
+			</script>
+			
+								
+			</div><!-- graphDivWrap -->	
+			
+			</div><!-- child-div -->
+			
+<!-- ------------------------------------------------------------------------------------------------------------- -->	
+			<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none;
+			flex-direction: row; justify-content: left; background-color: transparent; flex-direction: column;
+			">
+			
+			
+<div style="display: flex; margin-bottom:-0px; margin-top:-10px; border-bottom: 1px solid #cecece !important;">
+
+<div class="graphDivWrap1" >
+	<div style="width: 60px; height: auto;"><img th:src="@{/images/symbol_faqType_3.png}" style="width: 100%; height: 100%"/></div>
+</div>
+<div class="graphDivWrap2" >
+	<div class="title-div">
+		<div class="div-2" style="font-size: 36px; border: none; border: none;">
+			<span style="color: #5701d0">학습FAQ</span>
+		</div>
+	</div>
+</div>
+</div>
+
+<div class="graphDivWrap" style="flex: 9">	
+
+
+
+			<!-- 유형3 차트 -->
+			<canvas id="faqChart02" style="width: 50%;"></canvas>
+			<script th:inline="javascript">
+			    const data2 = /*[[${type2Data}]]*/ {};
+			    const ids2 = Object.keys(data2);
+			    const hits2 = Object.values(data2);
+			    
+			    const maxValue2 = /*[[${maxHits}]]*/ {};
+			
+			    new Chart(document.getElementById('faqChart02').getContext('2d'), {
+			        type: 'bar',
+			        data: {
+			            labels: ids2,
+			            datasets: [{
+			                label: '조회수',
+			                data: hits2,
+			                backgroundColor: 'rgba(87, 1, 208, 1)',
+			                borderColor: 'rgba(87, 1, 208, 1)',
+			                borderWidth: 1,
+			                barThickness: 5 // ✅ 막대 너비 통일
+			            }]
+			        },
+			        options: {
+			        	maintainAspectRatio: false,
+			            indexAxis: 'y',
+			            scales: {
+			                x: {
+			                    beginAtZero: true,
+			                    max: maxValue2, // ✅ 서버에서 전달받은 최대값
+			                    stepSize: 10,
+			                    grid: { display: false },
+			                 ticks: {
+			                    	font: {
+			                            size: 16,
+			                            weight: 'bold'
+			                        },
+			                        color: '#5701d0',
+			                        stepSize: 10,
+			                        precision: 0,
+			                        callback: v => Number.isInteger(v) ? v : null
+			                    }
+			                },
+			                y: { grid: { display: false }, ticks: { font: { size: 15, weight: 'bold' }, color: '#5701d0' } }
+			            },
+			            plugins: {
+			                legend: { display: false }
+			            }
+			        }
+			    });
+			</script>
+			
+							
+								
+</div><!-- graphDivWrap -->	
+			
+			</div><!-- child-div -->
+			
+					
+<!-- ------------------------------------------------------------------------------------------------------------- -->	
+			
+			<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none;
+			flex-direction: row; justify-content: left; background-color: transparent; flex-direction: column;
+			">
+			
+			
+			<div style="display: flex; margin-bottom:-0px; margin-top:-10px; border-bottom: 1px solid #cecece !important;">
+			<div class="graphDivWrap1" >
+				<div style="width: 60px; height: auto;"><img th:src="@{/images/symbol_faqType_4.png}" style="width: 100%; height: 100%"/></div>
+			</div>
+			<div class="graphDivWrap2" >
+				<div class="title-div">
+					<div class="div-2" style="font-size: 36px; border: none; border: none;">
+						<span style="color: #5701d0">계정FAQ</span>
+					</div>
+				</div>
+			</div>
+			
+			</div>
+
+<div class="graphDivWrap" style="flex: 9">	
+
+
+
+			<!-- 유형4 차트 -->
+			<canvas id="faqChart04" style="width: 50%;"></canvas>
+			<script th:inline="javascript">
+			    const data4 = /*[[${type4Data}]]*/ {};
+			    const ids4 = Object.keys(data4);
+			    const hits4 = Object.values(data4);
+			    
+			    const maxValue4 = /*[[${maxHits}]]*/ {};
+			
+			    new Chart(document.getElementById('faqChart04').getContext('2d'), {
+			        type: 'bar',
+			        data: {
+			            labels: ids4,
+			            datasets: [{
+			                label: '조회수',
+			                data: hits4,
+			                backgroundColor: 'rgba(87, 1, 208, 1)',
+			                borderColor: 'rgba(87, 1, 208, 1)',
+			                borderWidth: 1,
+			                barThickness: 5 // ✅ 막대 너비 통일
+			            }]
+			        },
+			        options: {
+			        	maintainAspectRatio: false,
+			            indexAxis: 'y',
+			            scales: {
+			                x: {
+			                    beginAtZero: true,
+			                    max: maxValue4, // ✅ 서버에서 전달받은 최대값
+			                    stepSize: 10,
+			                    grid: { display: false },
+			                 ticks: {
+			                    	font: {
+			                            size: 16,
+			                            weight: 'bold'
+			                        },
+			                        color: '#5701d0',
+			                        stepSize: 10,
+			                        precision: 0,
+			                        callback: v => Number.isInteger(v) ? v : null
+			                    }
+			                },
+			                y: { grid: { display: false }, ticks: { font: { size: 15, weight: 'bold' }, color: '#5701d0' } }
+			            },
+			            plugins: {
+			                legend: { display: false }
+			            }
+			        }
+			    });
+			</script>
+			
+							
+								
+			</div><!-- graphDivWrap -->	
+			
+			</div><!-- child-div -->	
+					
+<!-- ------------------------------------------------------------------------------------------------------------- -->
+			<div class="child-div"
+			style="height: auto; width: 60%; box-shadow: none; margin-left: 100px; border: none;
+			flex-direction: row; justify-content: left; background-color: transparent; flex-direction: column;
+			">
+			
+			
+<div style="display: flex; margin-bottom:-0px; margin-top:-10px; border-bottom: 1px solid #cecece !important;">
+
+<div class="graphDivWrap1" >
+	<div style="width: 60px; height: auto;"><img th:src="@{/images/symbol_faqType_5.png}" style="width: 100%; height: 100%"/></div>
+</div>
+<div class="graphDivWrap2" >
+	<div class="title-div">
+		<div class="div-2" style="font-size: 36px; border: none; border: none;">
+			<span style="color: #5701d0">기타FAQ</span>
+		</div>
+	</div>
+</div>
+
+</div>
+<div class="graphDivWrap" style="flex: 9">	
+
+
+			<!-- 유형5 차트 -->
+			<canvas id="faqChart05" style="width: 50%;"></canvas>
+			<script th:inline="javascript">
+			    const data5 = /*[[${type5Data}]]*/ {};
+			    const ids5 = Object.keys(data5);
+			    const hits5 = Object.values(data5);
+			    
+			    const maxValue5 = /*[[${maxHits}]]*/ {};
+			
+			    new Chart(document.getElementById('faqChart05').getContext('2d'), {
+			        type: 'bar',
+			        data: {
+			            labels: ids5,
+			            datasets: [{
+			                label: '조회수',
+			                data: hits5,
+			                backgroundColor: 'rgba(87, 1, 208, 1)',
+			                borderColor: 'rgba(87, 1, 208, 1)',
+			                borderWidth: 0,
+			                barThickness: 5 // ✅ 막대 너비 통일
+			            }]
+			        },
+			        options: {
+			        	maintainAspectRatio: false,
+			            indexAxis: 'y',
+			            scales: {
+			                x: {
+			                    beginAtZero: true,
+			                    max: maxValue5, // ✅ 서버에서 전달받은 최대값
+			                    stepSize: 10,
+			                    grid: { display: false },
+			                 ticks: {
+			                    	font: {
+			                            size: 16,
+			                            weight: 'bold'
+			                        },
+			                        color: '#5701d0',
+			                        stepSize: 10,
+			                        precision: 0,
+			                        callback: v => Number.isInteger(v) ? v : null
+			                    }
+			                },
+			                y: { grid: { display: false }, ticks: { font: { size: 15, weight: 'bold' }, color: '#5701d0' },  }
+			            },
+			            plugins: {
+			                legend: { display: false }
+			            }
+			        }
+			    });
+			</script>
+			
+							
+								
+			</div><!-- graphDivWrap -->	
+			
+			</div><!-- child-div -->	
+					
+<!-- ------------------------------------------------------------------------------------------------------------- -->
+
+</div><!-- child-div -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div><!-- parent-container -->
+
+
+</body>
+</html>

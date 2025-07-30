@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.quiz.QuizMapper">
+<!-- 퀴즈 리스트 묶음 -->
+<insert id="insertQuizList" parameterType="kr.co.sist.e_learning.quiz.QuizListDTO">
+<!-- 퀴즈 리스트 묶음 -->
+ <selectKey keyProperty="quizListSeq" resultType="String" order="BEFORE">
+    SELECT 'QL' || TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD(quiz_list_seq.NEXTVAL, 4, '0') FROM dual
+  </selectKey>
+
+  INSERT INTO QUIZ_LIST (
+    quiz_list_seq, course_seq, lang_category, title, upload_date, is_delete
+  ) VALUES (
+    #{quizListSeq, jdbcType=VARCHAR}, #{courseSeq, jdbcType=VARCHAR}, #{langCategory,  jdbcType=VARCHAR},
+    #{title,  jdbcType=VARCHAR}, SYSDATE, 'N'
+  )
+</insert>
+
+
+<!-- 퀴즈 등록 -->
+<insert id="insertQuiz" parameterType="kr.co.sist.e_learning.quiz.QuizDTO">
+<!-- 시퀀스 생성 -->
+<selectKey keyProperty="quizSeq" resultType="String" order="BEFORE">
+	SELECT 'Quiz' || TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD(quiz_seq.NEXTVAL, 4, '0') FROM dual
+</selectKey>
+	
+INSERT INTO quiz (
+	quiz_seq, quiz_list_seq, course_seq, correct_option,
+	question, quiz_order, upload_date, is_delete, type
+) VALUES (
+	#{quizSeq}, #{quizListSeq}, #{courseSeq}, #{correctOption, jdbcType=NUMERIC},
+	#{question}, #{quizOrder}, SYSDATE, 'N', #{type, jdbcType=VARCHAR}
+)
+</insert>
+
+<!-- 퀴즈 보기 추가 -->
+<insert id="insertQuizOption" parameterType="kr.co.sist.e_learning.quiz.QuizOptionDTO">
+
+	INSERT INTO quiz_option (
+		quiz_option_seq,  quiz_seq, option_order, content,
+		image_name, image_addr, is_delete
+	) VALUES (
+	'QO' || TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD(quiz_option_seq.NEXTVAL, 4, '0'),
+	#{quizSeq, jdbcType=VARCHAR}, #{optionOrder, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR},
+	#{imageName, jdbcType=VARCHAR}, #{imageAddr, jdbcType=VARCHAR}, 'N'
+	)
+</insert>
+
+<!-- 퀴즈 리스트(quiz_list 테이블)에 있는 퀴즈 묶음들 가져오기 -->
+<select id="selectQuizListTable" resultMap="quizListDTOMap">
+SELECT *
+FROM quiz_list
+WHERE is_delete = 'N'
+</select>
+
+<!-- resultMap 설정 (하나의 객체 안에 다른 객체 리스트 중첩 매핑/퀴즈 하나에 보기 여러개 중첩해서 quizDTO 안에 담기) -->
+<resultMap id="quizWithOptionsMap" type="kr.co.sist.e_learning.quiz.QuizDTO">
+	<id property="quizSeq" column="quiz_seq" /> <!-- pk -->
+	<result property="quizListSeq" column="quiz_list_seq" />
+	<result property="courseSeq" column="course_seq" />
+	<result property="question" column="question" />
+	<result property="correctOption" column="correct_option" />
+	<result property="quizOrder" column="quiz_order" />
+	<result property="type" column="type" />
+<!-- quizDTO_options에 quiz_option 보기 데이터 담기 -->
+ <collection property="options" ofType="kr.co.sist.e_learning.quiz.QuizOptionDTO">
+    <id property="quizOptionSeq" column="quiz_option_seq" />
+    <result property="optionOrder" column="option_order" />
+    <result property="content" column="content" />
+    <result property="imageName" column="image_name" />
+    <result property="imageAddr" column="image_addr" />
+    <result property="isDelete" column="is_delete" />
+  </collection>
+</resultMap>
+
+<!-- 퀴즈+퀴즈 보기 join 묶음으로 가져오기 -->
+<select id="selectQuizWithOptions" parameterType="String" resultMap="quizWithOptionsMap">
+SELECT
+  q.quiz_seq, <!-- 퀴즈 id -->
+  q.quiz_list_seq, <!-- 퀴즈 묶음 id -->
+  q.question, <!-- 문제 -->
+  q.correct_option, <!-- 정답 -->
+  q.quiz_order, <!-- 퀴즈 순서 (1번퀴즈~5번퀴즈까지) -->
+  q.type, <!-- 퀴즈 타입 (이미지or텍스트) -->
+  
+  qo.quiz_option_seq, <!-- 퀴즈 보기 id -->
+  qo.option_order, <!-- 보기 순서 (1번~5번 보기) -->
+  qo.content, <!-- 보기 내용 -->
+  qo.image_name, <!-- 이미지 파일명 -->
+  qo.image_addr <!-- 이미지 저장 경로 -->
+FROM
+  quiz q
+INNER JOIN
+  quiz_option qo ON q.quiz_seq = qo.quiz_seq
+WHERE
+  q.quiz_list_seq = #{quizListSeq}
+  AND q.is_delete = 'N'      
+  AND qo.is_delete = 'N'
+ORDER BY
+  q.quiz_order, qo.option_order
+</select>
+
+<!-- QuizListDTO를 위한 resultMap / 강의실 modal 창에 제목, 언어 등 데이터 주기 -->
+<resultMap id="quizListDTOMap" type="kr.co.sist.e_learning.quiz.QuizListDTO">
+    <id property="quizListSeq" column="quiz_list_seq"/>
+    <result property="courseSeq" column="course_seq"/>
+    <result property="langCategory" column="lang_category"/>
+    <result property="title" column="title"/>
+    <result property="uploadDate" column="upload_date"/>
+</resultMap>
+
+<!-- 퀴즈 버튼 눌렀을 때 시작 전 리스트 정보 (어떤 외국어? 제목은?)-->
+<select id="selectQuizListInfo" parameterType="String" resultMap="quizListDTOMap" flushCache="true" useCache="false">
+SELECT quiz_list_seq, course_seq, upload_date, lang_category, title
+FROM quiz_list
+WHERE quiz_list_seq = #{quizListSeq, jdbcType=VARCHAR}
+AND is_delete = 'N'
+</select>
+
+<resultMap id="quizDTOMap" type="kr.co.sist.e_learning.quiz.QuizDTO">
+  <id property="quizSeq" column="quiz_seq"/>
+  <result property="quizListSeq" column="quiz_list_seq"/>
+  <result property="courseSeq" column="course_seq"/>
+  <result property="question" column="question"/>
+  <result property="correctOption" column="correct_option"/>
+  <result property="quizOrder" column="quiz_order"/>
+  <result property="type" column="type"/>
+</resultMap>
+
+<select id="selectQuiz" parameterType="String" resultMap="quizDTOMap">
+SELECT quiz_seq, quiz_list_seq, course_seq, question, correct_option, 
+       quiz_order, type
+FROM quiz
+WHERE quiz_seq = #{quizSeq, jdbcType=VARCHAR}
+AND is_delete = 'N'
+</select>
+
+<select id="selectQuizByCourseSeq" parameterType="String" resultType="kr.co.sist.e_learning.quiz.QuizListDTO">
+SELECT quiz_seq, quiz_list_seq, course_seq, question, correct_option, 
+       quiz_order, type
+FROM quiz
+WHERE is_delete = 'N'
+and course_seq=#{courseSeq}
+</select>
+
+<select id="selectQuizSeqByCourseId" parameterType="String" resultType="kr.co.sist.e_learning.quiz.QuizListDTO">
+SELECT quiz_seq, quiz_list_seq
+FROM quiz
+WHERE is_delete = 'N'
+and course_seq=#{courseSeq}
+</select>
+
+<select id="selectDistinctQuizLists" parameterType="String" resultType="kr.co.sist.e_learning.quiz.QuizListDTO">
+    SELECT DISTINCT quiz_list_seq 
+    FROM quiz 
+    WHERE is_delete = 'N'
+    AND course_seq = #{courseSeq}
+</select>
+
+<!-- 퀴즈 학습 데이터 저장 -->
+<insert id="insertQuizResponse" parameterType="kr.co.sist.e_learning.quiz.QuizResponseDTO">
+ <selectKey keyProperty="quizResponseSeq" resultType="String" order="BEFORE">
+    SELECT 'QR' || TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD(quiz_response_seq.NEXTVAL, 4, '0') FROM dual
+ </selectKey>
+
+INSERT INTO quiz_response (
+	quiz_response_seq, quiz_seq, course_seq, user_seq,
+	quiz_list_seq, select_option, correct_check, responseDate
+) VALUES (
+	#{quizResponseSeq}, #{quizSeq, jdbcType=VARCHAR}, #{courseSeq, jdbcType=VARCHAR}, #{userSeq, jdbcType=VARCHAR},
+	#{quizListSeq, jdbcType=VARCHAR} ,#{selectOption, jdbcType=NUMERIC}, #{correctCheck, jdbcType=VARCHAR}, SYSDATE
+)
+
+</insert>
+
+<!-- 저장된 응답 기록들 조회 -->
+<select id="selectQuizResponse" resultType="kr.co.sist.e_learning.quiz.QuizResponseDTO">
+SELECT *
+FROM quiz_response
+WHERE quiz_seq = #{quizSeq}
+</select>
+
+<!-- 응답 중복 체크용 1개 이상 true, 데이터 없으면 false -->
+<select id="existsQuizResponse" resultType="boolean">
+ SELECT CASE WHEN EXISTS (
+    SELECT 1 FROM quiz_response 
+    WHERE quiz_seq = #{quizSeq} 
+    AND user_seq = #{userSeq}
+  ) THEN 1 ELSE 0 END AS result
+  FROM dual
+</select>
+
+<!-- 퀴즈 정답률 및 응답 수 조회 -->
+<select id="QuizCorrectChk" resultType="kr.co.sist.e_learning.quiz.QuizStatusDTO">
+SELECT 
+COUNT(*) AS totalCnt, 
+SUM(CASE WHEN correct_check = 'Y' THEN 1 ELSE 0 END) AS correctCnt
+FROM quiz_response
+WHERE user_seq = #{userSeq}
+AND quiz_list_seq = #{quizListSeq}
+</select>
+
+<!-- 퀴즈 정답 내용 보여주기 -->
+<select id="selectCorrectContent" resultType="String">
+SELECT content
+FROM quiz_option
+WHERE quiz_seq = #{quizSeq}
+AND option_order = (
+SELECT correct_option FROM quiz WHERE quiz_seq = #{quizSeq}
+AND is_delete = 'N'
+)
+AND is_delete = 'N'
+</select>
+
+<!-- 퀴즈 리스트 정보 수정용 -->
+<update id="updateQuizList">
+UPDATE quiz_list
+SET title = #{title, jdbcType=VARCHAR}, lang_category = #{langCategory, jdbcType=VARCHAR}
+WHERE quiz_list_seq = #{quizListSeq, jdbcType=VARCHAR}
+</update>
+
+<!-- 퀴즈 update -->
+<update id="updateQuiz" parameterType="kr.co.sist.e_learning.quiz.QuizDTO">
+UPDATE quiz
+SET question = #{question, jdbcType=VARCHAR},
+    correct_option = #{correctOption, jdbcType=NUMERIC},
+    quiz_order = #{quizOrder, jdbcType=NUMERIC},
+    type = #{type,  jdbcType=VARCHAR}
+WHERE quiz_seq = #{quizSeq, jdbcType=VARCHAR}
+</update>
+
+<!-- 기존 퀴즈+보기 삭제하기 -->
+<delete id="deleteQuizByListSeq">
+DELETE FROM quiz_option
+WHERE quiz_seq IN (
+SELECT quiz_seq FROM quiz WHERE quiz_list_seq = #{quizListSeq}
+);
+
+DELETE FROM quiz
+WHERE quiz_list_seq = #{quizListSeq, jdbcType=VARCHAR};
+</delete>
+
+<!-- 보기 전체 삭제 -->
+<delete id="deleteOptionsByQuizSeq" parameterType="String">
+DELETE FROM quiz_option
+WHERE quiz_seq = #{quizSeq, jdbcType=VARCHAR}
+</delete>
+
+<!-- soft delete -->
+<update id="softDeleteQuizList">
+UPDATE quiz_list
+SET is_delete = 'Y'
+WHERE quiz_list_seq = #{quizListSeq, jdbcType=VARCHAR}
+</update>
+
+<update id="softDeleteQuiz">
+UPDATE quiz
+SET is_delete = 'Y'
+WHERE quiz_list_seq = #{quizListSeq, jdbcType=VARCHAR}
+</update>
+
+<update id="softDeleteOptions" parameterType="String">
+UPDATE quiz_option
+SET is_delete = 'Y'
+WHERE quiz_seq IN (
+  SELECT quiz_seq FROM quiz WHERE quiz_list_seq = #{quizListSeq}
+)
+</update>
+
+</mapper>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강의 후원하기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" th:href="@{/css/donation.css}">
+</head>
+<body>
+<div class="sponsorship-modal">
+    <div class="modal-header">
+        <h2>강의 후원하기</h2>
+        <p>소중한 마음을 전해보세요</p>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+
+    <div class="sponsorship-content">
+        <!-- 강의 정보 -->
+        <div class="lecture-info">
+            <div class="lecture-title" th:text="${lecture.courseTitle}">테스트 강의 제목</div>
+            <div class="instructor-name" th:text="${lecture.instructorNickname} + ' 강사님'">홍길동 강사님</div>
+        </div>
+
+        <!-- 사용자 마일 정보 -->
+        <div class="user-mile-info">
+           <button class="charge-btn" onclick="chargeMiles()">마일 충전하기</button>
+            <h3>보유 마일</h3>
+            <div class="current-miles" th:text="${#numbers.formatInteger(userMiles, 0, 'COMMA')}">15,000</div>
+            <div class="miles-unit">마일</div>
+        </div>
+
+        <!-- 후원 금액 입력 -->
+        <div class="amount-section">
+            <div class="section-title">후원 금액</div>
+            <div class="amount-input-group" id="amountInputGroup">
+                <input type="number" id="amountInput" class="amount-input" placeholder="후원할 마일 입력"
+                       min="100" th:max="${userMiles}" 
+                       oninput="updateAmount()" 
+                       onfocus="this.parentElement.classList.add('focused')" 
+                       onblur="this.parentElement.classList.remove('focused')">
+                <span class="miles-label">마일</span>
+                <div class="amount-controls">
+                    <button class="amount-btn" onclick="decreaseAmount()">-</button>
+                    <button class="amount-btn" onclick="increaseAmount()">+</button>
+                </div>
+            </div>
+            <div class="error-message" id="errorMessage">후원 금액은 100마일 이상 입력해주세요</div>
+            <div class="preset-amounts">
+                <button class="preset-btn" onclick="setAmount(1000)">1,000</button>
+                <button class="preset-btn" onclick="setAmount(3000)">3,000</button>
+                <button class="preset-btn" onclick="setAmount(5000)">5,000</button>
+                <button class="preset-btn" onclick="setAmount(10000)">10,000</button>
+                <button class="preset-btn" onclick="setAmount(20000)">20,000</button>
+                <button class="preset-btn" onclick="setAmount('전액')">전액</button>
+            </div>
+        </div>
+
+        <!-- 후원 메시지 -->
+        <div class="message-section" id="messageSection">
+            <div class="section-title">후원 메시지</div>
+            <div class="message-info" id="messageInfo">
+                <span class="highlight">3,000마일 이상</span> 후원 시 메시지를 보낼 수 있어요.
+            </div>
+            <textarea id="messageTextarea" class="message-textarea" maxlength="200" disabled
+                      placeholder="강사님께 전하고 싶은 메시지를 입력해주세요..." oninput="updateMessageCounter()"></textarea>
+            <div class="message-counter"><span id="messageCount">0</span> / 200</div>
+        </div>
+
+        <!-- 후원 버튼 -->
+        <button id="sponsorshipBtn" class="sponsorship-btn" onclick="processSponsor()" disabled>
+            <span id="sponsorshipBtnText">후원하기</span>
+        </button>
+
+        <!-- 안내사항 -->
+        <div class="notice">
+            <strong>💡 후원 안내</strong>
+            <ul>
+                <li>후원된 마일은 즉시 강사님께 전달됩니다</li>
+                <li>후원 완료 후에는 취소가 불가능합니다</li>
+                <li>3,000마일 이상 후원 시 감사 메시지를 남길 수 있습니다</li>
+                <li>후원 내역은 마이페이지에서 확인할 수 있습니다</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+const lectureData = /*[[${lecture}]]*/ null;
+const maxMiles = /*[[${userMiles}]]*/ 0;
+let currentAmount = 0;  // 초기값을 설정해줍니다.
+/*]]>*/
+
+
+
+
+
+function updateAmount() {
+    const input = document.getElementById('amountInput');
+    const value = parseInt(input.value) || 0;
+    currentAmount = value;
+    validateAmount();
+    updateMessageSection();
+    updateSponsorshipButton();
+    updatePresetButtons();
+}
+
+function validateAmount() {
+    const group = document.getElementById('amountInputGroup');
+    const error = document.getElementById('errorMessage');
+    if (currentAmount < 100 || currentAmount > maxMiles) {
+        group.classList.add('error');
+        error.classList.add('show');
+        return false;
+    } else {
+        group.classList.remove('error');
+        error.classList.remove('show');
+        return true;
+    }
+}
+
+function setAmount(amount) {
+    if (amount === '전액') {
+        amount = maxMiles;
+    }
+    document.getElementById('amountInput').value = amount;
+    updateAmount();
+}
+
+function increaseAmount() {
+    setAmount(Math.min(currentAmount + 1000, maxMiles));
+}
+
+function decreaseAmount() {
+    setAmount(Math.max(currentAmount - 1000, 0));
+}
+
+function updatePresetButtons() {
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    presetButtons.forEach(btn => {
+        btn.classList.remove('active');
+        const btnAmount = parseInt(btn.textContent.replace(',', '').replace('전액', maxMiles));
+        if (btnAmount === currentAmount) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function updateMessageSection() {
+    const section = document.getElementById('messageSection');
+    const textarea = document.getElementById('messageTextarea');
+    const info = document.getElementById('messageInfo');
+    if (currentAmount >= 3000) {
+        section.classList.add('enabled');
+        textarea.disabled = false;
+        info.style.display = 'none';
+        messageEnabled = true;
+    } else {
+        section.classList.remove('enabled');
+        textarea.disabled = true;
+        textarea.value = '';
+        info.style.display = 'block';
+        messageEnabled = false;
+    }
+    updateMessageCounter();
+}
+
+function updateMessageCounter() {
+    document.getElementById('messageCount').textContent =
+        document.getElementById('messageTextarea').value.length;
+}
+
+function updateSponsorshipButton() {
+    const btn = document.getElementById('sponsorshipBtn');
+    const text = document.getElementById('sponsorshipBtnText');
+    const valid = currentAmount >= 100 && currentAmount <= maxMiles;
+    btn.disabled = !valid;
+    text.textContent = valid ? `${currentAmount.toLocaleString()}마일 후원하기` : '후원하기';
+}
+
+async function processSponsor() {
+    if (!validateAmount()) return;
+
+    const message = messageEnabled ? document.getElementById('messageTextarea').value : '';
+    if (!confirm(`강사: ${lectureData.instructorNickname}\n후원: ${currentAmount.toLocaleString()}마일\n\n후원하시겠습니까?`)) return;
+
+    const btn = document.getElementById('sponsorshipBtn');
+    const text = document.getElementById('sponsorshipBtnText');
+    btn.disabled = true;
+    text.textContent = '후원 중...';
+
+    try {
+        const res = await fetch('/api/donation', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                lectureNo: lectureData.courseSeq,
+                amount: currentAmount,
+                message: message
+            })
+        });
+        
+        if (res.ok) {
+            const result = await res.json();
+            alert('후원이 완료되었습니다!');
+            
+            // 성공 페이지로 이동할 URL 생성
+            const successUrl = new URL('/donation/success', window.location.origin);
+            successUrl.searchParams.append('lectureTitle', result.lectureTitle);
+            successUrl.searchParams.append('instructorName', result.instructorName);
+            successUrl.searchParams.append('amount', result.amount);
+            if (result.message) {
+                successUrl.searchParams.append('message', result.message);
+            }
+            
+            window.location.href = successUrl.href;
+        } else {
+            const result = await res.json();
+            alert(result.message || '후원 실패');
+            btn.disabled = false;
+            updateSponsorshipButton();
+        }
+    } catch (e) {
+        alert('오류가 발생했습니다.');
+        btn.disabled = false;
+        updateSponsorshipButton();
+    }
+}
+
+function closeModal() {
+    if (currentAmount > 0) {
+        if (confirm('작성 중인 후원 내용이 있습니다. 닫을까요?')) window.history.back();
+    } else {
+        window.history.back();
+    }
+}
+
+function chargeMiles() {
+    const result = confirm('마일을 충전하시겠습니까?');
+    if (result) {
+        // 확인을 누른 경우
+        // URL에서 lectureNo 파라미터 값을 추출
+        const urlParams = new URLSearchParams(window.location.search);
+        const lectureNo = urlParams.get('lectureNo');
+
+        if (lectureNo) {
+            // 세션에 lectureNo 값 저장
+            sessionStorage.setItem('lectureNo', lectureNo);
+            
+            // 결제 페이지로 이동
+            window.location.href = '/user/payments?lectureNo=' + lectureNo;
+        } else {
+            alert("강의 정보를 찾을 수 없습니다.");
+        }
+    }
+    // 취소를 누르면 아무 일도 일어나지 않음
+}
+
+
+
+// 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    updateSponsorshipButton();
+});
+</script>
+</body>
+</html>

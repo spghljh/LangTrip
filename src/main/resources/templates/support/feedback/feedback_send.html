@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/common.css}">
+<link rel="stylesheet" href="/css/feedback_design.css">
+<title>templates/support/feedback/feedback_send.html</title>
+</head>
+<body
+style="background: linear-gradient( to bottom, white, rgba(204,169,254, 0.3), rgba(64,5,147, 0.3)) !important;"
+>
+<div th:replace="layout/header :: header"></div>
+	<div class="parent-container"
+		style="border: none !important; width: 100%; padding-top: 30px">
+
+		<div class="child-div"
+			style="height: auto; margin: 0px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none">
+			<div class="title-div"
+				style="margin: 0px; padding: 1px; border: none;">
+
+
+				<div class="div-2"
+					style="font-size: 28px; color: #000000; margin: 0px; margin-bottom: -5px; border: none; display: flex">
+					<div>
+						<a th:href="@{/support}"><img
+							th:src="@{/images/symbol_support.png}"
+							style="width: 32px; height: 32px; margin-right: 15px; margin-top: 8px;" /></a>
+					</div>
+					<div>
+						<a th:href="@{/support}" style="color: #000000">지원센터</a>
+					</div>
+				</div>
+
+
+				<div class="div-3" style="margin: 0px; border: none"></div>
+				<div class="div-4" style="margin: 0px; border: none"></div>
+			</div>
+		</div><!-- child-div -->
+
+		<div class="child-div"
+			style="height: auto; margin-top: 40px; margin-bottom: 20px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;">
+			<div class="title-div">
+				<div class="div-1">
+					<div>
+						<img th:src="@{/images/symbol_feedback.png}"
+							style="width: 50px; height: 50px" />
+					</div>
+				</div>
+				<div class="div-2">피드백</div>
+				<div class="div-3" style="font-size: 24px">소중한 피드백을 통해 사용자 경험을 향상시킬 수 있습니다.</div>
+				<div class="div-4" style="color: #5701d0">
+					<span><a href="/support" style="font-size: 18px">뒤로가기</a></span>
+				</div>
+			</div>
+		</div><!-- child-div -->
+
+		<div class="child-div"
+			style="height: auto; width: 1200px; box-shadow: none !important; background-color: transparent; border: none">
+			<div
+				style="font-size: 36px;    font-weight: bold; color: #8e3efe; margin-top: 10px; margin-bottom: -30px; padding-bottom: 15px; text-shadow: 0 0 3px rgba(white 0.3);">
+				피드백 방식을 선택해주세요. <span
+					style="font-size: 20px; margin-left: 290px; font-weight: normal; opacity: 0.6">익명
+					피드백의 경우 검토 및 반영이 지연될 수 있습니다.</span>
+			</div>
+
+		</div>
+		<!-- child-div -->
+
+		<form th:action="@{/support/feedback/submit}" method="post">
+		
+		
+		
+<div th:if="${sessionUser != null}">		
+		
+		<div class="child-div"
+			style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 20px;">
+
+			<div
+				style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px">
+
+				<div
+					style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;">
+					<label>피드백 유형</label>
+				</div>
+				
+
+
+				<div id="feedbackTypeSection"
+					style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid red; padding: 8px 16px; border-radius: 6px;">
+					<label>
+					<input type="radio" name="feedback_style" value="1" id="realnameRadio" checked><span> 실명 피드백</span>
+					</label>
+					<label>
+					<input type="radio" name="feedback_style" value="0" id="anonymousRadio"><span> 익명 피드백</span>
+					</label>
+				</div>
+				
+		</div>
+		</div><!-- child-div -->
+		
+		
+	
+	
+	
+	
+	
+		
+		
+<!-- 		<div class="child-div" -->
+<!-- 		    style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 10px;"> -->
+		
+<!-- 		    <div -->
+<!-- 		        style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px"> -->
+		
+<!-- 		        <div -->
+<!-- 		            style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;"> -->
+<!-- 		            <label>피드백 분류</label> -->
+<!-- 		        </div> -->
+		
+<!-- 		        <div id="feedbackCategorySection" -->
+<!-- 		            style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px;"> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="결제" checked><span> 결제</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="강좌"><span> 강좌</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="학습"><span> 학습</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="계정"><span> 계정</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="기타"><span> 기타</span> -->
+<!-- 		            </label> -->
+<!-- 		        </div> -->
+<!-- 		    </div> -->
+<!-- 		</div> child-div -->
+
+
+			<div class="child-div"
+			    style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 20px;">
+			    <div style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px">
+			        <div
+			            style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;">
+			            <label>피드백 분류</label>
+			        </div>
+			
+			        <div id="feedbackCategorySection"
+			            style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px;">
+			
+			            <!-- 동적 라디오 렌더링 -->
+			            <th:block th:each="type : ${faqtypeList}">
+			                <label>
+			                    <input type="radio" name="feedback_type" th:value="${type.faqtype_name}"
+			                        th:checked="${typeStat.index == 0}"> <!-- 첫 항목 체크 -->
+			                    <span th:text="${type.faqtype_name}">카테고리</span>
+			                </label>
+			            </th:block>
+			
+			        </div>
+			    </div>
+			</div>
+
+
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			<div class="child-div" 
+				style="height: auto; width: 1200px; box-shadow: none !important; background-color: transparent; border: none">
+				<div
+				style="font-size: 36px;    font-weight: bold; color: #8e3efe; margin-top: 10px; margin-bottom: -30px; padding-bottom: 20px; text-shadow: 0 0 3px rgba(white 0.3);">
+					피드백 진행 현황을 알려드립니다. <span
+						style="font-size: 20px; font-weight: normal; margin-left: 120px; opacity: 0.6">유효하지
+						않은 이메일의 입력 또는 진행현황 미확인에 주의해주세요.</span>
+				</div>
+
+			</div>
+			<!-- child-div -->
+			
+			
+			
+			
+	<div class="child-div" id="userIdSection"
+				style="height: auto; width: auto; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding: 10px; display: flex; flex-direction: column; gap: 15px;">
+
+<!-- 			<div id="userIdSection" style="display: flex !important;"> -->
+				<div style="display: flex !important;">
+
+					<div
+						style="font-size: 24px; width: 100px; margin-bottom: 10px; margin-top: 5px; margin:10px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(white 0.3);">
+						아이디 :</div>
+					<div id="user_id"
+						style="width: 100px; margin-top: 3px; font-size: 30px; color: rgba(142, 62, 254, 0.6);">
+						<span th:text="${sessionUser.user_id}">user_id</span>
+					</div>
+
+					<input type="hidden" name="user_id"
+						th:value="${session.user != null} ? ${session.user.user_id} : ''" />
+
+				</div>
+				
+
+	</div><!-- child-div -->
+	
+	<div class="child-div"
+				style="height: auto; width: auto; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+
+				<div style="display: flex">
+					<div style="font-size: 28px; width: 200px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(white 0.3); margin-top: 5px;">
+						<label for="email">피드백 이메일 :</label>
+					</div>
+					<div>
+						<input type="email" id="email" name="email" placeholder="email@example.com" style="width: 120%; padding: 8px; margin-top: 0px; margin-left: -20px;">
+					</div>
+				</div>
+
+	</div><!-- child-div -->
+			
+			
+			
+			
+			
+			
+</div>
+<div th:if="${sessionUser == null}">
+
+		<div class="child-div"
+			style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 20px;">
+
+			<div
+				style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px">
+
+				<div
+					style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;">
+					<label>피드백 유형</label>
+				</div>
+				<div id="feedbackTypeSection"
+					style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid red; padding: 8px 16px; border-radius: 6px;">
+					<label>
+					<input type="radio" name="feedback_style" value="1" id="realnameRadio" disabled="disabled"><span style="color:#cecece"> 실명 피드백</span>
+					</label>
+					<label>
+					<input type="radio" name="feedback_style" value="0" id="anonymousRadio" checked><span> 익명 피드백</span>
+					</label>
+				</div>
+				
+		</div>
+		</div><!-- child-div -->	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+<!-- 		<div class="child-div" -->
+<!-- 		    style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 10px;"> -->
+		
+<!-- 		    <div -->
+<!-- 		        style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px"> -->
+		
+<!-- 		        <div -->
+<!-- 		            style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;"> -->
+<!-- 		            <label>피드백 분류</label> -->
+<!-- 		        </div> -->
+		
+<!-- 		        <div id="feedbackCategorySection" -->
+<!-- 		            style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px;"> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="결제" checked><span> 결제</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="강좌"><span> 강좌</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="학습"><span> 학습</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="계정"><span> 계정</span> -->
+<!-- 		            </label> -->
+<!-- 		            <label> -->
+<!-- 		                <input type="radio" name="feedback_type" value="기타"><span> 기타</span> -->
+<!-- 		            </label> -->
+<!-- 		        </div> -->
+<!-- 		    </div> -->
+<!-- 		</div> child-div -->
+
+
+			<div class="child-div"
+			    style="height: auto; width: 1200px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding-bottom: 20px;">
+			    <div style="display: flex; align-items: center; gap: 30px; margin: 15px; margin-bottom: 0px">
+			        <div
+			            style="font-size: 30px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(255, 255, 255, 0.3); white-space: nowrap;">
+			            <label>피드백 분류</label>
+			        </div>
+			
+			        <div id="feedbackCategorySection"
+			            style="display: flex; gap: 20px; font-size: 20px; color: #000; border: 1px solid #ccc; padding: 8px 16px; border-radius: 6px;">
+			
+			            <!-- 동적 라디오 렌더링 -->
+			            <th:block th:each="type : ${faqtypeList}">
+			                <label>
+<!-- 			                    <input type="radio" name="feedback_type" th:value="${type.faqtype_name}" th:checked="${typeStat.index == 0}"> 첫 항목 체크 -->
+			                    <input type="radio" name="feedback_type" th:value="${type.faqtype_id}" th:checked="${typeStat.index == 0}"> <!-- 첫 항목 체크 -->
+			                    <span th:text="${type.faqtype_name}">카테고리</span>
+			                </label>
+			            </th:block>
+			
+			        </div>
+			    </div>
+			</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			<div class="child-div"
+				style="height: auto; width: 1200px; box-shadow: none !important; background-color: transparent; border: none">
+				<div
+					style="font-size: 36px; font-weight: bold; color: #8e3efe; margin-top: 10px; margin-bottom: 0px; text-shadow: 0 0 3px rgba(white 0.3);">
+					피드백 진행 현황을 알려드립니다. <span
+						style="font-size: 20px;font-weight: normal; margin-left: 120px; opacity: 0.6">유효하지
+						않은 이메일의 입력 또는 진행현황 미확인에 주의해주세요.</span>
+				</div>
+
+			</div>
+			<!-- child-div -->	
+			
+			
+			
+			
+	<div class="child-div" id="userIdSection"
+				style="height: auto; width: auto; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+
+				<div style="display: flex !important;">
+
+					<div
+						style="font-size: 24px; width: 100px; margin-bottom: 10px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(white 0.3);">
+						아이디</div>
+					<div id="user_id"
+						style="width: 100px; font-size: 24px; color: rgba(142, 62, 254, 0.6);">
+						<span th:if="${session.user != null}"
+							th:text="${session.user.user_id}">사용자아이디</span> <span
+							th:unless="${session.user != null}"></span>
+					</div>
+
+				</div>
+				
+	</div><!-- child-div -->
+	
+		<div class="child-div"
+						style="height: auto; width: auto; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding: 20px; display: flex; flex-direction: column; gap: 15px; margin-top: -10px">
+		
+						<div style="display: flex">
+							<div style="font-size: 28px; width: 200px; font-weight: bold; color: #5701d0; text-shadow: 0 0 3px rgba(white 0.3); margin-top: 5px;">
+								<label for="email">피드백 이메일 :</label>
+							</div>
+							<div>
+								<input type="email" id="email" name="email" placeholder="email@example.com" style="width: 120%; padding: 8px; margin-top: 0px; margin-left: -20px;">
+							</div>
+						</div>
+		
+			</div><!-- child-div -->
+			
+			
+</div>
+
+
+
+
+
+
+
+
+	
+
+
+		
+
+		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			<div class="child-div"
+				style="height: auto; width: 1200px; box-shadow: none !important; background-color: transparent; border: none">
+				<div
+				style="font-size: 36px;    font-weight: bold; color: #8e3efe; margin-top: 10px; margin-bottom: -30px; padding-bottom: 20px; text-shadow: 0 0 3px rgba(white 0.3);">
+					소중한 피드백을 작성해주세요. <span
+						style="font-size: 20px; margin-left: 180px; font-weight: normal; opacity: 0.6">불쾌감을
+						주는 표현이나 피드백과 관련없는 내용은 자제해주세요.</span>
+				</div>
+			</div>
+			<!-- child-div -->
+
+			<div class="child-div"
+				style="height: auto; width: auto; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+				<div>
+					<div
+						style="font-size: 28px; font-weight: bold; color: #5701d0; margin-top: 10px; text-shadow: 0 0 3px rgba(white 0.3);">
+						<label for="feedback_title">피드백 제목</label>
+					</div>
+					<input type="text" id="feedback_title" name="feedback_title"
+						placeholder="제목을 입력해주세요" style="width: 99.3%; padding: 10px;">
+				</div>
+				<div>
+					<div
+						style="font-size: 28px; font-weight: bold; color: #5701d0; margin-top: 10px; text-shadow: 0 0 3px rgba(white 0.3);">
+						<label for="feedback_content">피드백 상세 내용</label>
+					</div>
+					<textarea id="feedback_content" name="feedback_content" rows="8"
+						placeholder="의견 또는 문제를 상세히 작성해주세요"
+						style="width: 98%; padding: 10px; font-size: 24px; font-family: inherit;"></textarea>
+				</div>
+
+			</div><!-- child-div -->
+			
+			
+			
+			<div class="child-div" style="height: 80px; width: 1200px; border:none; box-shadow: none; display: flex; justify-content: center; align-items: center; background-color: transparent !important;">
+				<button type="submit" style="padding: 12px 64px; font-size: 28px; background-color: #5701d0; color: white; border: none; border-radius: 8px; cursor: pointer;">제출하기</button>
+			</div><!-- child-div -->
+			
+			</form><!-- th:action="@{/support/feedback/submit}" method="post" -->
+		
+<div style="margin-top: 100px"></div>
+
+</div><!-- parent-container -->
+
+<!-- <script src="/js/feedback_submit.js"></script> -->
+<!-- <script src="/js/support_ready.js"></script> -->
+<script src="/js/support_center.js"></script>
+
+<div th:replace="layout/footer :: footer"></div>
+</body>
+
+
+
+
+
+
+
+
+
+</html>

@@ -1,0 +1,61 @@
+<div class="table-header">
+  <h3>관리자 목록</h3>
+  <div class="table-stats">총 <span th:text="${totalCount ?: 0}">0</span>건</div>
+</div>
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>순번</th>
+        <th>관리자 ID</th>
+        <th>이름</th>
+        <th>휴대폰</th>
+        <th>이메일</th>
+        <th>부서</th>
+        <th>내선번호</th>
+        <th>상태</th>
+        <th>가입일자</th>
+        <th>액션</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="admin, iterStat : ${adminList}">
+        <td th:text="${(page - 1) * pageSize + iterStat.index + 1}">1</td>
+        <td th:text="${admin.adminId}">admin001</td>
+        <td th:text="${admin.adminName}">홍길동</td>
+        <td th:text="${admin.phone}">010-0000-0000</td>
+        <td th:text="${admin.email}">admin@example.com</td>
+        <td th:text="${admin.dept}">기획팀</td>
+        <td th:text="${admin.inline}">1234</td>
+        <td>
+          <span class="status-badge"
+                th:classappend="'status-' + (${admin.status == 'Y'} ? 'active' : (admin.status == 'N' ? 'inactive' : 'pending'))"
+                th:text="${admin.status == 'Y' ? '활성' : (admin.status == 'N' ? '비활성' : '신규')}">
+            상태
+          </span>
+        </td>
+        <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd')}">2025-07-09</td>
+        <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+          <a th:if="${admin.status == 'PENDING'}"
+             th:href="@{/admin/accounts/{id}(id=${admin.requestId})}"
+             class="btn btn-warning action-btn">승인대기</a>
+          <a th:if="${admin.status != 'PENDING'}"
+             th:href="@{/admin/accounts/{id}(id=${admin.adminId})}"
+             class="btn btn-secondary action-btn">상세</a>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(adminList)}">
+        <td colspan="11" style="text-align:center; color:#666; padding:1.5rem;">검색 결과가 없습니다.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="pagination">
+    <a th:if="${page > 1}" th:href="@{/admin/accounts(status=${status}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, page=${page - 1}, pageSize=${pageSize})}">이전</a>
+    <th:block th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+        <a th:href="@{/admin/accounts(status=${status}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, page=${pageNum}, pageSize=${pageSize})}" 
+           th:text="${pageNum}" 
+           th:classappend="${pageNum == page} ? 'active' : ''">1</a>
+    </th:block>
+    <a th:if="${page < totalPages}" th:href="@{/admin/accounts(status=${status}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, page=${page + 1}, pageSize=${pageSize})}">다음</a>
+</div>

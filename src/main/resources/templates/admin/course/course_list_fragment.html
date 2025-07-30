@@ -1,0 +1,52 @@
+<div class="table-header">
+  <h3>강의 목록</h3>
+  <div class="table-stats">총 <span th:text="${totalCount ?: 0}">0</span>건</div>
+</div>
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>순번</th>
+        <th>강의 제목</th>
+        <th>강사</th>
+        <th>업로드 날짜</th>
+        <th>영상 수</th>
+        <th>퀴즈 수</th>
+        <th>공개 여부</th>
+        <th>액션</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="course, stat : ${courseList}">
+        <td th:text="${(currentPage - 1) * pageSize + stat.index + 1}"></td>
+        <td th:text="${course.title}"></td>
+        <td th:text="${course.userName}"></td>
+        <td th:text="${#temporals.format(course.uploadDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="${course.videoCount}"></td>
+        <td th:text="${course.quizCount}"></td>
+        <td>
+          <span class="status-badge"
+                th:classappend="${course.isPublic == 'Y' ? 'status-active' : 'status-inactive'}"
+                th:text="${course.isPublic == 'Y' ? '공개' : '비공개'}">
+          </span>
+        </td>
+        <td class="action-buttons">
+          <a th:href="@{/admin/courses/{courseSeq}(courseSeq=${course.courseSeq})}" class="btn btn-secondary">상세</a>
+          
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(courseList)}">
+        <td colspan="8" style="text-align: center; color:#666; padding:1.5rem;">강의가 없습니다.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="pagination">
+    <a th:if="${currentPage > 1}" th:href="@{/admin/courses(page=${currentPage - 1}, pageSize=${pageSize}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, isPublic=${isPublic})}">이전</a>
+    <th:block th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+        <a th:href="@{/admin/courses(page=${pageNum}, pageSize=${pageSize}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, isPublic=${isPublic})}" 
+           th:text="${pageNum}" 
+           th:classappend="${pageNum == currentPage ? 'active' : ''}"></a>
+    </th:block>
+    <a th:if="${currentPage < totalPages}" th:href="@{/admin/courses(page=${currentPage + 1}, pageSize=${pageSize}, searchType=${searchType}, searchKeyword=${searchKeyword}, sort=${sort}, isPublic=${isPublic})}">다음</a>
+</div>

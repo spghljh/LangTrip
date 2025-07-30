@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.payment.PaymentMapper">
+
+    <!-- payments 시퀀스 채번 -->
+    <select id="selectNextPaymentSeq" resultType="String">
+        SELECT 'MID_' || TO_CHAR(SEQ_payments.NEXTVAL) FROM DUAL
+    </select>
+
+    <!-- payments insert -->
+   <insert id="insertPayment" parameterType="kr.co.sist.e_learning.payment.PaymentRequestDTO">
+    <selectKey keyProperty="paymentSeq" resultType="Long" order="BEFORE">
+        SELECT SEQ_payments.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO payments (
+        payment_seq,
+        imp_uid,
+        wallet_seq,
+        method,
+        provider,
+        payment_amount,
+        payment_status,
+        created_at,
+        currency,
+        channel,
+        name,
+        receipt_url,
+        mile_amount,
+        fee_rate,
+        user_seq
+    ) VALUES (
+        #{paymentSeq},
+        #{impUid, jdbcType=VARCHAR},
+        #{walletSeq},
+        #{method, jdbcType=VARCHAR},
+        #{provider, jdbcType=VARCHAR},
+        #{paymentAmount, jdbcType=NUMERIC},
+        #{paymentStatus, jdbcType=VARCHAR},
+        SYSDATE,
+        #{currency, jdbcType=VARCHAR},
+        #{channel, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR},
+        #{receiptUrl, jdbcType=VARCHAR},
+        #{mileAmount, jdbcType=NUMERIC},
+        #{feeRate, jdbcType=NUMERIC},
+        #{userSeq, jdbcType=NUMERIC}
+    )
+</insert>
+   
+
+    </mapper>

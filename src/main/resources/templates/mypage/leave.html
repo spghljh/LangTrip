@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 탈퇴</title>
+  <style>
+    body {
+      background-color: #f9fafc;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #d32f2f;
+    }
+
+    .sub {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: #3f51b5;
+    }
+
+    .reasons label {
+      display: block;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn-confirm {
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-cancel {
+      background-color: #aaa;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-confirm:hover {
+      background-color: #b71c1c;
+    }
+
+    .btn-cancel:hover {
+      background-color: #888;
+    }
+
+    .notice {
+      font-size: 13px;
+      color: #d32f2f;
+      margin-top: 30px;
+      line-height: 1.6;
+      background-color: #fff8f8;
+      padding: 15px;
+      border: 1px solid #ffcdd2;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div th:fragment="leave">
+  <div class="form-container">
+    <h2>그동안 저희 서비스를 이용해 주셔서 감사합니다.</h2>
+    <p class="sub">더 나은 학습 환경을 위해 노력하겠습니다.</p>
+
+    <form th:action="@{/mypage/withdraw}" method="post">
+      <div class="section">
+        <div class="section-title">📌 탈퇴 사유 선택</div>
+        <div class="reasons">
+          <label><input type="radio" name="reason" value="학습 동기 저하"> 외국어 학습에 대한 흥미 감소</label>
+          <label><input type="radio" name="reason" value="진행 어려움"> 강의 수강 진행이 어려움</label>
+          <label><input type="radio" name="reason" value="콘텐츠 불만"> 강의 콘텐츠 품질 불만족</label>
+          <label><input type="radio" name="reason" value="기술적 문제"> 사이트 오류 / 느림 등 기술 문제</label>
+          <label><input type="radio" name="reason" value="개인 사정"> 개인 사정(시간 부족 등)</label>
+          <label><input type="radio" name="reason" value="기타"> 기타</label>
+        </div>
+      </div>
+
+      <div class="section confirm">
+        <div class="section-title">✅ 본인 확인</div>
+        <label>아이디</label>
+        <input type="text" name="id" th:value="${session.userId}" readonly>
+        <label>비밀번호</label>
+        <input type="password" name="password" required>
+      </div>
+
+      <div class="btns">
+        <button type="submit" class="btn-confirm">회원 탈퇴</button>
+        <button type="button" class="btn-cancel" onclick="history.back()">취소</button>
+      </div>
+
+      <div class="notice">
+        ※ 탈퇴 시 회원 정보 및 학습 이력은 모두 삭제되며 복구되지 않습니다.<br>
+        ※ 수강 중인 강의 및 후원 내역도 모두 초기화됩니다.<br>
+        ※ 탈퇴 후 같은 이메일로 재가입은 가능하나, 기존 정보는 복원되지 않습니다.
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

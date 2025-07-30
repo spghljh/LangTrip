@@ -1,0 +1,198 @@
+@charset "UTF-8";
+
+/* 전체 배경 및 폰트 */
+body {
+  margin: 0;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, #d4f1ff 0%, #ffffff 100%);
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  font-family: 'Fredoka', sans-serif;
+}
+
+/* 로고 박스 */
+.logo-box {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-box img {
+  width: 160px;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+/* 퀴즈 입력 카드 */
+.form-card {
+  background: white;
+  max-width: 720px;
+  margin: auto;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+/* 퀴즈 번호 */
+.form-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #00b3c6;
+  margin-bottom: 25px;
+}
+
+/* label 공통 스타일 */
+label {
+  font-weight: 600;
+  margin-top: 20px;
+  display: block;
+  color: #333;
+}
+
+/* 입력 필드 */
+input[type="text"], select, textarea {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid #d1e4ef;
+  padding: 12px 16px;
+  margin-top: 8px;
+  background-color: #f7fcff;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #00b3c6;
+  background-color: #fff;
+  outline: none;
+}
+
+
+/* 텍스트 퀴즈 보기 삭제 버튼 */
+.remove-option {
+  background-color: #ff6666;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  height: 37px;
+  transition: 0.2s;
+}
+
+.remove-option:hover {
+  background-color: #cc0000;
+}
+
+/* 텍스트 퀴즈 보기 추가 버튼 */
+.add-option {
+  background-color: #00c4cc;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-weight: 600;
+  margin-top: 24px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.add-option:hover {
+  background-color: #00aabb;
+}
+
+/* 퀴즈 등록 완료 버튼 */
+.submit-btn {
+  margin-top: 35px;
+  width: 100%;
+  background-color: #00c4cc;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #0099aa;
+}
+
+/* 모바일 대응 */
+@media (max-width: 576px) {
+  .form-card {
+    padding: 30px 20px;
+  }
+}
+
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.img-preview {
+  width: 140px;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  padding: 5px;
+  object-fit: contain;
+}
+
+.option-fields {
+  flex-grow: 1;
+}
+
+.option-content {
+  flex: 1;
+  min-width: 150px;
+}
+
+.option-image {
+  width: 150px;
+}
+/* 이미지 퀴즈 보기 확장용 (사용 시 HTML 구조 필요) */
+.option-row img {
+  width: 130px;
+  height: 110px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #eee;
+  flex-shrink: 0;
+}
+
+.current-image-info {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.slide {
+  margin-bottom: 20px; /* 문제 카드 간 여백 추가 */
+}
+
+ .thumbnail-box {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .thumbnail-box img.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .custom-file-input {
+    width: 100%;
+  }

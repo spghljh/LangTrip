@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마일 충전하기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .payment-modal {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: #6366f1;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .payment-content {
+            padding: 20px;
+        }
+
+        .amount-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .amount-input-group {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0 15px;
+            background: #f9fafb;
+        }
+
+        .amount-input-group.focused {
+            border-color: #6366f1;
+        }
+
+        .amount-input {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 15px 0;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+        }
+
+        .amount-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .amount-btn {
+            background: none;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .amount-btn:hover {
+            background: #f3f4f6;
+            border-color: #6366f1;
+        }
+
+        .amount-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+        }
+
+        .amount-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .amount-info-row:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #6366f1;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 8px;
+        }
+
+        .preset-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover, .preset-btn.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .payment-methods {
+            margin-bottom: 30px;
+        }
+
+        .method-group {
+            margin-bottom: 20px;
+        }
+
+        .method-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+        .method-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .method-option {
+            position: relative;
+        }
+
+        .method-radio {
+            display: none;
+        }
+
+        .method-label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .method-radio:checked + .method-label {
+            border-color: #6366f1;
+            background: #f0f9ff;
+            color: #6366f1;
+        }
+
+        .method-label:hover {
+            border-color: #6366f1;
+        }
+
+        .agreement-section {
+            margin-bottom: 20px;
+        }
+
+        .agreement-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .agreement-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .agreement-checkbox.checked {
+            background: #6366f1;
+            border-color: #6366f1;
+        }
+
+        .agreement-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+        }
+
+        .payment-btn {
+            width: 100%;
+            padding: 16px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .payment-btn:hover {
+            background: #5b5bd6;
+        }
+
+        .payment-btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .notice {
+            margin-top: 15px;
+            padding: 12px;
+            background: #fef3c7;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #92400e;
+        }
+
+        .notice ul {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+
+        .notice li {
+            margin-bottom: 3px;
+        }
+    </style>
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+</head>
+<body>
+  <div class="payment-modal">
+    <div class="modal-header">
+      <h2>마일 충전하기</h2>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+
+    <div class="payment-content">
+      <div class="amount-section">
+        <div class="section-title">충전금액</div>
+        <div class="amount-input-group" id="amountInputGroup">
+          <input type="number" id="amountInput" class="amount-input"
+            placeholder="충전할 금액 입력" min="3000" value="10000"
+            oninput="updateAmount()" />
+          <span style="color: #6b7280; margin-right: 10px;">원</span>
+          <div class="amount-controls">
+            <button class="amount-btn" onclick="decreaseAmount()">-</button>
+            <button class="amount-btn" onclick="increaseAmount()">+</button>
+          </div>
+        </div>
+
+        <div class="preset-amounts">
+          <button class="preset-btn" onclick="setAmount(event, 3000)">3,000원</button>
+          <button class="preset-btn active" onclick="setAmount(event, 10000)">10,000원</button>
+          <button class="preset-btn" onclick="setAmount(event, 30000)">30,000원</button>
+          <button class="preset-btn" onclick="setAmount(event, 50000)">50,000원</button>
+          <button class="preset-btn" onclick="setAmount(event, 100000)">100,000원</button>
+          <button class="preset-btn" onclick="setAmount(event, 300000)">300,000원</button>
+        </div>
+
+        <div class="amount-info">
+          <div class="amount-info-row">
+            <span>충전금액</span>
+            <span id="chargeAmount">10,000원</span>
+          </div>
+          <div class="amount-info-row">
+            <span>수수료 (10%)</span>
+            <span id="feeAmount">1,000원</span>
+          </div>
+          <div class="amount-info-row">
+            <span>받을 마일</span>
+            <span id="receiveMile">9,000 마일</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="payment-methods">
+        <div class="section-title">결제수단</div>
+
+        <div class="method-group">
+          <div class="method-group-title">간편결제</div>
+          <div class="method-options">
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="kakao" value="kakao" class="method-radio" />
+              <label for="kakao" class="method-label">카카오페이</label>
+            </div>
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="naver" value="naver" class="method-radio" />
+              <label for="naver" class="method-label">네이버페이</label>
+            </div>
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="toss" value="toss" class="method-radio" />
+              <label for="toss" class="method-label">토스페이</label>
+            </div>
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="payco" value="payco" class="method-radio" />
+              <label for="payco" class="method-label">PAYCO</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="method-group">
+          <div class="method-group-title">일반결제</div>
+          <div class="method-options">
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="card" value="card" class="method-radio" checked />
+              <label for="card" class="method-label">카드결제</label>
+            </div>
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="bank" value="bank" class="method-radio" />
+              <label for="bank" class="method-label">무통장입금</label>
+            </div>
+            <div class="method-option">
+              <input type="radio" name="paymentMethod" id="transfer" value="transfer" class="method-radio" />
+              <label for="transfer" class="method-label">계좌이체</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="agreement-section">
+        <div class="agreement-item">
+          <div class="agreement-checkbox" id="termsCheckbox" onclick="toggleAgreement('terms')"></div>
+          <label for="terms">마일 충전 약관에 동의합니다</label>
+        </div>
+      </div>
+
+      <button class="payment-btn" id="paymentBtn" onclick="processPayment()" disabled>
+        <span id="paymentBtnText">10,000원 결제하기</span>
+      </button>
+    </div>
+  </div>
+
+<script>
+    const FEE_RATE = 0.1;
+    let currentAmount = 10000;
+    let agreementChecked = false;
+
+    function updateAmount() {
+      const input = document.getElementById("amountInput");
+      let amount = parseInt(input.value) || 0;
+
+      if (amount < 3000) {
+        amount = 3000;
+        input.value = amount;
+      }
+
+      currentAmount = amount;
+      updateAmountDisplay();
+      updatePaymentButton();
+    }
+
+    function setAmount(e, amount) {
+      document.getElementById("amountInput").value = amount;
+      currentAmount = amount;
+      updateAmountDisplay();
+      updatePaymentButton();
+
+      document.querySelectorAll(".preset-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      e.target.classList.add("active");
+    }
+
+    function increaseAmount() {
+      const newAmount = currentAmount + 1000;
+      document.getElementById("amountInput").value = newAmount;
+      currentAmount = newAmount;
+      updateAmountDisplay();
+      updatePaymentButton();
+    }
+
+    function decreaseAmount() {
+      const newAmount = Math.max(3000, currentAmount - 1000);
+      document.getElementById("amountInput").value = newAmount;
+      currentAmount = newAmount;
+      updateAmountDisplay();
+      updatePaymentButton();
+    }
+
+    function updateAmountDisplay() {
+      const fee = Math.floor(currentAmount * FEE_RATE);
+      const receiveMile = currentAmount - fee;
+
+      document.getElementById("chargeAmount").textContent = currentAmount.toLocaleString() + "원";
+      document.getElementById("feeAmount").textContent = fee.toLocaleString() + "원";
+      document.getElementById("receiveMile").textContent = receiveMile.toLocaleString() + " 마일";
+    }
+
+    function toggleAgreement() {
+      const checkbox = document.getElementById("termsCheckbox");
+      agreementChecked = !agreementChecked;
+
+      if (agreementChecked) {
+        checkbox.classList.add("checked");
+      } else {
+        checkbox.classList.remove("checked");
+      }
+
+      updatePaymentButton();
+    }
+
+    function updatePaymentButton() {
+      const btn = document.getElementById("paymentBtn");
+      const btnText = document.getElementById("paymentBtnText");
+
+      btnText.textContent = currentAmount.toLocaleString() + "원 결제하기";
+
+      btn.disabled = !(agreementChecked && currentAmount >= 3000);
+    }
+
+    function getPG(method) {
+      switch (method) {
+        case "kakao": return "kakaopay.TC0ONETIME";
+        case "naver": return "naverpay";
+        case "toss": return "tosspay.tosstest";
+        case "payco": return "payco";
+        default: return "html5_inicis";
+      }
+    }
+
+    function getPayMethod(method) {
+      switch (method) {
+        case "card": return "card";
+        case "bank": return "vbank";
+        case "transfer": return "trans";
+        case "kakao":
+        case "naver":
+        case "toss":
+        case "payco": return "easy";
+        default: return "card";
+      }
+    }
+
+    function getChannelKey(pgProvider) {
+      // TODO: 실제 channelKey 매핑 로직을 적용
+      switch (pgProvider) {
+        case "kakaopay.TC0ONETIME":
+          return "channel-key-01764171-b249-4c16-9d18-e9174fa8e611";
+        case "tosspay.tosstest":
+          return "channel-key-01aab9b9-828b-4913-9395-52f922e578f6";
+        case "payco":
+          return "channel-key-a0962379-a4eb-41d3-90a8-47198b8af642";
+        case "naverpay":
+          return "channel-key-xxxx"; // 실제 채널키로 교체
+        default:
+          return "channel-key-001cc830-159d-45af-a551-fa834c07f6b9"; // 일반 카드, 무통장 등
+      }
+    }
+
+    function processPayment() {
+     
+        console.log("processPayment() called.");
+        IMP.init("imp14397622"); // 아이엠포트의 userCode를 넣어야 함!
+
+        const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!selectedMethod) {
+            alert("결제수단을 선택해주세요.");
+            return;
+        }
+        if (!agreementChecked) {
+            alert("약관에 동의해주세요.");
+            return;
+        }
+        console.log("Payment method and agreement checked.");
+
+        const paymentMethod = selectedMethod.value;
+        const pg = getPG(paymentMethod);
+        const channelKey = getChannelKey(pg);
+
+        const merchantUid = "mid_" + Date.now();
+        const amount = currentAmount;
+
+        // GET URL에서 lectureNo 가져오기 (GET 방식)
+        const urlParams = new URLSearchParams(window.location.search);
+        const lectureNo = urlParams.get('lectureNo');  // lectureNo는 GET 파라미터로 받기
+
+        if (!lectureNo) {
+            alert('강의 정보가 없습니다.');
+            return;
+        }
+        console.log("Lecture number obtained:", lectureNo);
+
+        // 결제 정보는 POST 방식으로 서버에 전달
+        const paymentData = {
+            channelKey: channelKey,
+            pg: pg,
+            pay_method: getPayMethod(paymentMethod),
+            merchant_uid: merchantUid,
+            name: "마일 충전",
+            amount: amount,
+            buyer_email: "test@example.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "서울특별시 강남구",
+            buyer_postcode: "123-456",
+        };
+
+        console.log("Calling IMP.request_pay with data:", paymentData);
+        IMP.request_pay(paymentData, function (rsp) {
+            console.log("IMP.request_pay callback received. rsp:", rsp);
+            if (rsp.success) {
+                // 성공 시 결제 서버에 저장
+                axios.post("/payment", {
+                    impUid: rsp.imp_uid,
+                    merchantUid: rsp.merchant_uid,
+                    paymentAmount: rsp.paid_amount,
+                    method: paymentData.pay_method,
+                    provider: paymentData.pg,
+                    name: paymentData.name,
+                    buyerEmail: paymentData.buyer_email,
+                    buyerName: paymentData.buyer_name,
+                    buyerTel: paymentData.buyer_tel,
+                    buyerAddr: paymentData.buyer_addr,
+                    buyerPostcode: paymentData.buyer_postcode,
+                    receiptUrl: rsp.receipt_url,
+                    mileAmount: Math.floor(amount * (1 - FEE_RATE)),
+                    feeRate: FEE_RATE * 100
+                }).then(res => {
+                    console.log("Response from /payment:", res.data);
+                    if (res.data.success) {
+                        // 결제 성공 후 서버로 payment_amount와 mile_amount를 전달하는 대신
+                        // 서버에서 세션에 저장했으므로 바로 리디렉션
+                        window.location.href = '/payment/success?lectureNo=' + lectureNo;
+                    } else {
+                        alert("결제 검증 실패: " + res.data.message);
+                    }
+                }).catch(err => {
+                    console.error(err);
+                    alert("서버 오류가 발생했습니다.");
+                });
+            } else {
+                // 실패 시 결제 취소 서버 호출
+                axios.post("/payment/cancel", {
+                    impUid: rsp.imp_uid,
+                    failReason: rsp.error_msg
+                }).then(res => {
+                    console.log("Payment cancel response:", res.data);
+                    alert("결제가 취소되었습니다.\n사유: " + rsp.error_msg);
+                }).catch(err => {
+                    console.error(err);
+                    alert("결제 취소 처리 중 오류가 발생했습니다.");
+                });
+            }
+        });
+    }
+
+
+
+
+
+    function closeModal() {
+        if (confirm("결제를 취소하시겠습니까?")) {
+            window.history.back();
+        }
+    }
+
+    updateAmountDisplay();
+    updatePaymentButton();
+
+</script>
+
+</body>
+</html>

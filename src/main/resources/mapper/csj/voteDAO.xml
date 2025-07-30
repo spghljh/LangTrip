@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.community.dao.VoteDAO">
+
+  <!-- 오늘 이미 투표했는지 확인 -->
+  <select id="hasVotedToday" resultType="int">
+    SELECT COUNT(*)
+    FROM community_like
+    WHERE user_id2 = #{userId}
+      AND post_id2 = #{postId}
+      AND liked_at >= TRUNC(SYSDATE)
+  </select>
+
+  <!-- 투표 저장 -->
+  <insert id="saveVote">
+    INSERT INTO community_like (
+      like_id,
+      user_id2,
+      post_id2,
+      vote_type,
+      liked_at
+    ) VALUES (
+      seq_community_like.NEXTVAL,
+      #{userId},
+      #{postId},
+      #{voteType},
+      SYSTIMESTAMP
+    )
+  </insert>
+
+  <!-- 추천/비추천 개수 조회 -->
+  <select id="countVotes" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM community_like
+    WHERE post_id2 = #{postId}
+      AND vote_type = #{voteType}
+  </select>
+
+</mapper>

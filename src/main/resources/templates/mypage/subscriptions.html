@@ -1,0 +1,24 @@
+<div class="subscription-page">
+  <div class="subscription-section">
+    <h2>구독한 강사 목록</h2>
+
+    <div th:if="${#lists.isEmpty(subscriptionList)}" class="empty-state">
+      <p>아직 구독한 강사가 없습니다. 🎓<br>
+        새로운 강사를 구독하여 학습을 시작해보세요!</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(subscriptionList)}" class="subscription-grid">
+      <div th:each="sub : ${subscriptionList}" class="subscription-card">
+        <div class="instructor-info">
+          <p><strong th:text="${sub.instructorName}">강사 이름</strong></p>
+          <p>구독일: <span th:text="${sub.subscribedAt}">2025-07-19</span></p>
+        </div>
+        <button class="unsubscribe-btn"
+                th:onclick="|unsubscribe(${sub.instructorId})|">
+          구독 취소
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

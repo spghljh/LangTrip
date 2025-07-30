@@ -1,0 +1,105 @@
+@charset "UTF-8";
+
+ body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: #f0f8ff;
+      text-align: center;
+      padding: 50px;
+    }
+
+ /* 퀴즈 묶음 (버튼+모달) 하나의 단위 */
+.quiz-item {
+  position: relative;
+  display: flex;              /* 버튼 + 모달 나란히 */
+  align-items: flex-start;    /* 버튼과 모달 상단 정렬 */
+  margin-bottom: 30px;        /* 버튼 간 간격 */
+}
+
+/* 퀴즈 시작 버튼 (세로로 배치되도록 block 처리) */
+.quiz-btn {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(79, 172, 254, 0.4);
+  margin-right: 20px;
+}
+
+/* 기존 모달 디자인 유지하고 위치만 오른쪽으로 */
+.modal {
+ display: none;
+  position: absolute;
+  top: 0;
+  left: 120%; /* ← 이건 유지! 버튼 오른쪽에 뜨게 하기 위함 */
+  
+  /* ✅ 복원된 기존 디자인 (이거 건들지 말기 요청사항 기준) */
+  padding: 20px;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 300px;
+  height: auto;
+  text-align: left;
+}
+
+.quiz-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 172, 254, 0.5);
+  background: linear-gradient(135deg, #1dcaff 0%, #00c8ff 100%);
+}
+    .quiz-container {
+  position: relative;
+  display: inline-block;
+}
+
+
+    .modal button {
+      margin-top: 20px;
+      margin-right: 10px;
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    
+    .modal p {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #333;
+    }
+
+
+    .modal button:first-of-type {
+      background-color: #3db9ff;
+      color: white;
+    }
+
+    .modal button:first-of-type:hover {
+      background-color: #1daeff;
+    }
+
+    .modal button:last-of-type {
+      background-color: #eee;
+      color: #444;
+    }
+
+    .modal button:last-of-type:hover {
+      background-color: #ddd;
+    }
+    
+    .modal .modify-quiz-btn {
+  background-color: #fbb034; /* 주황색 */
+  color: white;
+}
+
+.modal .modify-quiz-btn:hover {
+  background-color: #ffa500;
+}

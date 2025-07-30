@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/admin_sidebar.css">
+
+<link rel="stylesheet" href="/css/admin_notice_detail_design.css">
+<link rel="stylesheet" href="/css/admin_notices_design.css">
+
+
+<title>templates/admin/support/support_admin_notice.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body>
+<div th:replace="layout/admin_sidebar :: sidebar"></div>
+<div class="parent-container" style="border: none !important; width: 100%; height: 100%; padding-top: 30px; margin-bottom: 0px; padding-bottom: 0px; background: #f5f7fa; border: none; padding-right: 320px; min-width: 1800px;">
+<div class="child-div" style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); margin-left: 600px; background-color: rgba(255,255,255,0.7); border:none !important;">
+	<div th:replace="/support/admin/support_admin_submenu :: subMenu"></div>
+</div><!-- child-div -->
+		
+	
+		
+		<div class="child-div notice-background" th:attr="data-status=${notice.notice_status}"
+			style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; margin-left: 600px;">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top: 5px; ">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_notice.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						공지사항 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						전체 조회	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px; color:#5701d0">
+						상세 조회	
+					</div>
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+			
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>
+
+				<style>
+				.noticeDeleteButton {
+					width: 60px;
+					height: 30px;
+					color: white;
+					background-color: rgb(228,1,95);
+					border-radius: 5px;
+					border:none;
+				}
+				.noticeDeleteButton:hover {
+					width: 60px;
+					height: 30px;
+					color: white;
+					background-color: rgba(228,1,95, 0.2);
+					border-radius: 5px;
+					border:none;
+				}
+				
+				
+				.noticeFixButton {
+					width: 60px;
+					height: 30px;
+					color: #5701d0;
+					border: 2px solid #5701d0;
+					background-color: transparent;
+					border-radius: 5px;
+				}
+				.noticeFixButton:hover {
+					width: 60px;
+					height: 30px;
+					color: #5701d0;
+					border: 2px solid #5701d0;
+					background-color: transparent;
+					border-radius: 5px;
+				}
+				.notice-row:hover {
+					background-color: rgba(87,1,208, 0.1);
+				}
+				</style>
+				
+
+
+
+
+		<div class="child-div"
+				style="height: auto; box-shadow: none; margin-top: 20px; width: 99%; background-color: transparent; border:none">
+				<div class="detail-div"
+					style="height: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+					<div
+						style="font-size: 28px; font-weight: bold; color: #000000; border-bottom: 2px solid #ccc; padding-bottom: 10px;">
+						<span th:text="${notice.notice_title}"
+							style="margin-left: 10px; font-size: 36px">공지 제목</span>
+					</div>
+					<hr
+						style="border-color: rgba(0, 0, 0, 0.2) !important; width: 98%; margin-top: -15px; margin-bottom: 5px;">
+					<div
+						style="display: flex; justify-content: space-between; font-size: 14px; color: #666; ">
+
+						<div
+							style="display: flex; gap: 10px; border: none; margin-top: -10px; ">
+
+							<div class="detailDivs">
+								<span style="color: #5701d0;">작성자:</span> <span
+									th:text="${notice.notice_writer}" style="color: #000000">관리자</span>
+							</div>
+
+							<div class="detailDivs">
+								<span style="color: #5701d0;">작성일:</span> <span
+									th:text="${#dates.format(notice.notice_created_date, 'yyyy-MM-dd')}"
+									style="color: #000000">2025-07-07</span>
+							</div>
+
+							<div class="detailDivs">
+								<span style="color: #5701d0;">수정일:</span> <span
+									th:text="${#dates.format(notice.notice_last_modified_date, 'yyyy-MM-dd')}"
+									style="color: #000000">2025-07-08</span>
+							</div>
+
+						</div>
+
+						<div class="detailDivs" style="margin-top: 0px">
+							<span style="color: #5701d0;">조회수:</span> <span
+								th:text="${notice.notice_hits}" style="color: #000000">123</span>
+						</div>
+
+					</div>
+
+					<div
+						style="flex: 1; font-size: 20px; line-height: 1.6; color: #000000; border: 1px solid #ddd !important; border-radius: 0px; padding: 20px; background-color: #fefefe;">
+						<p th:utext="${notice.notice_content}">공지 내용이 출력됩니다.</p>
+					</div>
+
+				</div>
+			</div>
+			<!-- child-div  -->
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+
+		</div>
+		<!-- child-div -->
+		
+		<div class="child-div"
+			style="height: auto; width: 100%; box-shadow: none; margin-left: 600px; background-color: transparent; border:none !important">
+
+			<div class="title-div"
+				style="border-bottom: none; border: 1px solid none; margin-left: 20px; margin-bottom: 10px; border:none">
+				
+				<div class="div-1" style="flex:5; border:none; display: flex; justify-content: flex-end; border:none">
+				
+<!-- 					<div class="div-2" style="font-size: 30px; border:none"> -->
+<!-- 						<input type="button" value="삭제" class="noticeDeleteButton" -->
+<!-- 				th:onclick="'if(confirm(\'정말 삭제하시겠습니까?\')) location.href=\'' + @{/admin/support/notice/delete/{id}(id=${notice.notice_id})} + '\''" /> -->
+
+<!-- 					</div> -->
+
+				<form th:action="@{/admin/support/notice/delete/{id}(id=${notice.notice_id})}" method="post" onsubmit="return confirm('해당 공지를 삭제할까요?')">
+				    <input type="submit" value="삭제" class="noticeDeleteButton"  />
+				</form>
+				<form th:action="@{/admin/support/notice/edit/{id}(id=${notice.notice_id})}">
+				    <input type="submit" value="수정" class="noticeEditButton"  />
+				</form>
+
+				</div>
+			</div>
+
+
+
+
+
+				<style>
+				.noticeDeleteButton {
+					width: 120px;
+					height: 40px;
+					font-size : 20px;
+					color: white;
+					background-color: rgb(228,1,95);
+					border-radius: 5px;
+					border:none;
+					
+					
+				}
+				.noticeDeleteButton:hover {
+					width: 120px;
+					height: 40px;
+					font-size : 20px;
+					color: white;
+					background-color: rgb(228,1,95);
+					border-radius: 5px;
+					border:none;
+					
+					
+					opacity: 0.7;
+				}
+				
+				.noticeEditButton {
+					margin-left: 30px;
+					
+					width: 120px;
+					height: 40px;
+					font-size : 20px;
+					color: white;
+					background-color: #5701d0;
+					border-radius: 5px;
+					border:none;
+				}
+				.noticeEditButton:hover {
+					width: 120px;
+					height: 40px;
+					font-size : 20px;
+					color: white;
+					background-color: #5701d0;
+					border-radius: 5px;
+					border:none;
+					
+					
+					opacity: 0.7;
+				}
+				
+				</style>
+				
+
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+
+
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+	</div>
+	<!-- parent-container -->
+	
+	
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $('.notice-background').each(function() {
+	        const status = $(this).data('status');
+	        if (status === 'I') {  // 상태가 'I'일 때만 배경색 변경
+	            $(this).css('background-color', '#dddddd');
+	        }
+	    });
+	});
+
+	</script>
+	
+</body>
+</html>

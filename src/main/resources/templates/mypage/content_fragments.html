@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    .section-box {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .info-row {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .highlight {
+      color: #2b6cb0;
+      font-weight: bold;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .dashboard-item {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .dashboard-item h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #444;
+    }
+
+    .dashboard-item p {
+      font-size: 24px;
+      color: #2b6cb0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ✅ 내 정보 Fragment -->
+<div th:fragment="my_info">
+  <div class="section-box">
+    <div class="section-title">내 정보</div>
+    <div class="info-row">아이디: <span class="highlight" th:text="${myData.userId}">testUser</span></div>
+    <div class="info-row">이름: <span class="highlight" th:text="${myData.name}">홍길동</span></div>
+    <div class="info-row">이메일: <span th:text="${myData.email}">email@example.com</span></div>
+    <div class="info-row">전화번호: <span th:text="${myData.phone}">010-1234-5678</span></div>
+  </div>
+</div>
+
+<!-- ✅ 대시보드 Fragment -->
+<div th:fragment="dashboard">
+  <div class="section-box">
+    <div class="section-title">학습 요약</div>
+    <div class="dashboard-grid">
+      <div class="dashboard-item">
+        <h3>완료한 강의</h3>
+        <p th:text="${myData.completedCourses}">3</p>
+      </div>
+      <div class="dashboard-item">
+        <h3>총 학습 시간</h3>
+        <p th:text="${myData.totalStudyTime} + '분'">120분</p>
+      </div>
+      <div class="dashboard-item">
+        <h3>퀴즈 정답률</h3>
+        <p th:text="${myData.quizAccuracy} + '%'">90%</p>
+      </div>
+      <div class="dashboard-item">
+        <h3>후원 등급</h3>
+        <p th:text="${myData.donationLevel}">골드</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

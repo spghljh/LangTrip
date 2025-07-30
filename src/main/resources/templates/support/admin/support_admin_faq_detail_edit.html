@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/admin_sidebar.css">
+
+<link rel="stylesheet" href="/css/admin_faq_detail_design.css">
+<link rel="stylesheet" href="/css/admin_faqs_design.css">
+
+
+<title>templates/admin/support/support_admin_faq.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body style="background: #aaaaaa;">
+<div th:replace="layout/admin_sidebar :: sidebar"></div>
+<div class="parent-container" style="border: none !important; width: 100%; height: 100%; padding-top: 30px; margin-bottom: 0px; padding-bottom: 0px; border: none; padding-right: 320px; min-width: 1800px;">
+<div class="child-div" style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); margin-left: 600px; background-color: rgba(255,255,255,0.7); border:none !important;">
+	<div th:replace="/support/admin/support_admin_submenu :: subMenu"></div>
+</div><!-- child-div -->
+	
+		
+		<div class="child-div faq-background" th:attr="data-status=${faq.faq_status}"
+			style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important; margin-left: 600px;">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top: 5px">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_faq.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						FAQ 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						전체 조회	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px; color:#5701d0">
+						상세 조회 (편집)	
+					</div>
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+
+
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>
+
+
+
+		<div style="padding: 40px;">
+		<!-- 편집 폼 -->
+        <form th:action="@{/admin/support/faq/update/{id}(id=${faq.faq_id})}" method="post">
+            <input type="hidden" name="faq_id" th:value="${faq.faq_id}" />
+
+	            <!-- FAQ ID (수정 불가, 표시만) -->
+	            <div class="detailDivs">
+	                <label for="faq_id" style="color: #5701d0;">FAQ ID</label><br>
+	                <input type="text" id="faq_id" name="faq_id" th:value="${faq.faq_id}"
+	                       style="width: 100%; padding: 10px; font-size: 20px; border: 1px solid #ccc; border-radius: 4px; color:#cca9fe" readonly;/>
+	            </div>
+
+            			
+	            <!-- 제목 -->
+	            <div class="detailDivs">
+	                <label for="faq_title" style="color: #5701d0;">FAQ 제목</label><br>
+	                <input type="text" id="faq_title" name="faq_title" th:value="${faq.faq_title}"
+	                       placeholder="FAQ 제목을 입력하세요" style="width: 100%; padding: 10px; font-size: 20px; border: 1px solid #ccc; border-radius: 4px;" />
+	            </div>
+	
+	            <!-- 내용 -->
+	            <div class="detailDivs">
+	                <label for="faq_content" style="color: #5701d0;">FAQ 내용</label><br>
+	                <textarea id="faq_content" name="faq_content" rows="10" style="width: 100%; padding: 20px; font-size: 18px; border: 1px solid #ccc; border-radius: 4px;"
+	                          th:text="${faq.faq_content}"></textarea> 
+	            </div>
+
+            <!-- 조회수 (수정 불가, 표시만) -->
+            <div class="detailDivs">
+                <label for="faq_hits" style="color: #5701d0;">조회수</label><br>
+                <input type="text" id="faq_hits" name="faq_hits" th:value="${faq.faq_hits}"
+                       style="width: 100%; padding: 10px; font-size: 20px; border: 1px solid #ccc; border-radius: 4px; color:#cca9fe" readonly />
+            </div>
+
+            <!-- 수정일 (수정 불가, 표시만) -->
+            <div class="detailDivs">
+                <label for="faq_last_modified_date" style="color: #5701d0;">수정일</label><br>
+                <input type="text" id="faq_last_modified_date" name="faq_last_modified_date" th:value="${#dates.format(faq.faq_last_modified_date, 'yyyy-MM-dd')}"
+                       style="width: 100%; padding: 10px; font-size: 20px; border: 1px solid #ccc; border-radius: 4px; color:#cca9fe" readonly />
+            </div>
+
+
+
+    <!-- 버튼 공통 스타일 -->
+    <style>
+        .faqEditButton {
+            background-color: #5701d0;
+            color: white;
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .faqEditButton:hover {
+            opacity: 0.8;
+        }
+
+        .faqDeleteButton {
+            background-color: #e4015f;
+            color: white;
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .faqDeleteButton:hover {
+            opacity: 0.8;
+        }
+    </style>
+
+
+
+
+</div>
+
+
+		</div>
+		<!-- child-div -->
+		
+		<div class="child-div"
+			style="height: auto; width: 100%; box-shadow: none; margin-left: 600px; background-color: transparent; border:none !important">
+
+			<div class="title-div"
+				style="border-bottom: none; border: 1px solid none; margin-left: 20px; margin-bottom: 10px; border:none">
+				
+				<div class="div-1" style="flex:5; border:none; display: flex; justify-content: flex-end; border:none">
+
+			
+
+
+				</div>
+			</div>
+
+
+            <!-- 버튼 영역 -->
+            <div style="margin-top: -20px; text-align: right; display: flex; flex-direction: row; justify-content: right">
+                <button type="submit" class="faqEditButton">수정 완료</button>
+	        </form>
+                <form th:action="@{/admin/support/faq/delete/{id}(id=${faq.faq_id})}" method="post">
+                <button type="submit" class="faqEditButton" style="background-color: #e4015f; margin-left: 20px;">삭제</button>
+                </form>
+                <div style="margin-top: -20px; text-align: right; display: flex; flex-direction: row; justify-content: right">
+                <div style="margin-top: 30px"><a th:href="@{/admin/support/faq}" class="faqDeleteButton" style="margin-left: 20px; background-color: rgba(0,0,0,0.5);">취소</a></div>
+            </div>
+        
+
+
+
+				
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+
+
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+	</div>
+	<!-- parent-container -->
+	
+	
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $('.faq-background').each(function() {
+	        const status = $(this).data('status');
+	        if (status === 'I') {  // 상태가 'I'일 때만 배경색 변경
+	            $(this).css('background-color', '#dddddd');
+	        }
+	    });
+	});
+
+	</script>
+	
+</body>
+</html>

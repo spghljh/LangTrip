@@ -1,0 +1,67 @@
+<div th:fragment="faqItemFragment" style="margin-top: 20px; margin-bottom: 20px ">
+  <div th:each="group, iterStat : ${groupedFaqs}">
+  
+  
+  
+  	<div style="display: flex; ">
+	    <div style="border: none; width: 40px; height: 40px;">
+<!-- 	    	<img th:src="@{/images/symbol_faqType_1.png}" style="width: 95%; height: 95%; margin-bottom: -75px;"/> -->
+<!-- 		    <img th:src="@{|/images/symbol_faqType_${iterStat.index + 1}.png|}" style="width: 95%; height: 95%; margin-bottom: -73px;" /> -->
+				<img th:src="@{|/images/symbol_faqType_${iterStat.index + 1}.png|}"
+				     onerror="this.onerror=null; this.src='/images/symbol_faq.png';"
+				     style="width: 95%; height: 95%; margin-bottom: -80px;" />
+
+	    </div>
+	    <!-- 그룹별 제목에 id 추가 -->
+<!-- 	    <div class="faq-type-title" th:id="'faq-type' + ${iterStat.index + 1}" style="border:none;" th:text="${group.key}">faqtype_name</div> -->
+	    <div class="faq-type-title" th:id="'faq-type' + ${iterStat.index + 1}" style="border:none; color: #5701d0; font-size: 40px" th:text="|${group.key} FAQ|">faqtype_name</div>
+	</div>         
+     
+
+
+	<style>
+	.faqHover:hover{
+		background-color: rgba(204, 169, 254, 0.3);
+		
+		.div-2 {
+			color: #5701d0 !important;
+		}
+		.div-4 {
+			color: #5701d0 !important;
+		}
+	}
+	</style>
+
+    <!-- 해당 그룹의 faq 항목들 출력 -->
+    <div th:each="faq, iterStat: ${group.value}">
+    
+      <div class="child-div faqHover " onclick="toggleAccordion(this)" th:id="'faq-' + ${faq.faq_id}" th:attr="data-id=${faq.faq_id}"  style="box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) !important; cursor: pointer;">
+
+      
+        <div class="title-div">
+<!--      <div class="div-1" th:text="${faq.faqtype_name}" style="width: auto !important;">faqtype_name</div> -->
+<!--           <div class="div-1" th:text="|유형${iterStat.index +1}|" style="width: auto !important;">faqtype_name</div> -->
+          <div class="div-2" th:text="${faq.faq_title}" style="padding-left: 10px;">faq_title</div>
+          <div class="div-4">열기</div>
+        </div>
+      </div>
+
+      <div class="accordion-container">
+        <div class="child-div" style="background-color: rgba(236,226,253,0.7);">
+          <div class="content-div" style="background-color: transparent;">
+            <div class="left-content" style="background-color: transparent;">
+              <div class="half-top" th:text="${faq.faq_content}" style="font-size: 24px;">faq_content</div>
+              <div class="half-bottom">조회수: <span th:text="${faq.faq_hits}"></span></div>
+            </div>
+<!--             <div><input type="button" value="도움돼요"></div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+  </div>
+</div>

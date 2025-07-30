@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>책 아이콘 버튼</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #f4f4f4;
+      padding: 50px;
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .round-button {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #6dd400, #4CAF50);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .round-button i {
+      color: white;
+      font-size: 28px;
+    }
+
+    .round-button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 별 아이콘 버튼 -->
+  <button class="round-button">
+    <i class="fa-solid fa-star"></i>
+  </button>
+
+  <!-- 책 아이콘 버튼 -->
+  <button class="round-button">
+    <i class="fa-solid fa-book"></i>
+  </button>
+
+</body>
+</html>

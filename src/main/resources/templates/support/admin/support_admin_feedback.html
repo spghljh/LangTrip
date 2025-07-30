@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/admin_sidebar.css">
+
+<link rel="stylesheet"
+	href="/css/admin_feedback_design.css">
+
+<title>templates/admin/support/support_admin_notice.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+
+<div th:replace="layout/admin_sidebar :: sidebar"></div>
+<div class="parent-container" style="border: none !important; width: 100%; height: 100%; padding-top: 30px; margin-bottom: 0px; padding-bottom: 0px; background: #f5f7fa; border: none; padding-right: 320px; min-width: 1800px;">
+<div class="child-div" style="height: auto; width: 100%; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); margin-left: 600px; background-color: rgba(255,255,255,0.7); border:none !important;">
+	<div th:replace="/support/admin/support_admin_submenu :: subMenu"></div>
+</div><!-- child-div -->
+	
+	
+	
+	
+	
+	
+	
+		<div class="child-div"
+			style="height: auto; width: 100%; margin-left: 600px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); background-color: rgba(255,255,255,0.7); border: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top:5px">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_feedback.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						피드백 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; color: #5701d0">
+						누적 피드백 현황
+					</div>
+					
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>
+
+
+																							<div class="graphDivWrap" style="width: 720px; margin-bottom: 10px; margin-top: 80px;">
+																								
+																										<canvas id="feedbackChart"></canvas>
+																										<script th:inline="javascript">
+																										    const chartData = /*[[${feedbackChartData}]]*/ {};
+																										    
+																										    const labels = Object.keys(chartData);
+																										    const values = Object.values(chartData);
+																										    
+																										    const maxValue0 = /*[[${maxSends}]]*/ {};
+																										
+																										    const ctx = document.getElementById('feedbackChart').getContext('2d');
+																										    new Chart(ctx, {
+																										        type: 'bar',
+																										        data: {
+																										            labels: labels,
+																										            datasets: [{
+																										                label: '피드백 유형별 접수 수',
+																										                data: values,
+																										                backgroundColor: 'rgba(87, 1, 208, 1)', // 투명도 없는 색상
+																										                borderColor: 'rgba(87, 1, 208, 1)',
+																										                borderWidth: 1,
+																										                barThickness: 54 // ✅ 막대 너비 통일
+																										            }]
+																										        },
+																										        options: {
+																										            scales: {
+																										                x: {
+																										                    grid: {
+																										                        display: false // X축 격자 제거
+																										                    },
+																										                    ticks: {
+																										                        font: {
+																										                            size: 24,
+																										                            weight: 'bold'
+																										                        },
+																										                    color: '#000000'
+																										                    },
+																										                    
+																										                },
+																										                y: {
+																										                    beginAtZero: true,
+																										                    max: maxValue0, 
+																										                    grid: {
+																										                        display: false // Y축 격자 제거
+																										                    },
+																										                    ticks: {
+																										                    	font: {
+																										                            size: 20,
+																										                            weight: 'bold'
+																										                        },
+																										                        stepSize: 3,
+																										                        precision: 0,
+																										                        callback: function (value) {
+																										                            if (Number.isInteger(value)) return value;
+																										                        },
+																										                        color: '#000000'
+																										                 },
+																										                    title: {
+																										                        display: true,
+																										                        text: ''
+																										                    }
+																										                }
+																										            },
+																										            plugins: {
+																										                legend: {
+																										                    display: false
+																										                }
+																										            }
+																										        }
+																										    });
+																										</script>
+																										
+																							</div><!-- graphDivWrap -->	
+			
+														
+							
+
+</div><!-- child-div -->
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		<div class="child-div"
+			style="height: auto; width: 100%; margin-left: 600px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); background-color: rgba(255,255,255,0.7); border: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top:5px">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_feedback.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						피드백 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; color: #5701d0">
+						새로운 피드백
+					</div>
+					
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+			
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>													
+																
+																<div th:if="${#lists.isEmpty(newFeedbackList)}"
+																	style="padding: 30px; font-size: 30px; color: #5701d0; opacity: 0.5; text-align: center; margin-top: -50px;">
+																	접수된 피드백이 없습니다.</div>
+																	
+																<div th:unless="${#lists.isEmpty(newFeedbackList)}"
+																	style="padding: 30px; font-size: 30px; color: #5701d0; text-align: center;">
+																	
+																	
+																	
+																<div th:replace="/support/admin/feedbackHeader :: feedbackHeader"></div>
+																<div class="feedback-row row-bordered"
+																	th:each="fbNew : ${newFeedbackList}"
+																	th:attr="data-step=${fbNew.feedback_step}">
+																	<a
+																		th:href="@{/admin/support/feedback_detail/{id}(id=${fbNew.feedback_id})}"
+																		style="display: contents;" class="feedback-detail-link">
+<!-- 																		<div class="notice-cell" th:text="${fbNew.feedback_id}"></div> -->
+																		<div class="notice-cell" th:text="${fbNew.feedback_type}"></div>
+																		<div class="notice-cell"
+																			th:text="${#dates.format(fbNew.feedback_created_date, 'yyyy-MM-dd')}"></div>
+												
+												
+																		<!-- 실명/익명 구분 마킹 -->
+																		<div class="notice-cell">
+																			<th:block th:if="${fbNew.feedback_style} == '0'">
+																				<button type="submit"
+																					style="border: none; background-color: transparent; color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+																					익명</button>
+																			</th:block>
+																			<th:block th:if="${fbNew.feedback_style} == '1'">
+																				<button type="submit"
+																					style="border: none; background-color: rgba(204, 169, 254, 0); color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px; font-weight: bold">
+																					실명</button>
+																			</th:block>
+																		</div>
+												
+												
+												
+																		<div class="notice-cell" th:text="${fbNew.feedback_title}"
+																			style="text-align: left; padding-left: 20px;"></div> <!--             <div class="notice-cell" th:text="${fbNew.user_id}"></div> -->
+												<!-- 						<div class="notice-cell" th:text="${fbNew.email}" style="text-align: left;"></div> -->
+																		<!--             <div class="notice-cell" th:text="${fbNew.feedback_content}"></div> -->
+												
+																		<!-- 반영상태 구분 마킹 -->
+																		<div class="notice-cell">
+																			<th:block th:if="${fbNew.feedback_step} == '0'">
+																				<button type="submit"
+																					style="border: none; background-color: transparent; color: #aaaaaa; border: 1px solid #aaaaaa; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+																					미반영</button>
+																			</th:block>
+																			<th:block th:if="${fbNew.feedback_step} == '1'">
+																				<button type="submit"
+																					style="border: none; background-color: rgba(204, 169, 254, 0); color: #000000; border: 1px solid #000000; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+																					검토중</button>
+																			</th:block>
+																			<th:block th:if="${fbNew.feedback_step} == '2'">
+																				<button type="submit"
+																					style="border: none; background-color: rgba(204, 169, 254, 0); color: #5701d0; border: 1px solid #5701d0; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+																					처리중</button>
+																			</th:block>
+																			<th:block th:if="${fbNew.feedback_step} == '3'">
+																				<button type="submit"
+																					style="border: none; background-color: rgba(204, 169, 254, 0); color: rgb(1, 213, 75); border: 1px solid rgb(1, 213, 75); border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+																					반영완료</button>
+																			</th:block>
+																		</div>
+												
+												
+<!-- 																		<div class="notice-cell" th:text="${fbNew.feedback_status}"></div> -->
+<!-- 																		<div class="notice-cell" th:text="${fbNew.feedback_step}"></div> -->
+<!-- 																		<div class="notice-cell" th:text="${fbNew.feedback_style}"></div> -->
+												
+												
+												
+																	</a>
+																</div>
+														
+															</div>
+													
+														
+														
+				
+	
+				
+	
+		<!-- 모달 레이어 -->
+		<div id="feedbackModal" class="modal">
+			<div class="modal-content">
+				<div id="modal-body" style="display: flex; justify-content: center;">
+					<!-- 여기에 AJAX로 피드백 상세 내용 로딩 -->
+				</div>
+			</div>
+		</div>
+
+
+
+	</div><!-- child-div -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		<div class="child-div"
+			style="height: auto; width: 100%; margin-left: 600px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); background-color: rgba(255,255,255,0.7); border: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top:5px">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_feedback.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						피드백 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; color: #5701d0">
+						진행중인 피드백
+					</div>
+					
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+			
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>
+						
+						
+										
+									<div th:if="${#lists.isEmpty(newFeedbackList)}"
+											style="padding: 30px; font-size: 30px; color: #5701d0; opacity: 0.5; text-align: center; margin-top: -50px;">
+											진행중인 피드백이 없습니다.</div>
+										
+										
+									<div th:unless="${#lists.isEmpty(niceFeedbackList)}"
+											style="padding: 30px; font-size: 30px; color: #5701d0; text-align: center;">
+										<div th:replace="/support/admin/feedbackHeader :: feedbackHeader"></div>
+						
+						
+						
+										<div class="feedback-row row-bordered"
+											th:each="fbNice : ${niceFeedbackList}"
+											th:attr="data-step=${fbNice.feedback_step}">
+											<a
+												th:href="@{/admin/support/feedback_detail/{id}(id=${fbNice.feedback_id})}"
+												style="display: contents;">
+<!-- 												<div class="notice-cell" th:text="${fbNice.feedback_id}"></div> -->
+												<div class="notice-cell" th:text="${fbNice.feedback_type}"></div>
+												<div class="notice-cell"
+													th:text="${#dates.format(fbNice.feedback_created_date, 'yyyy-MM-dd')}"></div>
+						
+						
+												<!-- 실명/익명 구분 마킹 -->
+												<div class="notice-cell">
+													<th:block th:if="${fbNice.feedback_style} == '0'">
+														<button type="submit"
+															style="border: none; background-color: transparent; color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+															익명</button>
+													</th:block>
+													<th:block th:if="${fbNice.feedback_style} == '1'">
+														<button type="submit"
+															style="border: none; background-color: rgba(204, 169, 254, 0); color: #5701d0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 14px; font-weight: bold">
+															실명</button>
+													</th:block>
+												</div>
+						
+						
+						
+												<div class="notice-cell" th:text="${fbNice.feedback_title}"
+													style="text-align: left; padding-left: 20px;"></div> <!--             <div class="notice-cell" th:text="${fbNew.user_id}"></div> -->
+						<!-- 						<div class="notice-cell" th:text="${fbNice.email}" style="text-align: left;"></div> -->
+												<!--             <div class="notice-cell" th:text="${fbNew.feedback_content}"></div> -->
+						
+												<!-- 진행상태 구분 마킹 -->
+												<div class="notice-cell">
+													<th:block th:if="${fbNice.feedback_step} == '0'">
+														<button type="submit"
+															style="border: none; background-color: transparent; color: #aaaaaa; border: 1px solid #aaaaaa; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+															미반영</button>
+													</th:block>
+													<th:block th:if="${fbNice.feedback_step} == '1'">
+														<button type="submit"
+															style="border: none; background-color: rgba(204, 169, 254, 0); color: #000000; border: 1px solid #000000; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+															검토중</button>
+													</th:block>
+													<th:block th:if="${fbNice.feedback_step} == '2'">
+														<button type="submit"
+															style="border: none; background-color: rgba(204, 169, 254, 0); color: #5701d0; border: 1px solid #5701d0; border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+															처리중</button>
+													</th:block>
+													<th:block th:if="${fbNice.feedback_step} == '3'">
+														<button type="submit"
+															style="border: none; background-color: rgba(204, 169, 254, 0); color: rgb(1, 213, 75); border: 1px solid rgb(1, 213, 75); border-radius: 4px; padding: 4px 8px; font-size: 14px;">
+															반영완료</button>
+													</th:block>
+												</div>
+						
+											</a>
+										</div>
+										</div>
+						
+		
+
+
+		<!-- 모달 레이어 -->
+		<div id="feedbackModal" class="modal">
+			<div class="modal-content">
+				<div id="modal-body" style="display: flex; justify-content: center;">
+					<!-- 여기에 AJAX로 피드백 상세 내용 로딩 -->
+				</div>
+			</div>
+		</div>
+
+
+
+	</div><!-- child-div -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		<div class="child-div"
+			style="height: auto; width: 100%; margin-left: 600px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); background-color: rgba(255,255,255,0.7); border: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: 15px;">
+				
+				
+				<div class="div-1" style="flex:5; display: flex; justify-content: left; border:none; margin:20px; margin-top:5px">
+				
+				
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 20px; margin-left:-20px;">
+						<img th:src="@{/images/symbol_feedback.png}" style="width: 54px; height: 54px; "/>
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 30px;">
+						피드백 관리	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; margin-right: 18px; margin-left: -10px; margin-bottom: 5px; color: #bbbbbb;">
+						>	
+					</div>
+					<div class="div-2" style="font-size: 32px; border:none; display: flex; width: auto; color: #5701d0">
+						전체 피드백 기록
+					</div>
+					
+					
+				</div><!-- div-1 -->
+				
+				
+			</div><!-- title-div -->
+											
+			<div style="border-top: 1px solid #bbbbbb !important; margin-top:-25px; margin-bottom: 40px;"></div>
+
+	</div><!-- child-div -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+	
+
+
+
+	</div>
+	<!-- parent-container -->
+
+	<script>
+		$(document).ready(function() {
+			// 모달 닫기
+			$(".modal-close").click(function() {
+				$("#feedbackModal").hide();
+			});
+
+			// 행 클릭 시 모달 열기 + AJAX 요청
+			$(".feedback-row").click(function(e) {
+				e.preventDefault(); // <a> 태그 기본 이동 방지
+				var detailUrl = $(this).find("a").attr("href");
+
+				$.ajax({
+					url : detailUrl,
+					type : 'GET',
+					success : function(response) {
+						$("#modal-body").html(response); // HTML 내용을 모달에 로드
+						$("#feedbackModal").show();
+					},
+					error : function() {
+						alert("피드백 상세 정보를 불러오지 못했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$(".modal-close").click(function() {
+				$("#feedbackModal").fadeOut();
+			});
+
+			$(".feedback-detail-link").click(function(e) {
+				e.preventDefault();
+				const url = $(this).attr("href");
+
+				$.get(url, function(data) {
+					$("#modal-body").html(data);
+					$("#feedbackModal").fadeIn();
+				});
+			});
+
+			$(window).click(function(event) {
+				if ($(event.target).is("#feedbackModal")) {
+					$("#feedbackModal").fadeOut();
+				}
+			});
+
+			$(document).on("click", ".modal-close", function() {
+				$("#feedbackModal").fadeOut();
+			});
+		});
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$(document).on("click", ".feedback-step-update", function() {
+				const id = $(this).data("id");
+
+				$.ajax({
+					type : "POST",
+					url : "/admin/support/feedback/stepUpdate",
+					data : {
+						id : id
+					},
+					success : function(response) {
+						if (response === "success") {
+							alert("피드백이 접수 처리되었습니다.");
+							location.reload(); // 또는 모달만 새로 고치기
+						} else {
+							alert("접수 처리에 실패했습니다.");
+						}
+					},
+					error : function() {
+						alert("서버 오류가 발생했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+	
+	 <script>
+		$(document).ready(function() {
+			$(document).on("click", ".feedback-step-refuse", function() {
+				const id = $(this).data("id");
+
+				$.ajax({
+					type : "POST",
+					url : "/admin/support/feedback/refuse",
+					data : {
+						id : id
+					},
+					success : function(response) {
+						if (response === "success") {
+							alert("피드백이 거절되었습니다.");
+							location.reload(); // 또는 모달만 새로 고치기
+						} else {
+							alert("거절 처리에 실패했습니다.");
+						}
+					},
+					error : function() {
+						alert("서버 오류가 발생했습니다.");
+					}
+				});
+			});
+		});
+	</script>
+
+
+
+</body>
+</html>

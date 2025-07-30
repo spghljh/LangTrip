@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.mypage.LectureHistoryMapper">
+
+	<select id="selectLectureHistory"
+	        parameterType="long"
+	        resultType="kr.co.sist.e_learning.mypage.LectureHistoryDTO">
+	  SELECT
+	    cs.course_seq       AS courseSeq,
+	    c.title             AS courseTitle,
+	    v.title             AS videoTitle,
+	    u.nickname          AS instructorName,
+	    TO_CHAR(v.upload_date, 'YYYY-MM-DD') AS uploadDate,
+	    cs.course_rate      AS courseRate
+	  FROM course_stat cs
+	  JOIN video v ON cs.video_seq = v.video_seq
+	  JOIN course c ON cs.course_seq = c.course_seq
+	  JOIN users u ON c.user_seq = u.user_seq
+	  WHERE cs.user_seq = 1002
+	  ORDER BY v.video_order ASC
+	</select>
+
+	<select id="selectMyLectures"
+	        parameterType="long"
+	        resultType="kr.co.sist.e_learning.mypage.LectureHistoryDTO">
+	  SELECT
+	    course_seq       AS courseSeq,
+	    title            AS courseTitle,
+	    TO_CHAR(upload_date, 'YYYY-MM-DD') AS uploadDate,
+	    is_public        AS isPublic
+	  FROM course
+	  WHERE user_seq = #{userSeq}
+	  ORDER BY upload_date DESC
+	</select>
+
+</mapper>

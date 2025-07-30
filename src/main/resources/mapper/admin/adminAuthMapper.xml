@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.admin.auth.AdminAuthDAO">
+
+  <!-- 로그인 -->
+  <resultMap id="adminAuthMap" type="kr.co.sist.e_learning.admin.auth.AdminAuthDTO">
+  <id property="adminId" column="ADMIN_ID"/>
+  <result property="adminPw" column="PASSWORD"/>
+  <result property="adminName" column="ADMIN_NAME"/>
+  <result property="status" column="STATUS"/>
+</resultMap>
+
+<select id="loginSelectAdminById" parameterType="String" resultMap="adminAuthMap">
+  SELECT ADMIN_ID, PASSWORD, ADMIN_NAME, STATUS
+  FROM ADMINS
+  WHERE ADMIN_ID = #{id}
+</select>
+
+  <select id="selectAdminRoles" parameterType="String" resultType="String">
+    SELECT ROLE_CODE
+    FROM ADMIN_ROLE
+    WHERE ADMIN_ID = #{adminId}
+  </select>
+
+  <!-- 관리자 회원가입 -->
+  <insert id="insertAdmin" parameterType="AdminSignupDTO">
+    INSERT INTO ADMINS (
+      ADMIN_ID, PASSWORD, ADMIN_NAME, EXTENSION, EMAIL, PHONE, STATUS, REG_DATE
+    ) VALUES (
+      #{id}, #{password}, #{name}, #{extension}, #{email}, #{phone}, 'Y', SYSDATE
+    )
+  </insert>
+
+  <!-- 권한 저장 -->
+  <insert id="insertPermission" parameterType="map">
+    INSERT INTO ADMIN_ROLE (ADMIN_ID, ROLE_CODE)
+    VALUES (#{adminId}, #{permissionCode})
+  </insert>
+
+
+</mapper>

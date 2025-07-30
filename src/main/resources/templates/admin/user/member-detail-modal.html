@@ -1,0 +1,273 @@
+<!--
+	정제균.
+	
+	회원상세정보를 제공하는 모달.
+	
+	TODO :
+	
+-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회원 상세 정보</title>
+<!-- bootstrap CSS CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+	integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+<style type="text/css">
+.modal-dialog {
+  animation: none !important;
+  transform: none !important;
+}
+</style>
+</head>
+<body>
+<!-- 트리거 버튼 -->
+<button type="button" class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#userDetailModal">
+  사용자 정보 보기
+</button>
+
+<!-- 상세 모달 -->
+<div class="modal fade" id="userDetailModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg modal-fullscreen-sm-down">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="userDetailModalLabel">회원 상세 정보</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+      </div>
+
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+	      <div class="container-fluid">
+	        <!-- 🔹 기본 정보 -->
+	        <section class="mb-5">
+	          <h6><strong>기본 정보</strong></h6>
+	          <table class="table table-bordered">
+	            <tbody>
+	              <tr><th>아이디</th><td>wjdwrprbs</td></tr>
+	              <tr><th>닉네임</th><td>정제균</td></tr>
+	              <tr><th>개설한 과목 수</th><td>1</td></tr>
+	              <tr><th>수강 중인 과목 수</th><td>2</td></tr>
+	              <tr><th>가입일</th><td>2025-06-21</td></tr>
+	              <tr><th>상태</th><td>경고 (사유 : 욕설)</td></tr>
+	              <tr><th>현재 상태 확정일</th><td>2024-06-25</td></tr>
+	            </tbody>
+	          </table>
+	        </section>
+	
+	        <!-- 🔹 수강 중인 과목 -->
+	        <section class="mb-5">
+	          <h6><strong>수강 중인 과목</strong></h6>
+	          <table class="table table-bordered">
+	            <thead>
+	              <tr><th>과목명</th><th class="d-none d-sm-table-cell">강사명</th></tr>
+	            </thead>
+	            <tbody>
+	              <tr><td><a href="#">Content</a></td><td class="d-none d-sm-table-cell">Content</td></tr>
+	              <tr><td><a href="#">Content</a></td><td class="d-none d-sm-table-cell">Content</td></tr>
+	              <tr><td><a href="#">Content</a></td><td class="d-none d-sm-table-cell">Content</td></tr>
+	              <tr><td><a href="#">Content</a></td><td class="d-none d-sm-table-cell">Content</td></tr>
+	              <tr><td><a href="#">Content</a></td><td class="d-none d-sm-table-cell">Content</td></tr>
+	            </tbody>
+	          </table>
+	        </section>
+	
+	        <!-- 🔹 강사 활동 + 계정 상태 -->
+	        <section>
+	          <h6><strong>강사 활동</strong></h6>
+	          <table class="table table-bordered">
+	            <thead>
+	              <tr><th>과목명</th></tr>
+	            </thead>
+	            <tbody>
+	              <tr><td><a href="#">Content</a></td></tr>
+	              <tr><td><a href="#">Content</a></td></tr>
+	              <tr><td><a href="#">Content</a></td></tr>
+	            </tbody>
+	          </table>
+	        </section>
+			
+			<section class="mt-5">
+				<!-- 계정 상태 -->
+				<div>
+				  <!-- 계정 조치 -->
+				  <h6 class="fw-bold mb-3">계정 조치</h6>
+				
+				  <!-- 제재 여부 -->
+				  <div class="mb-3">
+				    <div class="form-check form-check-inline">
+				      <input class="form-check-input" type="radio" name="penaltyType" id="noPenalty" value="무제재">
+				      <label class="form-check-label" for="noPenalty">무제재</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input class="form-check-input" type="radio" name="penaltyType" id="penalty" value="제재" checked>
+				      <label class="form-check-label" for="penalty">제재</label>
+				    </div>
+				  </div>
+				
+				  <hr>
+				
+				  <!-- 계정 상태 -->
+				  <div class="mb-3">
+				    <div class="form-check form-check-inline">
+				      <input class="form-check-input" type="radio" name="accountStatus" id="status-normal" value="정상">
+				      <label class="form-check-label" for="status-normal">정상</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input class="form-check-input" type="radio" name="accountStatus" id="status-ban" value="영구정지">
+				      <label class="form-check-label" for="status-ban">영구정지</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input class="form-check-input" type="radio" name="accountStatus" id="status-leave" value="탈퇴" disabled>
+				      <label class="form-check-label" for="status-leave">탈퇴</label>
+				    </div>
+				  </div>
+				
+				  <!-- 사유 -->
+				  <div class="mb-3">
+				    <label class="form-label fw-bold">관리자 지정 사유</label><br>
+				    <div class="form-check form-check-inline">
+				      <input type="checkbox" class="form-check-input" id="reason1">
+				      <label class="form-check-label" for="reason1">욕설</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input type="checkbox" class="form-check-input" id="reason2">
+				      <label class="form-check-label" for="reason2">음란물</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input type="checkbox" class="form-check-input" id="reason3">
+				      <label class="form-check-label" for="reason3">허위</label>
+				    </div>
+				    <div class="form-check form-check-inline">
+				      <input type="checkbox" class="form-check-input" id="reason4">
+				      <label class="form-check-label" for="reason4">기타</label>
+				    </div>
+				    <input type="text" id="customReason" class="form-control mt-2" maxlength="20" placeholder="직접 입력(최대 20자)" disabled>
+				  </div>
+				
+				  <!-- 적용 버튼 -->
+				  <div class="text-end">
+				    <button type="button" class="btn btn-primary" id="applyBtn">적용</button>
+				  </div>
+			    </div>
+			</section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 의사 재확인 모달 -->
+<div class="modal fade" id="confirmModal"
+    data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel2">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+	    <div class="modal-content">
+      	    <div class="modal-header">
+        	    <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">계정 상태 적용</h1>
+        	    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      	    </div>
+      	    <div class="modal-body">
+        	    회원 계정 상태를 적용하시겠습니까?
+      	    </div>
+      	    <div class="modal-footer">
+        	    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        	    <button type="button" class="btn btn-primary" id="confirmApplyBtn">확인</button>
+  	       </div>
+	    </div>
+    </div>
+</div>
+
+<!-- bootstrap bundle CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+// 무제재/제재 라디오
+const noPenaltyRadio = document.getElementById('noPenalty');
+const penaltyRadio = document.getElementById('penalty');
+
+// 계정 상태 라디오
+const normalRadio = document.getElementById('status-normal');
+const banRadio = document.getElementById('status-ban');
+const leaveRadio = document.getElementById('status-leave');
+
+// 사유 체크박스 및 기타
+const reasonCheckboxes = document.querySelectorAll("#reason1, #reason2, #reason3, #reason4");
+const reasonEtc = document.getElementById("reason4");
+const customReasonInput = document.getElementById("customReason");
+
+// 탈퇴 라디오 항상 비활성화
+leaveRadio.disabled = true;
+
+// 제어 함수 : 입력 요소 비활성화/활성화
+function setInputsDisabled(disabled) {
+	normalRadio.disabled = disabled;
+	banRadio.disabled = disabled;
+	reasonCheckboxes.forEach((cb) => {
+		cb.disabled = disabled;
+	});
+	customReasonInput.disabled = disabled || !reasonEtc.checked;
+}
+
+// 초기 설정
+setInputsDisabled(noPenaltyRadio.checked);
+
+// 무제재 선택 시 입력요소 비활성화
+noPenaltyRadio.addEventListener('change', () => {
+	if (noPenaltyRadio.checked) {
+		setInputsDisabled(true);
+	}
+});
+
+// 제재 선택 시 입력요소 활성화
+penaltyRadio.addEventListener('change', ()=> {
+	if (penaltyRadio.checked) {
+		setInputsDisabled(false);
+	}
+});
+
+// 기타 체크 여부에 따른 직접 입력 활성화
+reasonEtc.addEventListener('change', () => {
+	if (penaltyRadio.checked) {
+		customReasonInput.disabled = !reasonEtc.checked;
+		if (reasonEtc.checked) {
+			customReasonInput.focus();
+		} else {
+			customReasonInput.value = "";
+		}
+
+	}
+});
+
+// 적용 버튼 클릭 시 검증
+document.getElementById('applyBtn').addEventListener('click', () => {
+	if (penaltyRadio.checked && reasonEtc.checked && customReasonInput.value.trim() === "") {
+		reasonEtc.checked = false;
+		customReasonInput.disabled = true;
+		customReasonInput.value = "";
+	}
+
+	const confirmActionModal = new bootstrap.Modal(document.getElementById('confirmModal'), {
+		backdrop: false,
+		keyboard: false
+	});
+	confirmActionModal.show();
+});
+
+// 확인 버튼 클릭 시 두 모달 닫기
+document.getElementById('confirmApplyBtn').addEventListener('click', () => {
+	const modal1 = bootstrap.Modal.getInstance(document.getElementById('userDetailModal'));
+	const modal2 = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+	modal2.hide();
+	modal1.hide();
+});
+
+});
+</script>
+</body>
+</html>

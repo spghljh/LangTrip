@@ -1,0 +1,39 @@
+<div th:fragment="link_account">
+  <div th:if="${linked}" class="account-info-box">
+    <div><strong>은행명:</strong> <span th:text="${bank}">국민은행</span></div>
+    <div><strong>계좌번호:</strong> <span th:text="${maskedAccount}">211-****-****</span></div>
+    <div><strong>연동일시:</strong> <span th:text="${linkedAt}">2025-06-20 13:45</span></div>
+  </div>
+
+  <form th:action="@{/mypage/unlink-account}" method="post" th:if="${linked}">
+    <button class="unlink-btn" type="submit">계좌 연동 해제</button>
+  </form>
+
+  <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+  <form th:action="@{/mypage/link-account}" method="post">
+    <div class="form-group">
+      <label for="bank">은행명</label>
+      <select id="bank" name="bank" required>
+        <option value="">-- 은행 선택 --</option>
+        <option value="국민은행">국민은행</option>
+        <option value="신한은행">신한은행</option>
+        <option value="우리은행">우리은행</option>
+        <option value="하나은행">하나은행</option>
+        <option value="농협">농협</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="account">계좌번호</label>
+      <input type="text" id="account" name="account" placeholder="예: 211-1234-5678" required>
+    </div>
+
+    <div class="form-group">
+      <label for="owner">예금주명</label>
+      <input type="text" id="owner" name="owner" required>
+    </div>
+
+    <button class="link-btn" type="submit">계좌 연동하기</button>
+  </form>
+</div>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.admin.signup.AdminSignupDAO">
+
+  <insert id="insertSignupRequest" parameterType="AdminSignupDTO">
+  INSERT INTO ADMIN_SIGNUP_REQUEST (
+    REQUEST_ID, ADMIN_ID, ADMIN_NAME, EMAIL, PHONE, PASSWORD_HASH,
+    DEPT, INLINE, STATUS, REQUEST_DATE
+  ) VALUES (
+    #{requestId, jdbcType=VARCHAR},
+    #{adminId, jdbcType=VARCHAR},
+    #{name, jdbcType=VARCHAR},
+    #{email, jdbcType=VARCHAR},
+    #{phone, jdbcType=VARCHAR},
+    #{password, jdbcType=VARCHAR},
+    #{dept, jdbcType=VARCHAR},
+    #{inline, jdbcType=VARCHAR},
+    'PENDING',
+    SYSTIMESTAMP
+  )
+</insert>
+<select id="selectRoleCodesByDept" parameterType="String" resultType="String">
+  SELECT ROLE_CODE
+  FROM DEPT_ROLE_MAPPING
+  WHERE DEPT = #{dept}
+</select>
+
+
+  <!-- 인증 유효성 검사 -->
+  <select id="selectValidVerification" parameterType="map" resultType="EmailVerificationDTO">
+    SELECT * FROM EMAIL_VERIFICATION_ADMIN
+    WHERE EMAIL = #{email}
+      AND CODE = #{code}
+      AND STATUS = 'SENT'
+      AND EXPIRES_AT > SYSTIMESTAMP
+  </select>
+
+  <!-- 인증 상태 업데이트 -->
+<update id="markCodeVerified" parameterType="java.lang.String">
+  UPDATE EMAIL_VERIFICATION_ADMIN
+  SET STATUS = 'VERIFIED'
+  WHERE VERIFICATION_SEQ = #{verificationSeq, jdbcType=VARCHAR}
+</update>
+
+
+  <!-- 요청 권한 저장 -->
+  <insert id="insertSignupPermission" parameterType="map">
+    INSERT INTO ADMIN_SIGNUP_ROLE (
+      REQUEST_ID, ROLE_CODE
+    ) VALUES (
+      #{requestId}, #{roleCode}
+    )
+  </insert>
+
+<select id="isDuplicateId" parameterType="String" resultType="Integer">
+  SELECT COUNT(*) FROM (
+    SELECT ADMIN_ID FROM ADMIN_SIGNUP_REQUEST WHERE ADMIN_ID = #{adminId} AND STATUS != 'REJECTED'
+    UNION ALL
+    SELECT ADMIN_ID FROM ADMINS WHERE ADMIN_ID = #{adminId}
+  )
+</select>
+<insert id="insertVerificationCode" parameterType="kr.co.sist.e_learning.admin.signup.EmailVerificationDTO">
+  INSERT INTO EMAIL_VERIFICATION_ADMIN (
+    VERIFICATION_SEQ, EMAIL, CODE, STATUS, EXPIRES_AT, CREATED_AT
+  ) VALUES (
+    #{verificationSeq},
+    #{email},
+    #{code},
+    'SENT',
+    #{expiresAt},
+    SYSTIMESTAMP
+  )
+</insert>
+
+
+</mapper>

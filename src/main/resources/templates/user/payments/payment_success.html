@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .success-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            border-top: 8px solid #4CAF50;
+        }
+        .icon {
+            font-size: 60px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        h1 {
+            color: #212529;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        p {
+            color: #495057;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        .details {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .details-row:last-child {
+            margin-bottom: 0;
+        }
+        .details-label {
+            color: #6c757d;
+        }
+        .details-value {
+            color: #212529;
+            font-weight: 600;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            color: white;
+            padding: 14px 30px; /* 동일한 패딩으로 설정 */
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px; /* 글꼴 크기 동일하게 설정 */
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="icon">✔</div>
+        <h1>결제가 성공적으로 완료되었습니다!</h1>
+        <p>
+            LangTrip과 함께 즐거운 학습 여정을 시작해보세요.<br>
+            결제 내역은 마이페이지에서 확인하실 수 있습니다.
+        </p>
+        
+        <div class="details">
+            <div class="details-row">
+                <span class="details-label">결제 금액</span>
+                <span class="details-value" th:text="${#numbers.formatInteger(paymentAmount, 0, 'COMMA')} + '원'">0원</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">충전된 마일</span>
+                <span class="details-value" th:text="${#numbers.formatInteger(mileAmount, 0, 'COMMA')} + ' 마일'">0 마일</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <!-- "후원하러 가기" 버튼을 클릭하면 POST 요청으로 데이터 전송 -->
+            <form action="/user/donation" method="get" id="donationForm">
+               <input type="hidden" name="lectureNo" id="lectureNoInput" th:value="${lectureNo}">
+                <button type="submit" class="btn btn-primary">후원하러 가기</button>
+            </form>
+            <a href="/" class="btn btn-secondary">메인으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUrl = window.location.href;
+        // URL에서 lectureNo를 query string으로 추출
+        const lectureNo = new URL(currentUrl).searchParams.get('lectureNo');
+        
+        if (lectureNo) {
+            // lectureNo 값을 폼의 숨겨진 입력 필드에 넣기
+            document.getElementById('lectureNoInput').value = lectureNo;
+        } else {
+            alert('강의 정보를 찾을 수 없습니다.');
+        }
+    });
+    </script>
+</body>
+</html>

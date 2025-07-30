@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 회원가입</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px;
+    }
+    .header { text-align: center; margin-bottom: 30px; }
+    .header h1 { color: #2c3e50; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .header p { color: #7f8c8d; font-size: 14px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e8ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 12px;
+    }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-primary:hover { background: #2980b9; transform: translateY(-1px); }
+    .btn-secondary { background: #95a5a6; color: white; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .btn-verify {
+      background: #27ae60;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+      width: auto;
+      margin-left: 10px;
+    }
+    .btn-verify:hover { background: #229954; }
+    .flex-group { display: flex; align-items: center; }
+    .flex-group input { flex: 1; }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>관리자 회원가입</h1>
+    <p>새 계정을 생성합니다</p>
+  </div>
+  <form onsubmit="handleSignup(event)">
+    <div class="form-group">
+      <label for="signupId">아이디</label>
+      <input type="text" id="signupId" required>
+    </div>
+    <div class="form-group">
+      <label for="signupPassword">비밀번호</label>
+      <input type="password" id="signupPassword" required>
+      <small id="password-strength" style="font-size:12px;display:block;margin-top:5px;"></small>
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">비밀번호 확인</label>
+      <input type="password" id="confirmPassword" required>
+    </div>
+    <div class="form-group">
+      <label for="signupName">이름</label>
+      <input type="text" id="signupName" required>
+    </div>
+    <div class="form-group">
+      <label for="signupInline">내선번호</label>
+      <input type="text" id="signupInline" placeholder="예: 1234" required>
+    </div>
+    <div class="form-group">
+  <label for="signupDept">부서</label>
+  <select id="signupDept" required>
+    <option value="">부서를 선택하세요</option>
+    <option value="운영관리팀">운영관리팀</option>
+    <option value="고객센터팀">고객센터팀</option>
+    <option value="콘텐츠팀">콘텐츠팀</option>
+    <option value="결제관리팀">결제관리팀</option>
+    <option value="모니터링팀">모니터링팀</option>
+    <option value="QA팀">QA팀</option>
+    <option value="데이터분석팀">데이터분석팀</option>
+    <option value="마케팅팀">마케팅팀</option>
+  </select>
+</div>
+
+    <div class="form-group">
+      <label for="signupEmail">이메일</label>
+      <div class="flex-group">
+        <input type="email" id="signupEmail" required>
+        <button type="button" class="btn-verify" onclick="sendEmailVerification()">인증발송</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="emailCode">이메일 인증코드</label>
+      <div class="flex-group">
+        <input type="text" id="emailCode" placeholder="인증코드를 입력하세요" required>
+        <button type="button" class="btn-verify" onclick="verifyCode()">인증하기</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="signupPhone">핸드폰 번호</label>
+      <input type="tel" id="signupPhone" placeholder="010-0000-0000" required>
+    </div>
+    <button type="submit" class="btn btn-primary">회원가입</button>
+    <a href="/admin/login" class="btn btn-secondary" style="text-align:center;display:block;text-decoration:none;">로그인으로 돌아가기</a>
+  </form>
+</div>
+<script>
+let emailVerified = false;
+let resendTimer = null;
+
+$("#signupPassword").on("input", function () {
+  const password = $(this).val();
+  const $msg = $("#password-strength");
+  const strong = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+  if (strong.test(password)) {
+    $msg.text("\u2705 안전한 비밀번호입니다.").css("color", "green");
+  } else {
+    $msg.text("\u274C 영문, 숫자, 특수문자를 포함한 8자 이상").css("color", "red");
+  }
+});
+
+$("#signupId").on("blur", function () {
+  const adminId = $(this).val();
+  if (!adminId) return;
+  $.get("/admin/check-id", { adminId }, function (res) {
+    if (res === "exists") {
+      alert("이미 사용 중인 아이디입니다.");
+      $("#signupId").val("").focus();
+    }
+  });
+});
+
+function sendEmailVerification() {
+  const $btn = $(".btn-verify").eq(0);
+  const email = $("#signupEmail").val();
+  if (!email) {
+    alert("이메일을 입력해주세요.");
+    return;
+  }
+  alert("인증코드 발송 중입니다...");
+  let sec = 60;
+  $btn.prop("disabled", true).text(`재전송 (${sec}s)`);
+  resendTimer = setInterval(() => {
+    sec--;
+    $btn.text(`재전송 (${sec}s)`);
+    if (sec <= 0) {
+      clearInterval(resendTimer);
+      $btn.text("인증발송").prop("disabled", false);
+    }
+  }, 1000);
+  $.post("/admin/send-code", { email })
+    .fail(() => {
+      alert("이메일 발송 실패");
+    });
+}
+
+function verifyCode() {
+  const email = $("#signupEmail").val();
+  const code = $("#emailCode").val();
+  $.post("/admin/verify-code", { email, code }, function(result) {
+    if (result === 'success') {
+      alert("인증 성공!");
+      emailVerified = true;
+      $("#signupEmail").prop("disabled", true);
+      $("#emailCode").prop("disabled", true);
+      $(".btn-verify").prop("disabled", true);
+    } else {
+      alert("인증 실패");
+    }
+  });
+}
+
+$("#signupEmail").on("input", function() {
+  emailVerified = false;
+  $("#emailCode").val("").prop("disabled", false);
+  $("#signupEmail").prop("disabled", false);
+  $(".btn-verify").prop("disabled", false).text("코드확인");
+  if (resendTimer) clearInterval(resendTimer);
+});
+
+function handleSignup(event) {
+  event.preventDefault();
+  if (!emailVerified) {
+    alert("이메일 인증을 먼저 완료해 주세요.");
+    return;
+  }
+  const data = {
+    adminId: $("#signupId").val(),
+    name: $("#signupName").val(),
+    inline: $("#signupInline").val(),
+    dept: $("#signupDept").val(),
+    email: $("#signupEmail").val(),
+    phone: $("#signupPhone").val(),
+    password: $("#signupPassword").val(),
+    confirmPassword: $("#confirmPassword").val(),
+    emailCode: $("#emailCode").val()
+  };
+
+  if (data.password !== data.confirmPassword) {
+    alert("비밀번호가 일치하지 않습니다.");
+    return;
+  }
+
+  $.ajax({
+    url: "/admin/signup",
+    method: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(data),
+    success: function () {
+      alert("회원가입 성공!");
+      location.href = "/admin/login";
+    },
+    error: function (xhr) {
+      if (xhr.status === 409) {
+        alert("중복된 이메일 또는 아이디입니다.");
+      } else if (xhr.status === 400) {
+        alert("입력값이 유효하지 않습니다.");
+      } else {
+        alert("회원가입 실패");
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

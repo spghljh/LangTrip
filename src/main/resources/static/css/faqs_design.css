@@ -1,0 +1,445 @@
+.faq-type-title {
+	font-size: 32px;
+	font-weight: 700;
+	color: #8e3efe;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+	margin-top: 50px;
+	margin-bottom: 20px;
+	border-left: 6px solid #bd8ffd;
+	padding-left: 20px;
+}
+
+.faq-menu {
+	margin: 20px auto;
+	text-align: center;
+}
+
+.faq-menu a {
+	margin: 0 12px;
+	font-weight: bold;
+	color: #8e3efe;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.faq-menu a:hover {
+	color: #bd8ffd;
+	border-bottom: 2px solid #bd8ffd;
+	padding-bottom: 2px;
+}
+
+.faq-menu>a {
+	margin: 48px;
+	font-size: 40px;
+}
+
+/* ----------------------------------------------------------------------------------------- */
+div {
+	border-color: transparent !important;
+}
+
+a {
+	text-decoration: none;
+	color: #5701d0;
+	transition: color 0.5s ease;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #cca9fe
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid #cecece; /* 부모 div에 보라색 테두리 */
+	width: fit-content; /* 자식 div 크기에 따라 부모 크기가 자동 조절되도록 설정 */
+	/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.3), white, white, white);  */
+	/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.7),  rgba(204,169,254, 0.2), white, white);  */
+/* 	background: linear-gradient(to bottom, rgba(204, 169, 254, 0.9),rgba(204, 169, 254, 0.1), rgba(204, 169, 254, 0.1), white, white); */
+}
+
+.child-div {
+	width: 1200px; /* 자식 div 너비 두 배로 설정 */
+	/* 	height: 240px; /* 자식 div 높이 반으로 줄임 */
+	height: auto; /* 내용에 따라 자동 조절 */
+	margin: 10px 0;
+	margin-bottom: 18px;
+	padding: 3px; /* padding 제거 */
+	border: 1px solid #cccccc; /* 자식 div 테두리 색상 검정색 */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: white; /* 배경을 흰색으로 설정 */
+	border-radius: 8px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 제목 상단 부분을 가로로 1:3:10:3 비율로 나누기 */
+.title-div {
+	display: flex;
+	padding: 10px; /* 제목 부분에 패딩 추가 */
+	font-size: 18px;
+	color: black; /* 텍스트 색상을 검정색으로 */
+	font-weight: bold;
+	flex: 1; /* 제목부분이 1배 비율 */
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	margin: 5px;
+}
+
+.title-div>div {
+	margin: 2px;
+	border: 2px solid #ccccf9; /* 보라색 테두리 */
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+
+.title-div>.div-1 {
+/* 	flex: 0.2; */
+	width: 150px !important;
+	font-size: 32px;
+	margin-right: 20px;
+	color: #a5a5f7;
+}
+
+.title-div>.div-2 {
+	flex: 0.4 4 auto; /* 1:3:10:3 비율의 3배 */
+	font-size: 32px;
+	/* 	min-width: 0; 내용에 따라 자동으로 크기 조정 */
+}
+
+.title-div>.div-3 {
+	flex: 10; /* 1:3:10:3 비율의 10배 */
+	color: #777777;
+	font-weight: normal;
+	animation: glowColor 2.4s infinite alternate;
+}
+
+.title-div>.div-4 {
+	flex: 3; /* 1:3:10:3 비율의 3배 */
+	text-align: right;
+	font-size: 24px;
+}
+
+.content-div {
+	padding: 5px; /* 내용 부분에 패딩 추가 */
+	font-size: 16px;
+	color: black; /* 텍스트 색상을 검정색으로 */
+	background-color: white; /* 내용 부분의 배경색 */
+	flex: 2; /* 내용부분이 2배 비율 */
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	overflow: auto;
+	margin: 5px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 중앙 정렬되는 div 추가 */
+.center-div {
+	margin: 3px;
+	padding: 3px;
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	width: 90%; /* 중앙 div의 너비를 조정 */
+	height: 90px;
+}
+
+/* 1:1 비율로 나누는 div 추가 */
+.split-div {
+	display: flex;
+	justify-content: space-between;
+	flex: 1; /* 1:1 비율로 나누기 */
+}
+
+.split-div>.half-div {
+	margin: 3px;
+	padding: 3px;
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	flex: 1; /* 1:1 비율로 나누기 */
+}
+
+/* 왼쪽 내용 div 내에서 세로로 2:1 비율로 나누는 div */
+.left-content {
+	display: flex;
+	flex-direction: column;
+	color: #5701d0;
+}
+
+.left-content>.half-top {
+	flex: 2; /* 2배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.left-content>.half-bottom {
+	flex: 1; /* 1배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	padding: 10px;
+	text-align: right;
+	font-weight: bold;
+	font-size: 24px;
+	color: #5701d0;
+}
+
+/* 지원센터의 피드백 기능 안에 세로로 2:1 비율로 자식 div 추가 */
+.left-inner-content {
+	display: flex;
+	flex-direction: column;
+}
+
+.left-inner-content>.half-inner-top {
+	flex: 2; /* 2배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	margin-bottom: 10px;
+	font-size: 28px;
+	font-weight: bold;
+	color: #9a43fe;
+}
+
+.left-inner-content>.half-inner-bottom {
+	flex: 1; /* 1배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	margin-top: -10px;
+	color: #9a43fe;
+}
+
+input::placeholder {
+	color: rgba(87, 1, 208, 0.3); /* 0.5는 50% 투명도 */
+}
+
+/*
+--------------------------------------------------------------------------------------------------------
+*/
+.notice-board {
+	width: 100%;
+	max-width: 1150px;
+	margin: 10px auto;
+	font-family: 'Segoe UI', sans-serif;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	overflow: hidden;
+	background-color: #fff;
+}
+
+.notice-header {
+	display: grid;
+	grid-template-columns: 80px 200px 1fr 100px 80px 100px 80px 100px 80px;
+	padding: 12px 16px;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	background-color: #5701d0;
+	color: white;
+	font-weight: bold;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
+
+.notice-body {
+	max-height: 600px; /* 최대 높이 지정 (스크롤 영역) */
+	overflow-y: auto;
+}
+
+.notice-row {
+	display: grid;
+	grid-template-columns: 80px 200px 1fr 100px 80px 100px 80px 100px 80px;
+	padding: 12px 16px;
+	align-items: center;
+	background: #fff;
+	transition: background 0.2s ease;
+	cursor: pointer; /* 클릭 가능한 느낌 부여 */
+}
+
+.notice-row:hover {
+	background: #f3e8ff; /* 연보라색 hover */
+}
+
+.notice-cell {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 14px;
+	color: black;
+}
+
+.notice-empty {
+	text-align: center;
+	padding: 200px 0;
+	color: #888;
+	font-size: 16px;
+}
+
+.notice-row.row-bordered {
+	border-bottom: 1px solid #cccccc;
+}
+
+/*
+--------------------------------------------------------------------------------------------------------
+*/
+.pagination a {
+	display: inline-block;
+	padding: 6px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	color: #5701d0;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.pagination a:hover {
+	background-color: #f2f2f2;
+}
+
+.pagination .active-page {
+	background-color: #5701d0;
+	color: white;
+	font-weight: bold;
+}
+
+.pagination a.disabled-page {
+	pointer-events: none;
+	color: #aaa;
+	border-color: #ddd;
+	background-color: #f9f9f9;
+	cursor: default;
+}
+/*
+--------------------------------------------------------------------------------------------------------
+*/
+.toolbox {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.toolbox>span {
+	font-size: 22px;
+}
+
+/*
+--------------------------------------------------------------------------------------------------------
+*/
+.slider {
+	width: 750px; /* 300px × 5 */
+	overflow: hidden;
+	position: relative;
+}
+
+.slide-track {
+	display: flex;
+	transition: transform 0.3s ease-in-out;
+}
+
+/* .card { */
+/*   width: 150px; */
+/*   height: 140px; */
+/*   margin: 10px; */
+/*   opacity: 0.5; */
+/*   transition: opacity 0.3s; */
+/*   background-color: #f8f8f8; */
+/*   display: flex; */
+/*   justify-content: center; */
+/*   align-items: center; */
+/*   box-sizing: border-box; */
+/* } */
+.card {
+	width: 160px;
+	height: 160px;
+	padding: 12px;
+	border-radius: 10px;
+	/*   background-color: #f5f5f5; */
+	background-color: transparent;
+	cursor: pointer;
+	text-align: center;
+	transition: box-shadow 0.3s ease, opacity 0.3s ease;
+	opacity: 1; /* 기본 투명하게 */
+}
+
+.card>img {
+	width: 80%;
+	height: 80%;
+}
+
+.accordion-container {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease;
+	width: 100%;
+}
+
+.accordion-container > div {
+	margin-left: 2px; 
+	margin-right: 5px; 
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+	}
+
+/* 열릴 때 추가되는 클래스 */
+#accordion-container.active {
+	
+}
+
+/*  -------------------------------------------------------------------------------  */
+.child-div>div>div>a:hover {
+	color: #bd8ffd !important;
+	transition: color 0.5s ease;
+}
+
+/*  -------------------------------------------------------------------------------  */
+.card.active {
+	opacity: 1;
+	background-color: #bd8ffd;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/*  -------------------------------------------------------------------------------  */
+.faq-filter-container button {
+	padding: 12px 24px;
+	margin: 6px;
+	font-size: 18px;
+	background-color: white;
+	color: #5701d0;
+	border: 2px solid #5701d0;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.faq-filter-container button:hover {
+	background-color: rgba(204, 169, 254, 0.2);
+	box-shadow: 0 0 6px rgba(87, 1, 208, 0.5);
+}
+
+/* FAQ 아코디언 열림/닫힘 애니메이션 적용 */
+.accordion-container.active {
+	max-height: 1000px; /* 충분한 값으로 설정 */
+	transition: max-height 0.4s ease-in-out;
+}
+
+/* 슬라이더 강조 텍스트 보완 (내부에 .card > div 이미 있지만 확장 가능) */
+/* .card:hover { */
+/*   cursor: pointer; */
+/*   box-shadow: 0 0 8px rgba(87, 1, 208, 0.3); */
+/*   transition: box-shadow 0.3s ease; */
+/* } */
+.card:hover {
+	box-shadow: 0 0 12px rgba(87, 1, 208, 0.4);
+	background-color: rgba(87, 1, 208, 0.1);
+	opacity: 1;
+}
+
+.card>div {
+	margin-top: 12px;
+	font-size: 20px;
+	color: #5701d0;
+	font-weight: bold;
+}
+
+/*  -------------------------------------------------------------------------------  */

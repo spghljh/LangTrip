@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="fragment">
+
+
+		<div class="child-div"
+			style="height: auto; width: 1300px; height: 80px; box-shadow: none">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: -10px; margin-bottom: -10px; ">
+				<div class="div-1" style="flex:5; border:none">
+					<div class="div-2" style="font-size: 30px; border:none; margin-bottom: 37px; margin-top: -5px">
+						<span style="color: #5701d0">피드백 상세</span>
+					</div>
+				</div>
+			</div>
+
+			
+			
+		</div><!-- child-div -->
+		
+		<div class="child-div"
+			style="height: auto; width: 1300px; height: auto; box-shadow: none; padding-left: 10px; padding: 30px;">
+			
+			    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+				    <div style="margin-right: 20px;">
+				    	<img th:src="@{/images/symbol_feedback.png}" style="width: 50px; height: 50px; border:none !important; " />
+					</div>
+					<div style="font-weight: bold; font-size: 36px">
+						<p th:text="${feedback.feedback_title}"></p>
+					</div>
+				</div>
+			    <div style="box-shadow: 0 0 4px rgba(0, 0, 0, 0.3) !important; padding: 20px;
+			    height: auto; font-size: 20px">
+				    <div style="margin-right: 20px;">
+			    		<p th:text="${feedback.feedback_content}"></p>
+					</div>
+				</div>
+<!-- 			    <p th:text="'유형: ' + ${feedback.feedback_type}"></p> -->
+<!-- 			    <p th:text="'작성일: ' + ${#dates.format(feedback.feedback_created_date, 'yyyy-MM-dd HH:mm')}"></p> -->
+<!-- 			    <p th:text="'이메일: ' + ${feedback.email}"></p> -->
+<!-- 			    <p th:text="'상태: ' + ${feedback.feedback_status}"></p> -->
+		</div>
+		
+		
+		
+		
+		<div class="child-div"
+			style="height: auto; width: 1300px; height: 150px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important;">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none; margin-left: 20px; margin-bottom: -10px;">
+				<div class="div-1" style="flex:5; border:none">
+					<div class="div-2" style="font-size: 24px; border:none; margin-bottom: 37px; margin-top: -5px">
+						<span style="color: #AAAAAA">공유하기</span>
+					</div>
+				</div>
+			</div>
+
+			
+		</div><!-- child-div -->
+		
+	
+<!-- 		<div class="child-div feedback-step-update" -->
+<!-- 		     data-id="${feedback.feedback_id}" -->
+<!-- 			style="height: auto; width: 1300px; height: 60px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important; -->
+<!-- 			display: flex; justify-content: center !important; align-items: center !important; background-color: #5701d0"> -->
+
+<!-- 			<div class="title-div" -->
+<!-- 				style="border-bottom: none; border: none;"> -->
+<!-- 				<div style=" border:none"> -->
+<!-- 					<div style="font-size: 24px; border:none; display: flex"> -->
+<!-- 						<span style="color: white">접수하기</span> -->
+<!-- 				</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+
+<!-- 		</div>child-div -->
+
+			<div class="child-div feedback-step-update"
+			     th:attr="data-id=${feedback.feedback_id}"
+			     style="cursor: pointer; width: 1300px; height: 60px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important;
+			     display: flex; justify-content: center; align-items: center; background-color: #5701d0">
+			
+			    <div class="title-div" style="border: none;">
+			        <div style="font-size: 24px; display: flex; border: none;">
+			            <span style="color: white;">접수하기</span>
+			        </div>
+			    </div>
+			
+			</div>
+					
+		
+		<div class="child-div feedback-step-refuse"
+			th:attr="data-id=${feedback.feedback_id}"
+			style="cursor: pointer; height: auto; width: 1300px; height: 60px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important;
+			display: flex; justify-content: center !important; align-items: center !important; background-color: #fb2c89">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none;">
+				<div style=" border:none">
+					<div style="font-size: 24px; border:none; display: flex">
+						<span style="color: white">거절하기</span>
+				</div>
+				</div>
+			</div>
+
+			
+		</div><!-- child-div -->
+		
+		
+		
+		<div class="child-div modal-close"
+			style="height: auto; width: 1300px; height: 60px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important; display: flex; justify-content: center !important; align-items: center !important">
+
+			<div class="title-div"
+				style="border-bottom: none; border: none;">
+				<div style=" border:none;">
+					<div style="font-size: 24px; border:none; display: flex">
+						<span style="color: #5701d0">닫기</span>
+				</div>
+				</div>
+			</div>
+
+			
+		</div><!-- child-div -->
+		
+</div><!-- fragment -->
+</html>

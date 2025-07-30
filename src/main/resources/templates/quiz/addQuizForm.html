@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>퀴즈 등록</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/addQuiz.css}"> 
+</head>
+<body>
+
+<div class="logo-box text-center mb-4">
+  <img th:src="@{/upload/img/mascot.png}" alt="LangTrip Logo">
+</div>
+
+<!-- 퀴즈 메타 정보 입력 -->
+<div class="container mb-4">
+  <div class="form-card">
+    <label>퀴즈 제목</label>
+    <input type="text" id="quizTitle" class="form-control" placeholder="퀴즈 제목을 입력해주세요.">
+	<input type="hidden" id="courseSeq" th:value="${courseSeq}">
+    <label class="mt-3">언어 분류</label>
+    <select id="langCategory" class="form-select">
+    <option value="">선택해주세요</option>
+      <option value="영어">영어</option>
+      <option value="일본어">일본어</option>
+      <option value="중국어">중국어</option>
+    </select>
+  </div>
+</div>
+
+<!-- 퀴즈 입력 영역 -->
+<div id="quizContainer" class="container"></div>
+
+<div class="container">
+  <button type="button" id="submitQuizBtn" class="btn btn-primary submit-btn w-100">퀴즈 등록 완료</button>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script>
+$(function () {
+  const totalQuiz = 5; //총 퀴즈 개수
+  const quizContainer = $("#quizContainer");
+
+  for (let i = 0; i < totalQuiz; i++) {
+    const quizHTML = `
+      <div class="slide" data-index="${i}">
+        <div class="form-card">
+          <div class="form-title">${i + 1}번 퀴즈</div>
+          <label>유형 선택</label>
+          <select name="quiz[${i}].type" class="form-select">
+            <option value="text-quiz">텍스트 퀴즈</option>
+            <option value="img-quiz">이미지 퀴즈</option>
+          </select>
+
+          <label>문제</label>
+          <textarea name="quiz[${i}].question" rows="2" class="form-control"></textarea>
+
+          <label>보기</label>
+          <div class="options-wrapper"></div>
+        </div>
+      </div>
+    `;
+    quizContainer.append(quizHTML);
+  }
+
+  // 유형 선택 시 해당 퀴즈 index에 맞는 보기 템플릿 삽입
+  $(document).on('change', 'select[name$=".type"]', function () {
+    const $slide = $(this).closest('.slide');
+    const idx = $slide.data('index');
+    const type = $(this).val();
+    const $wrap = $slide.find('.options-wrapper');
+    const template = type === 'text-quiz' ? getTextOptionsTemplate(idx) : getImgOptionsTemplate(idx);
+    $wrap.html(template);
+  });
+
+  // 텍스트 퀴즈 보기 템플릿 생성
+  function getTextOptionsTemplate(idx) {
+    return `
+      <div class="text-options">
+        ${[0, 1, 2].map(i => `
+          <div class="option-row">
+            <input type="text" name="quiz[${idx}].options[${i}].content" class="form-control mb-2" placeholder="보기 ${i+1}">
+            <button type="button" class="btn btn-danger btn-sm remove-option">X</button>
+          </div>
+        `).join('')}
+        <button type="button" class="btn btn-secondary btn-sm add-option" data-quiz-idx="${idx}">+ 보기 추가</button>
+      </div>
+      <label>정답</label>
+      <select name="quiz[${idx}].correctOption" class="form-select correct-option">
+        <option value="">선택하세요</option>
+        <option value="1">보기 1</option>
+        <option value="2">보기 2</option>
+        <option value="3">보기 3</option>
+      </select>
+    `;
+  }
+
+  // 이미지 퀴즈 보기 템플릿 생성 (3지선다 고정)
+  function getImgOptionsTemplate(idx) {
+    return [0, 1, 2].map(i => `
+      <div class="option-row">
+        <input type="text" name="quiz[${idx}].options[${i}].content" class="form-control mb-2" placeholder="보기 ${i+1}">
+        <input type="file" name="quiz[${idx}].options[${i}].image" class="form-control mb-3">
+      </div>
+    `).join('') + `
+      <label>정답</label>
+      <select name="quiz[${idx}].correctOption" class="form-select">
+        <option value="">선택하세요</option>
+        <option value="1">보기 1</option>
+        <option value="2">보기 2</option>
+        <option value="3">보기 3</option>
+      </select>
+    `;
+  }
+
+  // 초기값 설정
+  $(".slide").each(function () {
+    const idx = $(this).data("index");
+    $(this).find(`select[name="quiz[${idx}].type"]`).val("text-quiz").trigger("change");
+  });
+
+  // 보기 추가 버튼
+  $(document).on("click", ".add-option", function () {
+    const $slide = $(this).closest(".slide");
+    const idx = $slide.data("index");
+    const $wrapper = $slide.find(".text-options");
+    const $options = $wrapper.find(".option-row");
+    const count = $options.length;
+
+    if (count >= 5) {
+      alert("보기는 최대 5개까지 가능합니다.");
+      return;
+    }
+
+    const newOption = `
+      <div class="option-row">
+        <input type="text" name="quiz[${idx}].options[${count}].content" class="form-control mb-2" placeholder="보기 ${count+1}">
+        <button type="button" class="btn btn-danger btn-sm remove-option">X</button>
+      </div>
+    `;
+
+    $(this).before(newOption);
+    updateCorrectOptionSelect($slide);
+  });
+
+  // 보기 삭제 버튼
+  $(document).on("click", ".remove-option", function () {
+    const $slide = $(this).closest(".slide");
+    const $wrapper = $slide.find(".text-options");
+    const $rows = $wrapper.find(".option-row");
+
+    if ($rows.length <= 3) {
+      alert("보기는 최소 3개 이상이어야 합니다.");
+      return;
+    }
+
+    $(this).closest(".option-row").remove();
+    updateOptionPlaceholders($slide);
+    updateCorrectOptionSelect($slide);
+  });
+
+  // 보기 placeholder 및 name 재정렬
+  function updateOptionPlaceholders($slide) {
+    const idx = $slide.data("index");
+    $slide.find(".option-row").each(function (i) {
+      $(this).find("input[type='text']")
+        .attr("placeholder", `보기 ${i+1}`)
+        .attr("name", `quiz[${idx}].options[${i}].content`);
+    });
+  }
+
+  // 정답 콤보박스 재구성
+  function updateCorrectOptionSelect($slide) {
+    const idx = $slide.data("index");
+    const $select = $slide.find("select.correct-option");
+    const count = $slide.find(".option-row").length;
+
+    $select.empty();
+    $select.append('<option value="">선택하세요</option>');
+    for (let i = 1; i <= count; i++) {
+      $select.append(`<option value="${i}">보기 ${i}</option>`);
+    }
+  }
+
+  // 등록 버튼 클릭 시 FormData 전송
+  $("#submitQuizBtn").click(function () {
+	
+	// 여러 문제들을 저장할 배열
+	const quizList = [];
+    const imageFiles = [];
+
+    // 각 퀴즈 슬라이드(문제 단위)를 순회하면서 데이터 수집
+    $(".slide").each(function (quizIdx) {
+      const $slide = $(this);
+      const type = $slide.find(`select[name="quiz[${quizIdx}].type"]`).val();//텍스트or이미지 퀴즈 유형
+      const question = $slide.find(`textarea[name="quiz[${quizIdx}].question"]`).val();//문제 
+      const correctOption = $slide.find(`select[name="quiz[${quizIdx}].correctOption"]`).val();//정답
+      const options = [];
+
+      $slide.find(".option-row").each(function () {
+        const content = $(this).find("input[type='text']").val();//보기 내용
+        const fileInput = $(this).find("input[type='file']");//이미지
+        let fileIndex = null;//이미지 파일 순서
+
+        if (fileInput && fileInput.length && fileInput[0].files.length > 0) {
+          fileIndex = imageFiles.length;
+          imageFiles.push(fileInput[0].files[0]);
+        }
+
+        options.push({ content, fileIndex });
+      });
+
+      // 문제 하나를 quizList에 추가
+      quizList.push({
+        type,
+        question,
+        correctOption: parseInt(correctOption), // 정답은 정수로 변환 (1,2,3)
+        options
+      });
+    });
+    
+ 	// 서버로 보낼 formData 구성 (파일 + JSON 데이터)
+    const formData = new FormData();
+ 	
+    // 전체 퀴즈 묶음 정보를 JSON 문자열로 변환하여 추가
+    formData.append("quizJson", JSON.stringify({
+      title: $("#quizTitle").val(),
+      langCategory: $("#langCategory").val(),
+      courseSeq: $("#courseSeq").val(),
+      quiz: quizList
+    }));
+    // 이미지 파일들 formData에 하나씩 추가
+    imageFiles.forEach(file => formData.append("imageFiles", file));
+
+    // axios로 multipart/form-data 방식 POST 요청
+    axios.post("/addQuizForm", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    })
+    .then(res => {
+      alert("퀴즈 등록 완료!");
+      const courseSeq = document.getElementById("courseSeq").value;
+      window.location.href = '/upload/upload_course?seq='+courseSeq;
+    })
+    .catch(err => {
+      console.log("오류", err);
+      alert("에러 발생");
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+
+#overlay {
+  position: fixed;  /* 화면 고정 */
+  top: 0; left: 0; right: 0; bottom: 0;  /* 화면 전체 */
+  background-color: rgba(88,73,110, 0.7); /* 반투명 회색 */
+  z-index: 999;  /* 충분히 위에 표시 */
+}
+#keywordInput, #suggestBox {
+/*   position: relative;  */
+  position: absolute;
+  z-index: 1200; /* overlay보다 위 */
+}
+
+div {	border-color: white !important } 
+ 
+ a{
+ text-decoration: none;
+ color: #5701d0; 
+ transition: color 0.5s ease;
+ }
+ a:hover { text-decoration: none; color: #cca9fe }
+ 
+@keyframes glowColor {
+  0%   { color: #777777; }
+  25%   { color: #777777; }
+  50%   { color: #777777; }
+  100% { color: white; }  
+}
+ 
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid #cecece; /* 부모 div에 보라색 테두리 */
+	width: fit-content; /* 자식 div 크기에 따라 부모 크기가 자동 조절되도록 설정 */
+	z-index: 500; /* sidebar보다 낮게 설정 */
+/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.3), white, white, white);  */
+/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.3), white, white, white);  */
+/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.7),  rgba(204,169,254, 0.2), white, white);   */
+/* 	background: linear-gradient( to bottom, rgba(204,169,254, 0.9), rgba(204,169,254, 0.1),  rgba(204,169,254, 0.1), white, white);   */
+}
+
+.sidebar {
+  z-index: 1000 !important;
+}
+
+.child-div {
+	width: 1240px; /* 자식 div 너비 두 배로 설정 */
+	height: 240px; /* 자식 div 높이 반으로 줄임 */
+	margin: 10px 0;
+	margin-bottom: 18px;
+	padding: 3px; /* padding 제거 */
+	border: 2px solid #000000; 
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: white; /* 배경을 흰색으로 설정 */
+	border-radius: 8px;
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 제목 상단 부분을 가로로 1:3:10:3 비율로 나누기 */
+.title-div {
+	display: flex;
+	padding: 10px; /* 제목 부분에 패딩 추가 */
+	font-size: 18px;
+	color: black; /* 텍스트 색상을 검정색으로 */
+	font-weight: bold;
+/* 	flex: 1; /* 제목부분이 1배 비율 */ 
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	margin: 5px;
+}
+
+.title-div>div {
+	margin: 2px;
+	border: 2px solid #ccccf9; /* 보라색 테두리 */
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+
+.title-div>.div-1 {
+	flex: 1; /* 1:3:10:3 비율의 1배 */
+}
+
+.title-div>.div-2 {
+	flex: 0.4 4 auto; /* 1:3:10:3 비율의 3배 */
+	font-size: 34px;
+	min-width: 0; /* 내용에 따라 자동으로 크기 조정 */
+	margin-top: -8px;
+}
+
+.title-div>.div-3 {
+	flex: 10; /* 1:3:10:3 비율의 10배 */
+	color: rgb(155, 155, 155);
+	font-weight: normal;
+	margin-top: -8px;
+	font-size: 24px;
+	
+/* 	 animation: glowColor 2.4s infinite alternate; */
+}
+
+.title-div>.div-4 {
+	flex: 3; /* 1:3:10:3 비율의 3배 */
+	text-align: right;
+	font-size: 24px;
+}
+
+.content-div {
+	padding: 20px; /* 내용 부분에 패딩 추가 */
+	font-size: 16px;
+	color: black; /* 텍스트 색상을 검정색으로 */
+	background-color: white; /* 내용 부분의 배경색 */
+	flex: 1;
+
+	margin-top: -80px; 
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	overflow: auto;
+	margin: 5px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.content-div2 {
+	padding: 20px; /* 내용 부분에 패딩 추가 */
+	font-size: 16px;
+	color: black; /* 텍스트 색상을 검정색으로 */
+	background-color: white; /* 내용 부분의 배경색 */
+	flex: 0.5; /* 내용부분이 2배 비율 */
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	overflow: auto;
+	margin: 5px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 중앙 정렬되는 div 추가 */
+.center-div {
+	margin: 3px;
+	padding: 3px;
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	width: 90%; /* 중앙 div의 너비를 조정 */
+	height: 90px;
+}
+
+/* 1:1 비율로 나누는 div 추가 */
+.split-div {
+	display: flex;
+	justify-content: space-between;
+	flex: 1; /* 1:1 비율로 나누기 */
+}
+
+.split-div>.half-div {
+	margin: 3px;
+	padding: 3px;
+	border: 2px solid #a5a5f7; /* 보라색 테두리 */
+	flex: 1; /* 1:1 비율로 나누기 */
+}
+
+/* 왼쪽 내용 div 내에서 세로로 2:1 비율로 나누는 div */
+.left-content {
+	display: flex;
+	flex-direction: column;
+	color: #5701d0;
+}
+
+.left-content>.half-top {
+	flex: 2; /* 2배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.left-content>.half-bottom {
+	flex: 1; /* 1배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	padding: 10px;
+	text-align: right;
+	font-weight: bold;
+	font-size: 24px;
+	color: #5701d0;
+}
+
+/* 지원센터의 피드백 기능 안에 세로로 2:1 비율로 자식 div 추가 */
+.left-inner-content {
+	display: flex;
+	flex-direction: column;
+}
+
+.left-inner-content>.half-inner-top {
+	flex: 2; /* 2배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	margin-bottom: 10px;
+	font-size: 28px;
+	font-weight: bold;
+	color: #9a43fe;
+}
+
+.left-inner-content>.half-inner-bottom {
+	flex: 1; /* 1배 비율 */
+	border: 1px solid #a5a5f7; /* 보라색 테두리 */
+	margin-top: -10px;
+	color: #9a43fe;
+}
+
+input::placeholder {
+	color: rgba(87, 1, 208, 0.3); /* 0.5는 50% 투명도 */
+}
+
+.suggestBoxCss { 
+			position: absolute;
+		    top: 100%;
+		    left: 0;
+		    width: 100%;
+		    background: #ffffff;
+		    border: 3px solid #5701d0 !important;
+		    border-top: none;
+		    border-radius: 0 0 8px 8px;
+		    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+		    max-height: auto;
+		    overflow-y: auto;
+		    z-index: 1000;
+		    font-size: 24px;
+		    color: #5701d0;
+		    
+}
+
+.suggestBottom {
+  height: 90px;
+/*   padding: 10px; */
+  border-top: 1px solid #eee;
+  text-align: center;
+  color: #777777;
+  background-color: white;
+  font-size: 36px;
+  
+}
+
+.suggestBottom > div {
+	height: 100%;
+	background-color: white;
+/* 	border-radius: 8px; */
+/* 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); */
+	font-weight: bold;
+}
+
+.suggestBottomIn:hover{
+	color: rgb(87,1,208);
+	background-color: rgba(171,112,254, 0.3);
+/*  	box-shadow: 0 0 5px rgba(87,1,208, 0.8);  */
+	transition: color 0.4s ease, backgroud-color 0.4s ease; 
+}
+
+
+.suggestBottom > div > div{
+/* border: 1px solid black !important;  */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center; 
+}
+
+
+/* ----------------------------------------------------------------------------------------- */
+
+.slider {
+  width: 900px; /* 300px × 5 */
+  overflow: hidden;
+  position: relative;
+  
+  
+}
+
+.slide-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  
+}
+
+.card {
+  width: 180px;
+  height: 180px;
+  margin: 15px;
+  opacity: 0.2;
+  transition: opacity 0.5s;
+/*   background-color: #f8f8f8; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  
+}
+
+.card > div { 
+margin-top: 15px; font-size: 24px; color: #5701d0;
+
+}
+
+.card > img {
+
+  width: 80%;
+  height: 70%;
+  
+}
+
+.card.active {
+  opacity: 1;
+  background-color: #fff;
+  font-weight: bold;
+	 div{
+	  font-size: 28px;
+	  transition: font-size 0.5s;
+	 }
+	 img {
+	  width: 90%;
+	  height: 90%;
+	  transition: width 0.5s, height 0.5s;
+	  }
+ 
+}
+
+/* ----------------------------------------------------------------------------------------- */
+
+				.feedbackCmp{
+ 					border-radius: 10px !important; 
+ 					border: 1px solid none; 
+					flex: 3;
+					margin: 5px !important;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-content: center;
+					
+				}
+				.feedbackArrow{
+					border: 1px solid none; flex: 0.8;
+					transform: scale(0.8);
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-content: center;
+				}
+				
+				
+				.feedbackArrow > div {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-content: center;
+					
+					padding: 24px;
+				}
+				
+				.feedbackArrow > div > img {
+					width: 100%;
+					height: 100%;
+					opacity: 0.1;
+					
+				}
+				
+				@keyframes sparkleArrow { 
+ 			  0%   { opacity: 0; } 
+ 			  50%  { opacity: 0.3; } 
+ 			  100% { opacity: 0; } 
+ 			} 
+			
+			@keyframes sparkle {
+			  0%, 100% { filter: brightness(1); }
+			  50%      { filter: brightness(1.6); }
+			}
+			
+			.feedbackArrow > div > img {
+			  width: 100%;
+			  height: 100%;
+			  animation: sparkleArrow 2.4s ease-in-out infinite;
+			  
+			  }
+				
+				
+				.feedbackNull{
+					border: 1px solid none; flex: 0.3;
+				}
+				
+				.feedbackCmp > div {
+/* 				border: 1px solid red; */
+				margin: 6px;
+				text-align: center;
+				
+				}
+				
+				.feedbackCmpTitle{
+					font-size: 30px;
+					font-weight: bold;
+					
+				}
+				
+				.feedbackCmpContent{
+					font-size: 18px;
+				}
+				
+				.content-div2 {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-content: center;
+					
+					
+				}
+				
+				
+				
+				.content-div2 > div {
+				text-align: center;
+ 				 animation: sparkle 1.2s ease-in-out infinite;
+ 				 
+				}
+				
+				
+				.gradient-text {
+				  font-size: 48px;
+				  font-weight: bold;
+				  background: linear-gradient(240deg,rgb(224, 179, 255), #9a43fe, #300051);
+				  -webkit-background-clip: text;
+				  -webkit-text-fill-color: transparent;
+				  
+				  border: 1px solid none !important;
+				} 
+
+
+/* ----------------------------------------------------------------------------------------- */
+
+
+.content-div > .centerSymbol{
+
+	width: 100%;
+}
+
+.centerSymbol{
+	width: 110px;
+	height: 110px;
+}
+
+.centerSymbol > img {
+	height: 100%;
+}
+
+/* ----------------------------------------------------------------------------------------- */
+
+.scroll-container {
+	  width: 800px;
+	  height: 120px;
+	  overflow: hidden;
+	}
+	
+	#slider {
+	  display: flex;
+	  flex-direction: column;
+/* 	  animation: scroll-up 45s linear infinite; */
+	  animation: scroll-up 32s linear infinite;
+	  padding-top: 30px;
+	  
+	  
+	}
+	
+	.slide {
+ 	  margin-top: 10px; 
+ 	  margin-bottom: 10px; 
+	  
+	  height: 50px;
+	  box-sizing: border-box;
+/* 	  border-bottom: 1px solid #ddd !important;  */
+	  background-color: transparent;
+	  
+	  display: flex; 
+	  flex-direction: row;
+	  width: 100%;
+	  
+/* 	  border: 1px solid rgba(181,87,254, 0.4) !important; */
+	  
+	}
+	.slide:hover{
+		background-color: rgba(154,67,254, 0.2);
+	}
+	
+	@keyframes scroll-up {
+	  0% { transform: translateY(0); }
+	  100% { transform: translateY(-700px); } /* 총 슬라이드 수 * 높이 */
+	}
+
+  
+  .faqToolLeft > .faqToolLeftTitle {
+	font-size: 32px;
+	font-weight: bold;
+	color: #9a43fe;
+	
+  }
+  .faqToolLeft > .faqToolLeftInfo {
+	font-size: 18px;
+	color: rgb(155, 155, 155);
+  }
+  
+  .plusDiv{
+  border:1px solid red !important;
+  font-size: 36px;
+/*   font-weight: bold; */
+  color: #9a43fe;
+  width: 40px;
+  }
+  
+  .countDiv{
+/*   border:1px solid red !important; */
+  font-size: 36px;
+/*   font-weight: bold;  */
+  color: #9a43fe;
+  width: 40px;
+  }
+  
+  .rankDiv{
+  width :60px;;
+/*   border: 1px solid tranparent !important; */
+/*   border: 1px solid red !important; */
+  color: #9a43fe;
+  font-size: 30px;
+  margin-left: 40px;
+  margin-right: -20px;
+  }
+  
+  .topFaqtypeDiv{
+  width :auto;
+/*   border: 1px solid tranparent !important; */
+/*   border: 1px solid red !important; */
+  margin-left: 40px;
+  border: 1px solid #9a43fe !important;
+  border-radius: 8px; 
+  color: #9a43fe;
+  height: 100%;
+  font-size: 20px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  padding: 5px !important;
+  background-color: white;
+  
+  }
+  
+  .topFaqDiv{
+  width :auto;
+/*   border: 1px solid tranparent !important; */
+/*   border: 1px solid red !important; */
+  font-size: 30px;
+  margin-left: 36px;
+   color: #9a43fe;
+  }
+  
+  .suggestItem.hovered {
+  background-color: rgba(87,1,208, 0.2);
+  color: rgb(87,1,208);
+}

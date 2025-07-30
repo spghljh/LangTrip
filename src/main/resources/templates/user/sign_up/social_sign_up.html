@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 만들기</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4285f4;
+        }
+        span.msg {
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+        .interests-section {
+            margin: 30px 0;
+        }
+        .interests-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .interests-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .interest-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .interest-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #5865f2;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 30px 0 20px 0;
+            transition: transform 0.2s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,188,212,0.3);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>프로필 만들기</h1>
+    </div>
+
+    <form id="profileForm">
+        <div class="form-group">
+            <input type="text" id="nickname" placeholder="닉네임" required>
+            <span id="nickname-msg" class="msg"></span>
+            <input type="hidden" id="socialProvider" th:value="${socialProvider}">
+			<input type="hidden" id="socialId" th:value="${socialId}">
+        </div>
+
+        <div class="interests-section">
+            <div class="interests-title">• 가입경로 <span style="color:#999; font-size:12px;">(택 1)</span></div>
+            <div class="interests-grid">
+                <div class="interest-item">
+                    <input type="checkbox" id="recommend" value="추천 및 광고">
+                    <label for="recommend">추천 및 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="online" value="온라인 매체">
+                    <label for="online">온라인 매체</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="interview" value="언론사 광고">
+                    <label for="interview">언론사 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="sns" value="SNS(페이스북, 인스타그램)">
+                    <label for="sns">SNS(페이스북, 인스타그램)</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="tv" value="TV 광고">
+                    <label for="tv">TV 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="radio" value="라디오 광고">
+                    <label for="radio">라디오 광고</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="offline" style="grid-column: 1 / -1;" value="오프라인 광고(버스,지하철)">
+                    <label for="offline">오프라인 광고(버스,지하철)</label>
+                </div>
+                <div class="interest-item">
+                    <input type="checkbox" id="none" value="해당사항 없음"/>
+                    <label for="none">해당사항 없음</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">가입 정보 생성</button>
+    </form>
+</div>
+
+<script>
+let nicknameAvailable = false;
+let debounceTimer = null;
+
+
+document.getElementById('nickname').addEventListener('input', function () {
+    const value = this.value.trim();
+    const msg = document.getElementById('nickname-msg');
+    const regex = /^[a-zA-Z0-9]+$/;
+
+    clearTimeout(debounceTimer);
+
+    if (/\s/.test(value)) {
+        msg.textContent = "닉네임에 공백을 포함할 수 없습니다.";
+        msg.style.color = "red";
+        nicknameAvailable = false;
+    } else if (value && !regex.test(value)) {
+        msg.textContent = "닉네임은 영어 또는 영어+숫자만 가능합니다.";
+        msg.style.color = "red";
+        nicknameAvailable = false;
+    } else if (value) {
+        msg.textContent = "닉네임 확인 중...";
+        msg.style.color = "gray";
+        debounceTimer = setTimeout(() => {
+            fetch('/api/auth/nickname/check?nickname=' + encodeURIComponent(value))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        msg.textContent = "사용 가능한 닉네임입니다.";
+                        msg.style.color = "green";
+                        nicknameAvailable = true;
+                    } else {
+                        msg.textContent = "이미 사용 중인 닉네임입니다.";
+                        msg.style.color = "red";
+                        nicknameAvailable = false;
+                    }
+                })
+                .catch(err => {
+                    msg.textContent = "닉네임 확인 중 오류가 발생했습니다.";
+                    msg.style.color = "red";
+                    nicknameAvailable = false;
+                });
+        }, 300); // debounce 시간
+    } else {
+        msg.textContent = "";
+        nicknameAvailable = false;
+    }
+});
+
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nickname = document.getElementById('nickname').value.trim();
+    const nicknameMsg = document.getElementById('nickname-msg').textContent;
+    if (!nickname) {
+        alert('닉네임을 입력해주세요.');
+        return;
+    }
+    if (!nicknameAvailable) {
+        alert('닉네임 중복 여부를 확인해주세요.');
+        return;
+    }
+
+    // ✅ hidden input 값 읽어오기
+    const socialProvider = document.getElementById('socialProvider')?.value || "";
+    const socialId = document.getElementById('socialId')?.value || "";
+
+    const checked = [];
+    document.querySelectorAll('.interests-grid input[type="checkbox"]:checked').forEach(cb => {
+        checked.push(cb.value);
+    });
+
+    if (checked.length !== 1) {
+        alert('가입경로를 하나만 선택해주세요!');
+        return;
+    }
+
+    fetch('/api/auth/socialSignup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            socialProvider: socialProvider,
+            socialId: socialId,
+            nickname: nickname,
+            signUp_path: checked[0]
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('회원가입 성공!');
+            window.location.href = '/';
+        } else {
+            alert('회원가입 실패');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('회원가입 중 오류가 발생했습니다.');
+    });
+});
+
+</script>
+</body>
+</html>

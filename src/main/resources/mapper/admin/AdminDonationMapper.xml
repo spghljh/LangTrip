@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.e_learning.admin.donation.AdminDonationMapper">
+
+<sql id="searchConditions">
+    <where>
+        <if test="search.searchKeyword != null and search.searchKeyword != ''">
+            <choose>
+                <when test="search.searchType == 'sender'">
+                    AND u1.nickname LIKE CONCAT('%', #{search.searchKeyword}, '%')
+                </when>
+                <when test="search.searchType == 'recipient'">
+                    AND u2.nickname LIKE CONCAT('%', #{search.searchKeyword}, '%')
+                </when>
+                <when test="search.searchType == 'lecture'">
+                    AND c.title LIKE CONCAT('%', #{search.searchKeyword}, '%')
+                </when>
+                <when test="search.searchType == 'message'">
+                    AND d.message LIKE CONCAT('%', #{search.searchKeyword}, '%')
+                </when>
+                <otherwise>
+                    AND (
+                        u1.nickname LIKE CONCAT('%', #{search.searchKeyword}, '%') OR
+                        u2.nickname LIKE CONCAT('%', #{search.searchKeyword}, '%') OR
+                        c.title LIKE CONCAT('%', #{search.searchKeyword}, '%') OR
+                        d.message LIKE CONCAT('%', #{search.searchKeyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            AND d.created_at &gt;= TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            AND d.created_at &lt;= TO_DATE(#{search.endDate} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+    </where>
+</sql>
+
+<select id="selectDonations" resultType="kr.co.sist.e_learning.admin.donation.DonationVO">
+    SELECT
+        d.donation_seq AS donationId,
+        ws1.user_seq AS senderId,
+        u1.nickname AS senderNickname,
+        ws2.user_seq AS recipientId,
+        u2.nickname AS recipientNickname,
+        c.title AS lectureTitle,
+        d.donation_amount AS amount,
+        d.message,
+        d.message_deleted,
+        d.created_at AS donationDate
+    FROM
+        donations d
+    JOIN
+        course c ON d.course_seq = c.course_seq
+    JOIN
+        mile_wallet ws1 ON d.wallet_seq = ws1.wallet_seq
+    JOIN
+        users u1 ON ws1.user_seq = u1.user_seq
+    JOIN
+        mile_wallet ws2 ON d.wallet_seq = ws2.wallet_seq
+    JOIN
+        users u2 ON ws2.user_seq = u2.user_seq
+    <include refid="searchConditions"/>
+    ORDER BY
+        d.created_at DESC
+    OFFSET #{page.offset} ROWS FETCH NEXT #{page.size} ROWS ONLY
+</select>
+
+<select id="countDonations" resultType="int">
+    SELECT
+        COUNT(*)
+    FROM
+        donations d
+    JOIN
+        course c ON d.course_seq = c.course_seq
+    JOIN
+        mile_wallet ws1 ON d.wallet_seq = ws1.wallet_seq
+    JOIN
+        users u1 ON ws1.user_seq = u1.user_seq
+    JOIN
+        mile_wallet ws2 ON d.wallet_seq = ws2.wallet_seq
+    JOIN
+        users u2 ON ws2.user_seq = u2.user_seq
+    <include refid="searchConditions"/>
+</select>
+
+
+    <update id="updateDonationMessageDeleted">
+        UPDATE
+            donations
+        SET
+            message_deleted = 'Y',
+            message = '관리자에 의해 삭제된 메시지입니다.'
+        WHERE
+            donation_seq = '#{donationId}'
+    </update>
+
+</mapper>

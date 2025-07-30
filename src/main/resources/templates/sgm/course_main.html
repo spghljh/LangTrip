@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>인사 표현하기</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* 사이드 메뉴 */
+    .sidebar {
+      width: 180px;
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 12px 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+    }
+
+    .header {
+      width: 100%;
+      background-color: #6AD100;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+
+    .step {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #eee;
+      margin: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+    }
+
+    .step.active {
+      background-color: #6AD100;
+      color: white;
+      border: 3px solid #a0e548;
+    }
+
+    .info-box {
+      position: absolute;
+      right: 50px;
+      top: 180px;
+      width: 200px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .info-box h4 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .info-box button {
+      background-color: #0066ff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .footer {
+      margin-top: auto;
+      margin-bottom: 30px;
+      font-weight: bold;
+      color: #6AD100;
+    }
+
+    /* 🟣 챗봇 버튼 */
+    .chatbot-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #eee;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3b/OpenAI_ChatGPT_Logo.svg'); /* 예시 이미지 */
+      background-size: 60%;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    /* 모달 */
+    .chatbot-modal {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .chatbot-modal-header {
+      background: #6AD100;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chatbot-modal-body {
+      padding: 10px;
+      height: calc(100% - 40px);
+      overflow-y: auto;
+    }
+
+    .chatbot-close {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <ul>
+      <li>학습</li>
+      <li>퀴즈</li>
+      <li>마이페이지</li>
+      <li>더 보기</li>
+      <li>내 강의실</li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="header">인사 표현하기</div>
+
+    <div class="progress-container">
+      <div class="step active">★</div>
+      <div class="step">☆</div>
+      <div class="step">📘</div>
+      <div class="step">☆</div>
+      <div class="step">📘</div>
+    </div>
+
+    <div class="info-box">
+      <h4>강의 설명</h4>
+      <p>인사 표현으로 배우는 실전 회화</p>
+      <button>강의 추천하기</button>
+    </div>
+
+    <div class="footer">5/7</div>
+  </div>
+
+  <!-- 챗봇 버튼 -->
+  <div class="chatbot-button" onclick="toggleChatbot()"></div>
+
+  <!-- 챗봇 모달 -->
+  <div class="chatbot-modal" id="chatbotModal">
+    <div class="chatbot-modal-header">
+      챗봇 도우미
+      <button class="chatbot-close" onclick="toggleChatbot()">×</button>
+    </div>
+    <div class="chatbot-modal-body">
+      <p>안녕하세요! 무엇을 도와드릴까요?</p>
+      <!-- 여기에 챗 UI 연결 가능 -->
+    </div>
+  </div>
+
+  <script>
+    function toggleChatbot() {
+      const modal = document.getElementById('chatbotModal');
+      modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+    }
+  </script>
+
+</body>
+</html>

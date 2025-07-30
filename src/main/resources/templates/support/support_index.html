@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/common.css}">
+<link rel="stylesheet" href="/css/support_index_design.css">
+<title>templates/support/support_index.html</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body
+style="background: linear-gradient( to bottom, white, rgba(204,169,254, 0.7), rgba(64,5,147, 0.6)) !important;"
+>
+
+	<div th:replace="layout/header :: header"></div>
+	<div id="overlay" style="display: none; "></div>
+	
+	<div class="parent-container"
+		style="border: none !important; width: 100%; padding-top: 30px">
+
+
+
+
+
+
+
+
+
+
+		<div class="child-div"
+			style="height: auto; margin: 0px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none">
+			<div class="title-div"
+				style="margin: 0px; padding: 1px; border: none;">
+				<div class="div-2"
+					style="font-size: 28px; color: #000000; margin: 0px; margin-bottom: -5px; border: none">
+					<a th:href="@{/support}" style="color: #000000 !important">지원센터</a>
+				</div>
+			</div>
+		</div>
+		<!-- child-div -->
+
+		<div class="child-div"
+			style="height: auto; margin-bottom: -15px; margin-top: -60px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none; display: flex; justify-content: center; flex-direction: column; align-items: center;">
+			<div class="content-div" style="background: none; border: none">
+				<div class="centerSymbol">
+					<img th:src="@{/images/symbol_support.png}" />
+				</div>
+			</div>
+		</div>
+		<!-- child-div -->
+		
+
+		<div class="child-div"
+			style="height: auto; border: none; margin-bottom: -20px; margin-top: -8px; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none;">
+			<div class="content-div"
+				style="font-size: 40px; font-weight: bold; text-align: center; padding-bottom: 0px; padding-top: 0px; background: none; border: none">무엇을
+				도와드릴까요?</div>
+		</div>
+		<!-- child-div -->
+		
+
+		<div class="child-div"
+			style="height: 100px; width: 800px; border: none; box-shadow: 0 0 0px rgba(0, 0, 0, 0.0); background: none; margin-bottom: 40px;">
+
+			<div
+				style="position: relative; width: 100%; margin-top: 20px; height: 100px;">
+				<input type="text" id="keywordInput" placeholder="키워드로 찾아보세요" autocomplete="off"
+				style="font-size: 36px; border: 3px solid #5701d0; width: 100%; height: 95%; text-align: center; outline:none;"/>
+				<div id="suggestBox" class="suggestBoxCss " style="width: 794px; margin-top: -7px;"></div>
+			</div>
+
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div class="child-div" style="height: 90px; margin-top: -20px; ">
+			<div class="title-div" style="border:none !important;">
+				<div class="div-1">
+					<div style="margin-top:0px; margin-left: 5px;">
+						<img th:src="@{/images/symbol_notice.png}"
+							style="width: 45px; height: 45px; border:none !important;" />
+					</div>
+				</div>
+				<div class="div-2" style="font-size: 28px; margin-top: 0px; margin-left: -15px;">공지사항</div>
+				<div class="div-3" style="font-size: 20px; margin-top: 0px; color: rgba(0,0,0,0.6);">안내 사항과 피드백 반영을 전달해드립니다.</div>
+				<div class="div-4" style="color: #5701d0">
+					<span><a href="/support/notice">확인하기</a></span>
+				</div>
+			</div>
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div class="child-div" style="height: auto; margin-top: -2px;">
+
+			<div class="title-div"
+				style="border-bottom: 1px solid #cecece !important;">
+				<div class="div-1" style="height: 20px;">
+					<div style="margin-top:-10px;">
+						<img th:src="@{/images/symbol_faq.png}"
+							style="width: 45px; height: 45x" />
+					</div>
+				</div>
+				<div class="div-2" style="font-size: 28px; margin-left: -15px;">자주 묻는 질문</div>
+				<div class="div-3" style="font-size: 20px; color: rgba(0,0,0,0.6);">관련된 질문을 유형별로 탐색할 수 있습니다.</div>
+				<div class="div-4" style="color: #5701d0; margin-top: -5px">
+					<span><a href="/support/faq">탐색하기</a></span>
+				</div>
+			</div>
+
+
+			<div class="content-div" style="border: none; flex-direction: row; justify-content: center; align-items: center">
+				<div style="border:1px solid transparent !important; width: 280px;">
+					<div class="faqToolLeft">
+						<div class="faqToolLeftTitle">실시간 FAQ 추천</div>
+					</div>
+				</div>
+				<div style="border:2px solid rgba(87,1,208, 0.6) !important; border-radius: 15px; width: 800px; height: 110px; overflow: hidden;">
+						<div class="scroll-container">
+							<div id="slider">
+							<th:block th:each="faq, stat : ${faqList}">
+							  <div class="slide" th:attr="data-link=@{'/support/faq?openId=' + ${faq.faq_id}}" style="cursor:pointer;">
+							    <div class="rankDiv"><span th:text="${stat.index +1}"></span>위</div>
+							    <div class="topFaqtypeDiv" th:switch="${faq.faqtype_id}">
+							    	  <span th:case="3000">결제 FAQ</span>
+									  <span th:case="3001">강좌 FAQ</span>
+									  <span th:case="3002">학습 FAQ</span>
+									  <span th:case="3003">계정 FAQ</span>
+									  <span th:case="3004">기타 FAQ</span>
+									  <span th:case="3005">기능 FAQ</span>
+							    </div>
+							    <div class="topFaqDiv"><span th:text="${faq.faq_title}">제목</span></div>
+							  </div>
+							</th:block>
+							<th:block th:each="faq, stat : ${faqList}">
+							  <div class="slide" th:attr="data-link=@{'/support/faq?openId=' + ${faq.faq_id}}" style="cursor:pointer;">
+							    <div class="rankDiv"><span th:text="${stat.index +1}"></span>위</div>
+							 	<div class="topFaqtypeDiv" th:switch="${faq.faqtype_id}">
+							    	  <span th:case="3000">결제 FAQ</span>
+									  <span th:case="3001">강좌 FAQ</span>
+									  <span th:case="3002">학습 FAQ</span>
+									  <span th:case="3003">계정 FAQ</span>
+									  <span th:case="3004">기타 FAQ</span>
+									  <span th:case="3005">기능 FAQ</span>
+							    </div>
+							    <div class="topFaqDiv"><span th:text="${faq.faq_title}">제목</span></div>
+							  </div>
+							</th:block>
+							
+							<script>
+							  document.querySelectorAll('.slide').forEach(slide => {
+							    slide.addEventListener('click', () => {
+							      const link = slide.getAttribute('data-link');
+							      if (link) {
+							        location.href = link;
+							      }
+							    });
+							  });
+							</script>
+		
+						  </div>
+						</div><!-- scroll-container -->
+				
+				</div>
+			</div><!-- content-div -->
+
+		</div>
+		<!-- child-div -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		<div class="child-div" style="height: 450px; margin-top: -2px;">
+			<div class="title-div" style="border-bottom: 1px solid #cecece !important; border: 1px solid none">
+				<div class="div-1" style="height: 20px; margin-top: -5px; margin-left: 9px;">
+					<div>
+						<img th:src="@{/images/symbol_feedback.png}" style="width: 36px; height: 36px" />
+					</div>
+				</div>
+				<div class="div-2" style="font-size: 28px; margin-left: -24px;">피드백</div>
+				<div class="div-3" style="font-size: 20px; color: rgba(0,0,0,0.6);">소중한 피드백을 통해 사용자 경험을 향상시킬 수 있습니다.</div>
+				<div class="div-4" style="margin-top: -3px;">
+					<span><a href="/support/feedback/about"
+						style="font-size: 22px;">자세히 알아보기</a></span>
+				</div>
+
+			</div>
+
+			<div class="content-div" style="display: flex; flex-direction: row;">
+				<div class="feedbackNull"></div>
+				<div class="feedbackCmp"
+					style="box-shadow: 0 0 6px rgba(180, 159, 213, 1);">
+					<div class="feedbackCmpTitle" style="color: #b49fd5;">피드백 접수</div>
+					<div class="feedbackCmpContent" style="color: #b49fd5;">
+						여러분의 소중한 의견을<br> 직접 전달해주세요.
+					</div>
+				</div>
+				<div class="feedbackArrow">
+					<div>
+						<img th:src="@{/images/symbol_arrow.png}" />
+					</div>
+				</div>
+				<div class="feedbackCmp"
+					style="box-shadow: 0 0 6px rgba(154, 67, 254, 0.8);">
+					<div class="feedbackCmpTitle" style="color: #9a43fe;">피드백 검토</div>
+					<div class="feedbackCmpContent" style="color: #9a43fe;">
+						접수된 피드백은<br> 검토와 분석을 거칩니다.
+					</div>
+				</div>
+				<div class="feedbackArrow">
+					<div>
+						<img th:src="@{/images/symbol_arrow.png}" />
+					</div>
+				</div>
+				<div class="feedbackCmp"
+					style="box-shadow: 0 0 6px rgba(87, 1, 208, 0.9);">
+					<div class="feedbackCmpTitle" style="color: #5701d0;">피드백 반영</div>
+					<div class="feedbackCmpContent" style="color: #5701d0;">
+						함께 만들어 가는<br> 향상된 사용자 경험
+					</div>
+				</div>
+				<div class="feedbackNull"></div>
+			</div>
+
+			<div class="content-div2"
+				style="height: 70px; border-top: 1px solid #cecece !important; background-color: transparent; border-color: transparent !important;">
+				<div class="gradient-text"
+					style="font-size: 45px; font-weight: bold; margin-top: -30px;">
+					<span><a href="/support/feedback/send">피드백 바로 전달하기</a></span>
+				</div>
+			</div>
+
+		</div>
+		<!-- child-div -->
+
+	</div>
+	<!-- parent-container -->
+
+	<div style="margin-top: 50px"></div>
+
+<script src="/js/support_center.js"></script>
+	
+	<div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

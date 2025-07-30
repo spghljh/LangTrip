@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 로그 관리</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/admin_sidebar.css}">
+  <style>
+    /* Critical page-specific styles. Do not remove. */
+    @charset "UTF-8";
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; display: flex; }
+    /* Ensure main content fills space next to sidebar */
+    .main-content { margin-left: 280px; padding: 2rem; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .page-header { background: #fff; padding: 2rem; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.1); margin-bottom: 2rem; }
+    .page-header h1 { color: #333; font-size: 2rem; margin-bottom: .5rem; }
+    .page-header p { color: #666; font-size: 1.1rem; }
+    /* Sticky search section */
+    .search-section { 
+      background: #f5f7fa; /* Match body background */
+      padding: 2rem; 
+      border-radius: 16px; 
+      margin-bottom: 1rem; 
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+      box-shadow: 0 8px 16px rgba(0,0,0,.05);
+    }
+    .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: .5rem; font-weight: 600; color: #333; }
+    .form-group input, .form-group select { padding: .8rem; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: border-color .3s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+    .search-buttons { display: flex; gap: 1rem; justify-content: flex-end; }
+    .btn { padding: .8rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem; transition: all .3s; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(102,126,234,.4); }
+    .btn-secondary { background: #6c757d; color: #fff; }
+    .btn-secondary:hover { background: #5a6268; }
+    .sort-filter-bar { display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; padding: 1.5rem 1rem 1.5rem; }
+    .sort-filter-bar label { font-weight: 600; color: #333; }
+    .sort-filter-bar select { padding: .6rem 1rem; border-radius: 8px; border: 2px solid #e9ecef; font-size: 1rem; }
+    .table-section-wrapper { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.1); }
+    .table-header { padding: 1.5rem 2rem; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .table-header h3 { margin: 0; font-size: 1.3rem; }
+    .table-stats { font-size: .9rem; opacity: .9; }
+    .table-container { overflow-y: auto; flex-grow: 1; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th, .admin-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #e9ecef; white-space: nowrap; }
+    .admin-table th { background: #f8f9fa; font-weight: 600; color: #333; position: sticky; top: 0; z-index: 1; }
+    .pagination { display: flex; justify-content: center; padding: 1.5rem 0; flex-shrink: 0; }
+    .pagination button, .pagination a { padding: 0.5rem 1rem; margin: 0 5px; border: 1px solid #ddd; border-radius: 5px; background-color: #f8f8f8; cursor: pointer; transition: background-color 0.3s; text-decoration: none; color: #333; }
+    .pagination button:hover:not(.active), .pagination a:hover:not(.active) { background-color: #e0e0e0; }
+    .pagination button.active, .pagination a.active { background-color: #667eea; color: white; border-color: #667eea; }
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .main-content { margin-left: 0; height: auto; }
+      .search-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{/layout/admin_sidebar :: sidebar}"></div>
+
+<div class="main-content">
+  <div class="page-header">
+    <h1><i class="fas fa-file-alt"></i> 로그 관리</h1>
+    <p>관리자 활동 로그를 조회합니다.</p>
+  </div>
+
+  <div class="search-section">
+    <form id="searchForm" class="search-form" th:action="@{/admin/log}" method="get">
+      <div class="form-group">
+        <label for="searchType">검색 유형</label>
+        <select id="searchType" name="searchType" th:value="${searchDTO.searchType}">
+          <option value="all">전체</option>
+          <option value="adminId" th:selected="${searchDTO.searchType == 'adminId'}">관리자 ID</option>
+          <option value="actionType" th:selected="${searchDTO.searchType == 'actionType'}">액션 유형</option>
+          <option value="targetId" th:selected="${searchDTO.searchType == 'targetId'}">대상 ID</option>
+          <option value="details" th:selected="${searchDTO.searchType == 'details'}">상세 정보</option>
+          <option value="PAGE_VIEW" th:selected="${searchDTO.searchType == 'PAGE_VIEW'}">페이지 뷰</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="searchKeyword">검색어</label>
+        <input type="text" id="searchKeyword" name="searchKeyword" th:value="${searchDTO.searchKeyword}" placeholder="검색어를 입력하세요">
+      </div>
+      <div class="form-group">
+        <label for="startDate">시작일</label>
+        <input type="date" id="startDate" name="startDate" th:value="${searchDTO.startDate}">
+      </div>
+      <div class="form-group">
+        <label for="endDate">종료일</label>
+        <input type="date" id="endDate" name="endDate" th:value="${searchDTO.endDate}">
+      </div>
+      <div class="search-buttons">
+        <button type="submit" class="btn btn-primary">검색</button>
+        <a id="excelDownloadBtn" href="#" class="btn btn-primary">Excel 다운로드</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="sort-filter-bar">
+    <label for="sort">정렬 기준</label>
+    <select id="sort" name="sort">
+      <option value="logTime,desc" th:selected="${pageRequestDTO.orderBy == 'logTime' and pageRequestDTO.sort == 'desc'}">로그 시간 ↓</option>
+      <option value="logTime,asc" th:selected="${pageRequestDTO.orderBy == 'logTime' and pageRequestDTO.sort == 'asc'}">로그 시간 ↑</option>
+      <option value="adminId,asc" th:selected="${pageRequestDTO.orderBy == 'adminId' and pageRequestDTO.sort == 'asc'}">관리자 ID ↑</option>
+      <option value="adminId,desc" th:selected="${pageRequestDTO.orderBy == 'adminId' and pageRequestDTO.sort == 'desc'}">관리자 ID ↓</option>
+      <option value="actionType,asc" th:selected="${pageRequestDTO.orderBy == 'actionType' and pageRequestDTO.sort == 'asc'}">액션 유형 ↑</option>
+      <option value="actionType,desc" th:selected="${pageRequestDTO.orderBy == 'actionType' and pageRequestDTO.sort == 'desc'}">액션 유형 ↓</option>
+    </select>
+    <label for="pageSize">항목 수</label>
+    <select id="pageSize" name="pageSize">
+      <option value="5" th:selected="${pageRequestDTO.size == 5}">5</option>
+      <option value="10" th:selected="${pageRequestDTO.size == 10}">10</option>
+      <option value="15" th:selected="${pageRequestDTO.size == 15}">15</option>
+      <option value="20" th:selected="${pageRequestDTO.size == 20}">20</option>
+      <option value="25" th:selected="${pageRequestDTO.size == 25}">25</option>
+      <option value="30" th:selected="${pageRequestDTO.size == 30}">30</option>
+    </select>
+  </div>
+
+  <div id="admin-log-container" class="table-section-wrapper">
+    <!-- Table content will be loaded here asynchronously -->
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('searchForm');
+    const sortSelect = document.getElementById('sort');
+    const pageSizeSelect = document.getElementById('pageSize');
+    const container = document.getElementById('admin-log-container');
+    const excelDownloadBtn = document.getElementById('excelDownloadBtn');
+
+    let currentPage = 1;
+
+    // Initial load
+    fetchLogs(new URL(window.location.href));
+
+    function fetchLogs(url) {
+        currentPage = url.searchParams.get('page') || 1;
+        url.searchParams.set('async', 'true');
+
+        fetch(url.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            container.innerHTML = html;
+            attachPaginationListeners();
+            updateExcelLink();
+        })
+        .catch(error => console.error('Error fetching log list:', error));
+    }
+
+    function updateUrlAndFetch() {
+        const url = new URL(window.location.origin + window.location.pathname);
+        const formData = new FormData(searchForm);
+
+        for (const [key, value] of formData.entries()) {
+            url.searchParams.set(key, value);
+        }
+        url.searchParams.set('sort', sortSelect.value);
+        url.searchParams.set('pageSize', pageSizeSelect.value);
+        url.searchParams.set('page', 1); // Reset to page 1 on new search/filter
+
+        history.pushState({}, '', url);
+        fetchLogs(url);
+    }
+
+    function updateExcelLink() {
+        const url = new URL(window.location.origin + '/admin/log/excel');
+        const formData = new FormData(searchForm);
+
+        for (const [key, value] of formData.entries()) {
+            url.searchParams.set(key, value);
+        }
+        url.searchParams.set('sort', sortSelect.value);
+        url.searchParams.set('pageSize', pageSizeSelect.value);
+        url.searchParams.set('page', currentPage);
+        excelDownloadBtn.href = url.toString();
+    }
+
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateUrlAndFetch();
+    });
+
+    sortSelect.addEventListener('change', updateUrlAndFetch);
+    pageSizeSelect.addEventListener('change', function() {
+        localStorage.setItem('pageSize', this.value);
+        updateUrlAndFetch();
+    });
+
+    function attachPaginationListeners() {
+        container.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                history.pushState({}, '', url);
+                fetchLogs(url);
+            });
+        });
+    }
+
+    // Apply saved page size
+    const savedPageSize = localStorage.getItem('pageSize');
+    if (savedPageSize) {
+        pageSizeSelect.value = savedPageSize;
+    }
+});
+</script>
+
+</body>
+</html>

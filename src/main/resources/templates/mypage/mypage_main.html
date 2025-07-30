@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <!-- Chart.js 전역 로드 -->
+  <script src="/js/chart.umd.js"></script>
+  <!-- drawCharts 함수 정의 파일 -->
+  <script src="/js/dashboardCharts.js"></script>
+  
+   <script th:src="@{/js/login-status.js}"></script>
+
+  <!-- 공통 스타일 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"  rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/common.css}">
+  <link rel="stylesheet" th:href="@{/css/course_list.css}">
+
+  <!-- 마이페이지 전용 스타일 -->
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+  <link rel="stylesheet" th:href="@{/css/lecture.css}">
+  <link rel="stylesheet" th:href="@{/css/subscription.css}">
+  
+  
+  <meta charset="UTF-8">
+  <title>마이페이지</title>
+  <script>
+    // 🎯 콘텐츠 영역 비동기 로드
+    function loadContent(url) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          document.querySelector("#content-area").innerHTML = html;
+          history.replaceState(null, '', '/mypage?tab=' + url.split('/').pop());
+
+          if (url.includes("dashboard") && typeof window.drawCharts === 'function') {
+            setTimeout(() => window.drawCharts(), 50);
+          }
+        })
+        .catch(err => console.error("내용 로드 실패:", err));
+    }
+
+
+  function initSidebarClick() {
+    document.querySelector(".sidebar").addEventListener("click", function (e) {
+      const target = e.target.closest("a");
+      if (!target) return;
+
+      const href = target.getAttribute("href");
+      // /mypage 또는 /mypage?tab=xxx 까지 포함하도록 조건 넓히기
+      if (href.startsWith("/mypage")) {
+        e.preventDefault();
+
+        // 쿼리파라미터에서 tab 추출
+        const urlObj = new URL(href, window.location.origin);
+        const tabParam = urlObj.searchParams.get("tab") || urlObj.pathname.split("/").pop();
+
+        // 패스 방식(/mypage/subscriptions)을 AJAX로 호출
+        loadContent("/mypage/" + tabParam);
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // 초기 로드 시에도 query string 기준으로 tab 뽑아서 path 호출
+    const initialTab = new URL(window.location.href).searchParams.get("tab") || "dashboard";
+    loadContent("/mypage/" + initialTab);
+    initSidebarClick();
+  });
+    
+    
+    
+
+    function uploadProfile() {
+      const file = document.getElementById("profileFile").files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/mypage/upload_profile", {
+        method: "POST",
+        body: formData
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("profilePreview").src = data.newPath + "?t=" + new Date().getTime();
+          alert("프로필 이미지가 변경되었습니다.");
+        } else {
+          alert("업로드 실패: " + data.message);
+        }
+      })
+      .catch(err => alert("에러 발생: " + err));
+    }
+
+ 	 function unsubscribe(followingId) {
+      fetch('/mypage/unsubscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'following_id=' + followingId
+      })
+      .then(res => {
+        if (res.ok) {
+          alert('구독 취소되었습니다.');
+          location.reload();
+        } else {
+          alert('에러가 발생했습니다.');
+        }
+      });
+      
+    }
+  </script>
+  <style>
+body.logged-in .guest-state {
+  display: none;
+}
+body.logged-in .user-state {
+  display: inline-flex ;
+}
+body.logged-out .guest-state {
+  display: inline-flex ;
+}
+body.logged-out .user-state {
+  display: none ;
+}
+
+
+</style>
+</head>
+
+<!--  클래스 추가 -->
+<body class="mypage">
+  <div class="container">
+    <!-- 헤더 Fragment -->
+    <th:block th:replace="~{layout/header :: header}"/>
+
+    <div class="main-content">
+      <!-- 사이드바 Fragment -->
+      <div class="sidebar" th:replace="~{mypage/sidebar :: sidebar}"></div>
+
+      <!-- 동적 콘텐츠 영역 -->
+      <div class="content-area" id="content-area"></div>
+    </div>
+  </div>
+</body>
+<script th:src="@{/js/donation.js}"></script>
+</html>

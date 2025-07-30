@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.admin.course.AdminCourseMapper">
+
+  <select id="selectAdminCourses" parameterType="map" resultType="kr.co.sist.e_learning.admin.course.AdminCourseDTO">
+    SELECT
+      c.COURSE_SEQ AS courseSeq,
+      c.USER_SEQ AS userSeq,
+      c.TITLE AS title,
+      c.INTRODUCTION AS introduction,
+      c.QUIZ_SEQ AS quizSeq,
+      c.UPLOAD_DATE AS uploadDate,
+      c.VIDEO_SEQ AS videoSeq,
+      c.IS_PUBLIC AS isPublic,
+      u.NICKNAME AS userName,
+      (SELECT COUNT(*) FROM VIDEO v WHERE v.COURSE_SEQ = c.COURSE_SEQ) AS videoCount,
+      (SELECT COUNT(*) FROM QUIZ q WHERE q.COURSE_SEQ = c.COURSE_SEQ) AS quizCount
+    FROM COURSE c
+    JOIN USERS u ON c.USER_SEQ = u.USER_SEQ
+    <where>
+      <if test="searchType != null and searchKeyword != null and searchKeyword != ''">
+        <choose>
+          <when test="searchType == 'title'">
+            AND c.TITLE LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'userName'">
+            AND u.NICKNAME LIKE '%' || #{searchKeyword} || '%'
+          </when>
+        </choose>
+      </if>
+      <if test="isPublic != null and isPublic != ''">
+        AND c.IS_PUBLIC = #{isPublic}
+      </if>
+    </where>
+    ORDER BY
+      <choose>
+        <when test="sort == 'uploadDate,asc'">c.UPLOAD_DATE ASC</when>
+        <when test="sort == 'uploadDate,desc'">c.UPLOAD_DATE DESC</when>
+        <when test="sort == 'title,asc'">c.TITLE ASC</when>
+        <when test="sort == 'title,desc'">c.TITLE DESC</when>
+        <otherwise>c.UPLOAD_DATE DESC</otherwise>
+      </choose>
+    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+  </select>
+
+  <select id="countAdminCourses" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM COURSE c
+    JOIN USERS u ON c.USER_SEQ = u.USER_SEQ
+    <where>
+      <if test="searchType != null and searchKeyword != null and searchKeyword != ''">
+        <choose>
+          <when test="searchType == 'title'">
+            AND c.TITLE LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'userName'">
+            AND u.NICKNAME LIKE '%' || #{searchKeyword} || '%'
+          </when>
+        </choose>
+      </if>
+      <if test="isPublic != null and isPublic != ''">
+        AND c.IS_PUBLIC = #{isPublic}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectAdminCourseDetail" parameterType="String" resultType="kr.co.sist.e_learning.admin.course.AdminCourseDTO">
+    SELECT
+      c.COURSE_SEQ AS courseSeq,
+      c.USER_SEQ AS userSeq,
+      c.TITLE AS title,
+      c.INTRODUCTION AS introduction,
+      c.QUIZ_SEQ AS quizSeq,
+      c.UPLOAD_DATE AS uploadDate,
+      c.VIDEO_SEQ AS videoSeq,
+      c.IS_PUBLIC AS isPublic,
+      u.NICKNAME AS userName,
+      (SELECT COUNT(*) FROM VIDEO v WHERE v.COURSE_SEQ = c.COURSE_SEQ) AS videoCount,
+      (SELECT COUNT(*) FROM QUIZ q WHERE q.COURSE_SEQ = c.COURSE_SEQ) AS quizCount
+    FROM COURSE c
+    JOIN USERS u ON c.USER_SEQ = u.USER_SEQ
+    WHERE c.COURSE_SEQ = #{courseSeq}
+  </select>
+
+  <update id="updateCourseVisibility" parameterType="map">
+    UPDATE COURSE
+    SET IS_PUBLIC = #{isPublic}
+    WHERE COURSE_SEQ = #{courseSeq}
+  </update>
+
+</mapper>

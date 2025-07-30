@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.community.dao.CommunityPostDAO">
+
+  <!-- 게시글 작성 -->
+  <insert id="insertPost" parameterType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+    INSERT INTO community_post (
+      post_id, user_id, title, content, created_at, views, post_state
+    ) VALUES (
+      seq_community_post.NEXTVAL,
+      #{userId},
+      #{title},
+      #{content},
+      SYSTIMESTAMP,
+      0,
+      'A'
+    )
+  </insert>
+
+
+<!-- 페이징 + 제목·내용 검색용 게시글 조회 -->
+<select id="selectPostsPaginatedWithSearch"
+        parameterType="map"
+        resultType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+  SELECT 
+    cp.post_id    AS postId,
+    cp.user_id    AS userId,
+    u.nickname    AS nickname,
+    cp.title,
+    cp.content,
+    cp.created_at AS createdAt,
+    cp.views,
+    cp.post_state AS postState
+  	, cp.community_notice AS communityNotice
+  	
+  FROM community_post cp
+  JOIN users u ON cp.user_id = u.user_seq
+  WHERE cp.post_state = 'A'
+  <if test="keyword != null and keyword != ''">
+    AND (
+      cp.title   LIKE '%' || #{keyword} || '%'
+      OR cp.content LIKE '%' || #{keyword} || '%'
+    )
+  </if>
+  ORDER BY cp.created_at DESC
+  <if test="offset != null and limit != null">
+    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+  </if>
+</select>
+
+
+
+<!-- 검색 결과 전체 건수 조회 -->
+<select id="selectTotalPostCountWithSearch"
+        parameterType="map"
+        resultType="int">
+  SELECT COUNT(*)
+  FROM community_post cp
+  JOIN users u ON cp.user_id = u.user_seq
+  WHERE cp.post_state = 'A'
+  <if test="keyword != null and keyword != ''">
+    AND (
+      cp.title   LIKE '%' || #{keyword} || '%'
+      OR cp.content LIKE '%' || #{keyword} || '%'
+    )
+  </if>
+</select>
+
+
+
+
+
+
+  <!-- 게시글 전체 조회 -->
+  <select id="selectAllPosts" resultType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+    SELECT 
+      cp.post_id AS postId,
+      cp.user_id AS userId,
+      u.nickname AS nickname,
+      cp.title,
+      cp.content,
+      cp.created_at AS createdAt,
+      cp.views,
+      cp.post_state AS postState
+    FROM community_post cp
+    JOIN users u ON cp.user_id = u.user_seq
+    WHERE cp.post_state = 'A'
+    ORDER BY cp.post_id DESC
+  </select>
+
+  <!-- 페이징 게시글 조회 -->
+  <select id="selectPostsPaginated" parameterType="map" resultType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+    SELECT 
+      cp.post_id AS postId,
+      cp.user_id AS userId,
+      u.nickname AS nickname,
+      cp.title,
+      cp.content,
+      cp.created_at AS createdAt,
+      cp.views,
+      cp.post_state AS postState,
+      cp.community_notice AS communityNotice
+      
+      NVL((
+        SELECT COUNT(*) FROM community_like cl
+        WHERE cl.post_id2 = cp.post_id
+          AND cl.vote_type = 'UP'
+      ), 0) AS upCount
+    FROM community_post cp
+    JOIN users u ON cp.user_id = u.user_seq
+    WHERE cp.post_state = 'A'
+    ORDER BY cp.created_at DESC
+    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+  </select>
+
+  <!-- 오늘의 개념글 -->
+  <select id="selectBestPostsToday" parameterType="map" resultType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+    SELECT 
+      cp.post_id AS postId,
+      cp.user_id AS userId,
+      u.nickname AS nickname,
+      cp.title,
+      cp.content,
+      cp.created_at AS createdAt,
+      cp.views,
+      cp.post_state AS postState,
+      NVL((
+        SELECT COUNT(*) 
+        FROM community_like cl
+        WHERE cl.post_id2 = cp.post_id
+          AND cl.vote_type = 'UP'
+          AND cl.liked_at >= TRUNC(SYSDATE)
+      ), 0) AS upCount
+    FROM community_post cp
+    JOIN users u ON cp.user_id = u.user_seq
+    WHERE cp.post_state = 'A'
+      AND (
+        SELECT COUNT(*) 
+        FROM community_like cl
+        WHERE cl.post_id2 = cp.post_id
+          AND cl.vote_type = 'UP'
+          AND cl.liked_at >= TRUNC(SYSDATE)
+      ) > 0
+    ORDER BY upCount DESC
+    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+  </select>
+
+  <!-- 오늘의 개념글 개수 -->
+  <select id="countBestPostsToday" resultType="int">
+    SELECT COUNT(*) 
+    FROM community_post cp
+    WHERE cp.post_state = 'A'
+      AND EXISTS (
+        SELECT 1 FROM community_like cl
+        WHERE cl.post_id2 = cp.post_id
+          AND cl.vote_type = 'UP'
+          AND cl.liked_at >= TRUNC(SYSDATE)
+      )
+  </select>
+
+  <!-- 단일 게시글 조회 -->
+  <select id="selectPost" parameterType="long" resultType="kr.co.sist.e_learning.community.dto.CommunityPostDTO">
+    SELECT 
+      post_id AS postId,
+      user_id AS userId,
+      title,
+      content,
+      created_at AS createdAt,
+      views,
+      post_state AS postState
+    FROM community_post
+    WHERE post_id = #{postId}
+  </select>
+
+  <!-- 기존 deletePost -->
+<update id="deletePost" parameterType="long">
+  UPDATE community_post
+  SET post_state = 'D'
+  WHERE post_id = #{postId}
+</update>
+
+  <!-- 게시글 수 -->
+  <select id="countAllPosts" resultType="int">
+    SELECT COUNT(*) FROM community_post
+  </select>
+
+  <select id="selectTotalPostCount" resultType="int">
+    SELECT COUNT(*) 
+    FROM community_post 
+    WHERE post_state = 'A'
+  </select>
+
+
+
+
+  <!-- 이미지 등록 -->
+  <insert id="insertImage" parameterType="kr.co.sist.e_learning.community.dto.CommunityImageDTO">
+    <selectKey resultType="long" keyProperty="imageId" order="BEFORE">
+      SELECT seq_community_image.NEXTVAL FROM dual
+    </selectKey>
+    INSERT INTO community_image (
+      image_id, post_id2, user_id2, course_seq, image_url
+    ) VALUES (
+      #{imageId}, #{postId}, #{userId}, #{courseSeq}, #{imageUrl}
+    )
+  </insert>
+
+  <!-- 조회수 증가 -->
+  <update id="increaseViewCount" parameterType="long">
+    UPDATE community_post
+    SET views = views + 1
+    WHERE post_id = #{postId}
+  </update>
+
+  <!-- 댓글 작성 -->
+  <insert id="insertComment" parameterType="kr.co.sist.e_learning.community.dto.CommunityCommentDTO">
+    INSERT INTO community_comment(
+      comment_id,
+      post_id2,
+      user_id2,
+      parent_id,
+      content,
+      created_at,
+      cmt_state
+    ) VALUES (
+      seq_community_comment.nextval,
+      #{postId2},
+      #{userId2},
+      #{parentId, jdbcType=INTEGER},
+      #{content},
+      SYSTIMESTAMP,
+      'A'
+    )
+  </insert>
+
+  <!-- 댓글 목록 -->
+  <select id="selectCommentList" parameterType="long" resultType="kr.co.sist.e_learning.community.dto.CommunityCommentDTO">
+  SELECT 
+    c.comment_id AS commentId,
+    c.post_id2 AS postId2,
+    c.user_id2 AS userId2,
+    u.nickname AS nickname,
+    c.parent_id AS parentId,
+    c.content,
+    c.created_at AS createdAt,
+    c.cmt_state AS cmtState
+  FROM community_comment c
+  JOIN users u ON c.user_id2 = u.user_seq
+  WHERE c.post_id2 = #{postId} AND c.cmt_state = 'A'
+	ORDER BY NVL(c.parent_id, c.comment_id) DESC, c.parent_id NULLS FIRST, c.created_at DESC
+	
+</select>
+
+
+
+
+
+
+
+
+</mapper>

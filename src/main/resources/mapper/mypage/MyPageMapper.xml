@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.mypage.MyPageMapper">
+
+	<!-- 대시보드 요약 정보 조회 -->
+	<select id="selectMyPageSummary"
+	        parameterType="long"
+	        resultType="kr.co.sist.e_learning.mypage.MyPageDTO">
+	  SELECT
+	    u.user_seq AS userSeq,
+	    u.nickname AS nickname,
+	    u.email,
+	    u.profile AS profile,
+	    u.social_id AS socialId,
+	    3 AS completedCourses,
+	    120 AS totalStudyTime,
+	    95.5 AS quizAccuracy,
+	    '실버' AS donationLevel,
+	    (
+	      SELECT NVL(SUM(d.donation_amount), 0)
+	      FROM donations d
+	      JOIN mile_wallet mw ON d.wallet_seq = mw.wallet_seq
+	      WHERE mw.user_seq = u.user_seq
+	    ) AS totalDonation
+	  FROM users u
+	  WHERE u.user_seq = #{userSeq}
+	</select>
+
+
+<!-- 총 후원액 합계 -->
+<select id="selectTotalDonationByUserSeq"
+        parameterType="long"
+        resultType="int">
+  SELECT NVL(SUM(d.donation_amount), 0)
+  FROM donations d
+  JOIN mile_wallet mw ON d.wallet_seq = mw.wallet_seq
+  WHERE mw.user_seq = #{userSeq}
+</select>
+
+
+
+  <!-- 내 정보 조회 -->
+  <select id="selectUserInfo"
+          parameterType="long"
+          resultType="kr.co.sist.e_learning.mypage.MyPageDTO">
+    SELECT 
+      user_seq AS userSeq,
+      email,
+      password,
+      nickname,
+      status,
+      profile,
+      social_id AS socialId,
+      social_provider AS socialProvider
+    FROM users
+    WHERE user_seq = #{userSeq}
+  </select>
+
+  <!-- 프로필 경로 조회 -->
+  <select id="selectProfilePath"
+          parameterType="long"
+          resultType="string">
+    SELECT profile
+    FROM users
+    WHERE user_seq = #{userSeq}
+  </select>
+
+  <!-- 사용자 프로필 경로 업데이트 -->
+  <update id="updateProfile"
+          parameterType="map">
+    UPDATE users
+    SET profile = #{profile}
+    WHERE user_seq = #{userSeq}
+  </update>
+
+<!-- 구독 목록 조회 -->
+<select id="selectSubscriptions"
+        parameterType="long"
+        resultType="kr.co.sist.e_learning.mypage.SubscriptionDTO">
+  SELECT
+    uf.following_id                     AS instructorId,
+    u.nickname                          AS instructorName,
+    TO_CHAR(uf.subscribed_at,'YYYY-MM-DD') AS subscribedAt
+  FROM user_follow uf
+  JOIN users u 
+    ON uf.following_id = u.user_seq
+  WHERE uf.follower_id = #{userSeq}
+</select>
+
+
+
+  <!-- 구독 취소 -->
+  <delete id="deleteSubscription"
+          parameterType="map">
+    DELETE FROM user_follow
+    WHERE follower_id = #{userSeq}
+      AND following_id = #{instructorId}
+  </delete>
+
+
+</mapper>

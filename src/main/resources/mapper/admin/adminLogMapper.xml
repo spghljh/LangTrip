@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.e_learning.admin.log.AdminLogDAO">
+  <insert id="insertLog" parameterType="kr.co.sist.e_learning.admin.log.AdminLogDTO">
+    INSERT INTO ADMIN_LOG (log_id, admin_id, action_type, target_id, details)
+    VALUES (admin_log_seq.nextval, #{adminId}, #{actionType}, #{targetId, jdbcType=VARCHAR}, #{details})
+  </insert>
+
+  <sql id="logWhere">
+    <where>
+      <if test="searchKeyword != null and searchKeyword != ''">
+        <choose>
+          <when test="searchType == 'adminId'">
+            AND admin_id LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'actionType'">
+            AND action_type LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'targetId'">
+            AND target_id LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <when test="searchType == 'details'">
+            AND details LIKE '%' || #{searchKeyword} || '%'
+          </when>
+          <otherwise>
+            AND (admin_id LIKE '%' || #{searchKeyword} || '%'
+            OR action_type LIKE '%' || #{searchKeyword} || '%'
+            OR target_id LIKE '%' || #{searchKeyword} || '%'
+            OR details LIKE '%' || #{searchKeyword} || '%')
+          </otherwise>
+        </choose>
+      </if>
+      <if test="startDate != null and startDate != ''">
+        AND log_time &gt;= TO_TIMESTAMP(#{startDate} || ' 00:00:00.000000', 'YYYY-MM-DD HH24:MI:SS.FF6')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND log_time &lt;= TO_TIMESTAMP(#{endDate} || ' 23:59:59.999999', 'YYYY-MM-DD HH24:MI:SS.FF6')
+      </if>
+    </where>
+  </sql>
+
+  <select id="selectAdminLogs" resultType="kr.co.sist.e_learning.admin.log.AdminLogDTO" parameterType="map">
+    SELECT log_id, admin_id, action_type, target_id, log_time, details
+    FROM ADMIN_LOG
+    <include refid="logWhere"/>
+    <if test="orderBy != null and orderBy != ''">
+      ORDER BY
+      <choose>
+        <when test="orderBy == 'logId'">log_id</when>
+        <when test="orderBy == 'adminId'">admin_id</when>
+        <when test="orderBy == 'actionType'">action_type</when>
+        <when test="orderBy == 'logTime'">log_time</when>
+        <otherwise>log_time</otherwise>
+      </choose>
+      <if test="sort == 'desc'">DESC</if>
+      <if test="sort == 'asc'">ASC</if>
+    </if>
+    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+  </select>
+
+  <select id="selectAllAdminLogs" resultType="kr.co.sist.e_learning.admin.log.AdminLogDTO" parameterType="map">
+    SELECT log_id, admin_id, action_type, target_id, log_time, details
+    FROM ADMIN_LOG
+    <include refid="logWhere"/>
+    ORDER BY log_time DESC
+  </select>
+
+  <select id="countAdminLogs" resultType="int" parameterType="map">
+    SELECT COUNT(*)
+    FROM ADMIN_LOG
+    <include refid="logWhere"/>
+  </select>
+</mapper>

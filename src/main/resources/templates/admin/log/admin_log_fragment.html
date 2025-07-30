@@ -1,0 +1,42 @@
+<div class="table-header">
+  <h3>관리자 로그</h3>
+  <div class="table-stats">총 <span th:text="${pageResponse.totalCnt}">0</span>건</div>
+</div>
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>로그 ID</th>
+        <th>관리자 ID</th>
+        <th>대상 ID</th>
+        <th>작업 유형</th>
+        <th>상세 정보</th>
+        <th>로그 시간</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="log, stat : ${pageResponse.list}">
+        <td th:text="${pageResponse.getStartRow() + stat.index}">1</td>
+        <td th:text="${log.adminId}">admin</td>
+        <td th:text="${log.targetId}"></td>
+        <td th:text="${log.actionType}"></td>
+        <td th:text="${log.details}">IP: 127.0.0.1</td>
+        <td th:text="${#dates.format(log.logTime, 'yyyy-MM-dd HH:mm:ss')}">2023-10-27 10:00:00</td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(pageResponse.list)}">
+        <td colspan="6" style="text-align:center; padding:2rem; color:#666;">
+          로그가 없습니다.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="pagination">
+  <a th:if="${pageResponse.hasPrev}" th:href="@{/admin/log(page=${pageResponse.startPage - 1}, size=${pageResponse.pageSize}, orderBy=${pageRequestDTO.orderBy}, sort=${pageRequestDTO.sort}, searchType=${searchDTO.searchType}, searchKeyword=${searchDTO.searchKeyword}, startDate=${searchDTO.startDate}, endDate=${searchDTO.endDate})}">이전</a>
+  <th:block th:each="i : ${#numbers.sequence(pageResponse.startPage, pageResponse.endPage)}">
+    <a th:href="@{/admin/log(page=${i}, size=${pageResponse.pageSize}, orderBy=${pageRequestDTO.orderBy}, sort=${pageRequestDTO.sort}, searchType=${searchDTO.searchType}, searchKeyword=${searchDTO.searchKeyword}, startDate=${searchDTO.startDate}, endDate=${searchDTO.endDate})}" 
+       th:text="${i}" 
+       th:classappend="${i == pageResponse.page ? 'active' : ''}">[[${i}]]</a>
+  </th:block>
+  <a th:if="${pageResponse.hasNext}" th:href="@{/admin/log(page=${pageResponse.endPage + 1}, size=${pageResponse.pageSize}, orderBy=${pageRequestDTO.orderBy}, sort=${pageRequestDTO.sort}, searchType=${searchDTO.searchType}, searchKeyword=${searchDTO.searchKeyword}, startDate=${searchDTO.startDate}, endDate=${searchDTO.endDate})}">다음</a>
+</div>

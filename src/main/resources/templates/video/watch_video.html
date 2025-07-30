@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- favicon 설정 -->
+<link rel="icon" href="http://localhost/images/favicon.ico">
+<!-- bootstrap CDN -->
+<link rel="stylesheet" type="text/css"
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
+<style type="text/css">
+
+
+</style>
+
+
+<!-- jquery CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+
+});
+</script>
+
+</head>
+<body>
+<table class="table table-hover">
+<thead>
+<tr>
+<th>강의번호</th>
+<th>제목</th>
+<th>설명</th>
+<th>파일명</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="data, index : ${videoList}">
+<td th:text="${index.count}"></td>
+<td th:text="${data.title}"></td>
+<td th:text="${data.description}"></td>
+<td>
+    <span th:text="${data.fileName}"></span>
+    <form th:action="@{/video/watch}" method="POST">
+    <input type="hidden" name="videoSeq" th:value="${data.videoSeq}"/>
+	<button type="submit" class="btn btn-sm btn-success">영상보기</button>
+    </form>
+    
+<!--     <a th:href="@{/video/watch(videoSeq=${data.videoSeq})}" class="btn btn-sm btn-success ms-2">보기</a> -->
+  </td>
+</tr>
+</tbody>
+</table>
+<a th:href="@{/}">back</a>
+
+</body>
+</html>

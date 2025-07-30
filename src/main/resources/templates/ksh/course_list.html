@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LangTrip - 강의 목록</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/course_list.css}">
+
+</head>
+<body class="">
+    <!-- Header -->
+      <div th:replace="layout/header :: header"></div>
+
+
+    <main class="main-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">전체 강의</h1>
+      </div>
+    </div>
+
+    <div class="search-filter-section">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="원하는 강의를 검색해보세요..." id="searchInput" />
+            <span class="search-icon">🔍</span>
+        </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label">카테고리</label>
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">전체 카테고리</option>
+                        <option value="development">개발</option>
+                        <option value="design">디자인</option>
+                        <option value="marketing">마케팅</option>
+                        <option value="ai-ml">AI/ML</option>
+                        <option value="mobile">모바일</option>
+                        <option value="cloud">클라우드</option>
+                        <option value="data">데이터 분석</option>
+                        <option value="business">비즈니스</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">난이도</label>
+                    <select class="filter-select" id="levelFilter">
+                        <option value="">전체 난이도</option>
+                        <option value="beginner">초급</option>
+                        <option value="intermediate">중급</option>
+                        <option value="advanced">고급</option>
+                    </select>
+                </div>
+                
+                
+                <div class="filter-group">
+                    <label class="filter-label">정렬</label>
+                    <select class="filter-select" id="sortFilter">
+                        <option value="popular">인기순</option>
+                        <option value="newest">최신순</option>
+                        <option value="rating">평점순</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn" onclick="applyFilters()">검색</button>
+                    <button class="clear-filters" onclick="clearFilters()">초기화</button>
+                </div>
+            </div>
+            
+            <div class="active-filters" id="activeFilters" style="display: none;">
+                <!-- Active filter tags will be inserted here -->
+            </div>
+        </div>
+
+         <!-- 강의 목록 -->
+    <div class="course-grid" id="courseGrid">
+        <div class="course-card" th:each="course : ${courses}">
+            <div class="course-thumbnail">
+                <div class="course-level" th:text="${course.level}">중급</div>
+                <div class="course-duration" th:text="${course.duration}">12시간</div>
+                <span th:text="${course.thumbnail}">🎯</span>
+            </div>
+            <div class="course-info">
+                <span class="course-category" th:text="${course.category}">개발</span>
+                <h3 class="course-title" th:text="${course.title}">React 완벽 마스터</h3>
+                <div class="course-instructor">
+                    <div class="instructor-avatar" th:text="${course.instructor.substring(0,1)}">김</div>
+                    <span class="instructor-name" th:text="${course.instructor}">김개발</span>
+                </div>
+                <div class="course-stats">
+                    <div class="course-rating">⭐ <span th:text="${course.rating}">4.9</span> (<span th:text="${course.students}">1234</span>)</div>
+                    <div class="course-students" th:text="${course.students} + '명 수강'">1234명 수강</div>
+                </div>
+                <div class="course-footer">
+                    <div class="course-price">
+                        <span class="original-price" th:if="${course.originalPrice != course.currentPrice}" th:text="'\u20A9' + ${#numbers.formatInteger(course.originalPrice, 0)}">₩129,000</span>
+                        <span class="current-price" th:text="'\u20A9' + ${#numbers.formatInteger(course.currentPrice, 0)}">₩89,000</span>
+                    </div>
+                    <a th:href="@{/courses/enroll/{id}(id=${course.id})}" class="enroll-btn">수강신청</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Loading State -->
+        <div class="loading" id="loadingState" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>강의를 불러오는 중...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📚</div>
+            <h3>검색 결과가 없습니다</h3>
+            <p>다른 검색어나 필터 조건을 시도해보세요.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <button onclick="changePage(-1)" id="prevBtn">이전</button>
+            <button class="active" onclick="goToPage(1)">1</button>
+            <button onclick="goToPage(2)">2</button>
+            <button onclick="goToPage(3)">3</button>
+            <button onclick="goToPage(4)">4</button>
+            <button onclick="goToPage(5)">5</button>
+            <button onclick="changePage(1)" id="nextBtn">다음</button>
+        </div>
+          <div th:replace="layout/footer :: footer"></div>
+        
+    </main>
+    
+
+    <script>
+        // Sample course data
+        const sampleCourses = [
+            {
+                id: 1,
+                title: "왕초보 영어회화 - 일상 표현 마스터",
+                category: "영어",
+                categoryValue: "english",
+                instructor: "김영어",
+                students: 1234,
+                level: "초급",
+                levelValue: "beginner",
+                thumbnail: "🇺🇸"
+            },
+            {
+                id: 2,
+                title: "일본어 히라가나부터 간단한 회화까지",
+                category: "일본어",
+                categoryValue: "japanese",
+                instructor: "타나카선생",
+                students: 892,
+                level: "초급",
+                levelValue: "beginner",
+                thumbnail: "🇯🇵"
+            },
+            {
+                id: 3,
+                title: "중국어 발음 정복하기 - 성조부터 완벽하게",
+                category: "중국어",
+                categoryValue: "chinese",
+                instructor: "왕라오스",
+                students: 567,
+                level: "초급",
+                levelValue: "beginner",
+                thumbnail: "🇨🇳"
+            },
+            {
+                id: 4,
+                title: "스페인어로 떠나는 남미 여행 준비",
+                category: "스페인어",
+                categoryValue: "spanish",
+                instructor: "카를로스",
+                students: 423,
+                level: "중급",
+                levelValue: "intermediate",
+                thumbnail: "🇪🇸"
+            },
+            {
+                id: 5,
+                title: "프랑스어 바리스타 되기 - 카페에서 쓰는 표현",
+                category: "프랑스어",
+                categoryValue: "french",
+                instructor: "마리",
+                students: 289,
+                level: "중급",
+                levelValue: "intermediate",
+                thumbnail: "🇫🇷"
+            },
+            {
+                id: 6,
+                title: "독일어 축구 용어로 배우는 재미있는 학습",
+                category: "독일어",
+                categoryValue: "german",
+                instructor: "한스",
+                students: 334,
+                level: "중급",
+                levelValue: "intermediate",
+                thumbnail: "🇩🇪"
+            }
+        ];
+
+        let currentCourses = [...sampleCourses];
+        let currentPage = 1;
+        const coursesPerPage = 6;
+
+        function toggleLogin() {
+            const body = document.body;
+            if (body.classList.contains('logged-out')) {
+                body.classList.remove('logged-out');
+                body.classList.add('logged-in');
+            } else {
+                body.classList.remove('logged-in');
+                body.classList.add('logged-out');
+            }
+        }
+
+        function renderCourses(courses) {
+            const courseGrid = document.getElementById('courseGrid');
+            const startIndex = (currentPage - 1) * coursesPerPage;
+            const endIndex = startIndex + coursesPerPage;
+            const coursesToShow = courses.slice(startIndex, endIndex);
+
+            if (coursesToShow.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                courseGrid.style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+                courseGrid.style.display = 'grid';
+                document.getElementById('pagination').style.display = 'flex';
+            }
+
+            courseGrid.innerHTML = coursesToShow.map(course => `
+                <div class="course-card">
+                    <div class="course-thumbnail">
+                        <div class="course-level">${course.level}</div>
+                        ${course.thumbnail}
+                    </div>
+                    <div class="course-info">
+                        <span class="course-category">${course.category}</span>
+                        <h3 class="course-title">${course.title}</h3>
+                        <div class="course-instructor">
+                            <div class="instructor-avatar">${course.instructor[0]}</div>
+                            <span class="instructor-name">${course.instructor}</span>
+                        </div>
+                        <div class="course-stats">
+                            <div class="course-students">${course.students}명 수강</div>
+                        </div>
+                        <div class="course-footer">
+                            <button class="enroll-btn">수강신청</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateResultsCount(courses.length);
+            updatePagination(courses.length);
+        }
+
+
+        function updatePagination(totalCourses) {
+            const totalPages = Math.ceil(totalCourses / coursesPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            let paginationHTML = `<button onclick="changePage(-1)" id="prevBtn" ${currentPage === 1 ? 'disabled' : ''}>이전</button>`;
+            
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                paginationHTML += `<button onclick="goToPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</button>`;
+            }
+            
+            paginationHTML += `<button onclick="changePage(1)" id="nextBtn" ${currentPage === totalPages ? 'disabled' : ''}>다음</button>`;
+            
+            pagination.innerHTML = paginationHTML;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(currentCourses.length / coursesPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderCourses(currentCourses);
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderCourses(currentCourses);
+        }
+
+        function applyFilters() {
+            showLoading();
+            
+            setTimeout(() => {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const category = document.getElementById('categoryFilter').value;
+                const level = document.getElementById('levelFilter').value;
+                const price = "";
+                const sort = document.getElementById('sortFilter').value;
+
+                let filteredCourses = sampleCourses.filter(course => {
+                    const matchesSearch = !searchTerm || 
+                        course.title.toLowerCase().includes(searchTerm) || 
+                        course.instructor.toLowerCase().includes(searchTerm);
+                    const matchesCategory = !category || course.categoryValue === category;
+                    const matchesLevel = !level || course.levelValue === level;
+                    
+                    return matchesSearch && matchesCategory && matchesLevel;
+                });
+
+                // Apply sorting
+                filteredCourses = sortCourses(filteredCourses, sort);
+                
+                currentCourses = filteredCourses;
+                currentPage = 1;
+                hideLoading();
+                renderCourses(currentCourses);
+                updateActiveFilters();
+            }, 800);
+        }
+
+        function sortCourses(courses, sortType) {
+            const sorted = [...courses];
+            
+            switch(sortType) {
+                case 'newest':
+                    return sorted.reverse(); // Assume newer courses have higher IDs
+                case 'rating':
+                    return sorted.sort((a, b) => b.students - a.students); // Sort by students as proxy for rating
+                case 'popular':
+                default:
+                    return sorted.sort((a, b) => b.students - a.students);
+            }
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            const searchTerm = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            const level = document.getElementById('levelFilter').value;
+            
+            const filters = [];
+            
+            if (searchTerm) {
+                filters.push({ type: 'search', value: searchTerm, label: `검색: ${searchTerm}` });
+            }
+            if (category) {
+                const categoryText = document.getElementById('categoryFilter').selectedOptions[0].text;
+                filters.push({ type: 'category', value: category, label: `카테고리: ${categoryText}` });
+            }
+            if (level) {
+                const levelText = document.getElementById('levelFilter').selectedOptions[0].text;
+                filters.push({ type: 'level', value: level, label: `난이도: ${levelText}` });
+            }
+            
+            if (filters.length > 0) {
+                activeFiltersContainer.style.display = 'flex';
+                activeFiltersContainer.innerHTML = filters.map(filter => `
+                    <div class="filter-tag">
+                        ${filter.label}
+                        <span class="remove" onclick="removeFilter('${filter.type}')">&times;</span>
+                    </div>
+                `).join('');
+            } else {
+                activeFiltersContainer.style.display = 'none';
+            }
+        }
+
+        function removeFilter(filterType) {
+            switch(filterType) {
+                case 'search':
+                    document.getElementById('searchInput').value = '';
+                    break;
+                case 'category':
+                    document.getElementById('categoryFilter').value = '';
+                    break;
+                case 'level':
+                    document.getElementById('levelFilter').value = '';
+                    break;
+            }
+            applyFilters();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('levelFilter').value = '';
+            document.getElementById('sortFilter').value = 'popular';
+            
+            currentCourses = [...sampleCourses];
+            currentPage = 1;
+            renderCourses(currentCourses);
+            updateActiveFilters();
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('courseGrid').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        // Search input event listener
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+
+        // Filter change event listeners
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('levelFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses(currentCourses);
+        });
+
+        // Sample data expansion for demonstration
+        function generateMoreCourses() {
+            const additionalCourses = [
+                {
+                    id: 7,
+                    title: "한국어 K-POP으로 배우기 - BTS 가사 완전 분석",
+                    category: "한국어",
+                    categoryValue: "korean",
+                    instructor: "박한글",
+                    students: 756,
+                    level: "중급",
+                    levelValue: "intermediate",
+                    thumbnail: "🇰🇷"
+                },
+                {
+                    id: 8,
+                    title: "이탈리아어 파스타 요리하며 배우기",
+                    category: "기타 언어",
+                    categoryValue: "other",
+                    instructor: "마르코",
+                    students: 345,
+                    level: "초급",
+                    levelValue: "beginner",
+                    thumbnail: "🇮🇹"
+                },
+                {
+                    id: 9,
+                    title: "영어 드라마로 배우는 생활 회화",
+                    category: "영어",
+                    categoryValue: "english",
+                    instructor: "제니퍼",
+                    students: 998,
+                    level: "중급",
+                    levelValue: "intermediate",
+                    thumbnail: "🎬"
+                },
+                {
+                    id: 10,
+                    title: "일본어 애니메이션 대사로 배우는 자연스러운 표현",
+                    category: "일본어",
+                    categoryValue: "japanese",
+                    instructor: "사토선생",
+                    students: 667,
+                    level: "고급",
+                    levelValue: "advanced",
+                    thumbnail: "🎌"
+                },
+                {
+                    id: 11,
+                    title: "러시아어 기초 - 발레 용어로 시작하기",
+                    category: "기타 언어",
+                    categoryValue: "other",
+                    instructor: "이반",
+                    students: 234,
+                    level: "초급",
+                    levelValue: "beginner",
+                    thumbnail: "🇷🇺"
+                },
+                {
+                    id: 12,
+                    title: "베트남어 쌀국수 먹으며 배우는 현지 회화",
+                    category: "기타 언어",
+                    categoryValue: "other",
+                    instructor: "응우옌",
+                    students: 456,
+                    level: "초급",
+                    levelValue: "beginner",
+                    thumbnail: "🇻🇳"
+                }
+            ];
+
+            sampleCourses.push(...additionalCourses);
+            currentCourses = [...sampleCourses];
+            renderCourses(currentCourses);
+        }
+
+        // Add more courses after 2 seconds for demonstration
+        setTimeout(generateMoreCourses, 2000);
+    </script>
+</body>
+</html></html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.sist.e_learning.donation.LectureMapper">
+
+  <select id="selectLectureDetailByCourseSeq" resultType="kr.co.sist.e_learning.donation.LectureDetailDTO">
+    SELECT 
+        c.course_seq           AS courseSeq,
+        c.title                AS courseTitle,
+        u.user_seq             AS instructorUserSeq,
+        u.nickname             AS instructorNickname,
+        mw.wallet_seq          AS instructorWalletSeq
+    FROM course c
+    JOIN users u ON c.user_seq = u.user_seq
+    LEFT JOIN mile_wallet mw ON u.user_seq = mw.user_seq
+    WHERE c.course_seq = #{courseSeq}
+  </select>
+
+</mapper>
